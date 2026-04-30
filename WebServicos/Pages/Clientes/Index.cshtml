@@ -1,0 +1,58 @@
+@page
+@model WebServicos.Pages.Clientes.IndexModel
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold"><i class="bi bi-people me-2 text-primary"></i>Clientes</h1>
+        <p class="text-muted mb-0">Gestão de utilizadores registados</p>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Data de Registo</th>
+                        <th>Nº Pedidos</th>
+                        <th>Role</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cliente in Model.Clientes)
+                    {
+                        <tr>
+                            <td>
+                                <i class="bi bi-person-circle me-2 text-primary"></i>
+                                <strong>@cliente.NomeCompleto</strong>
+                            </td>
+                            <td>@cliente.Email</td>
+                            <td>@cliente.DataRegisto.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <span class="badge bg-info text-dark">@cliente.TotalPedidos</span>
+                            </td>
+                            <td>
+                                <span class="badge @(cliente.IsAdmin ? "bg-danger" : "bg-secondary")">
+                                    @(cliente.IsAdmin ? "Administrador" : "Cliente")
+                                </span>
+                            </td>
+                            <td>
+                                <a asp-page="Details" asp-route-id="@cliente.Id"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
