@@ -43,6 +43,13 @@ namespace WebServicos.Pages.Pedidos
 
         public async Task<IActionResult> OnGetAsync(int? servicoId)
         {
+            // ── Apenas clientes podem criar pedidos ──
+            if (User.IsInRole("Administrador"))
+            {
+                TempData["Erro"] = "Apenas clientes podem criar pedidos.";
+                return RedirectToPage("Index");
+            }
+
             ServicosDisponiveis = await _db.Servicos.Where(s => s.Ativo).ToListAsync();
 
             // Pré-selecionar serviço se veio da página de detalhes
@@ -54,6 +61,13 @@ namespace WebServicos.Pages.Pedidos
 
         public async Task<IActionResult> OnPostAsync()
         {
+            // ── Apenas clientes podem criar pedidos ──
+            if (User.IsInRole("Administrador"))
+            {
+                TempData["Erro"] = "Apenas clientes podem criar pedidos.";
+                return RedirectToPage("Index");
+            }
+
             // Carregar novamente os serviços para repopular a página em caso de erro
             ServicosDisponiveis = await _db.Servicos.Where(s => s.Ativo).ToListAsync();
 

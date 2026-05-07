@@ -26,6 +26,9 @@ namespace WebServicos.Pages.Pedidos
 
         public Pedido? Pedido { get; set; }
 
+        [BindProperty]
+        public EstadoPedido NovoEstado { get; set; }
+
         public async Task<IActionResult> OnGetAsync(int id)
         {
             Pedido = await _db.Pedidos
@@ -36,6 +39,8 @@ namespace WebServicos.Pages.Pedidos
 
             if (Pedido == null) return NotFound();
 
+            NovoEstado = Pedido.Estado;
+
             // Clientes só podem ver os seus próprios pedidos
             var userId = _userManager.GetUserId(User);
             if (!User.IsInRole("Administrador") && Pedido.ClienteId != userId)
@@ -45,7 +50,7 @@ namespace WebServicos.Pages.Pedidos
         }
 
         // Handler para administrador alterar estado
-        public async Task<IActionResult> OnPostAlterarEstadoAsync(int id, int novoEstado)
+        public async Task<IActionResult> OnPostAlterarEstadoAsync(int id)
         {
             if (!User.IsInRole("Administrador"))
                 return Forbid();
@@ -54,7 +59,7 @@ namespace WebServicos.Pages.Pedidos
             if (pedido == null) return NotFound();
 
             var estadoAnterior = pedido.Estado;
-            pedido.Estado = (EstadoPedido)novoEstado;
+            pedido.Estado = NovoEstado;
             await _db.SaveChangesAsync();
 
             // Notificar cliente via SignalR

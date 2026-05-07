@@ -20,6 +20,8 @@ namespace WebServicos.Data
         public DbSet<CategoriaServico> CategoriasServico { get; set; }
         public DbSet<Pedido> Pedidos { get; set; }
         public DbSet<PedidoServico> PedidoServicos { get; set; }
+        public DbSet<Mensagem> Mensagens { get; set; }
+        public DbSet<PedidoAlteracao> PedidoAlteracoes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

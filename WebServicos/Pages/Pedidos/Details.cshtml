@@ -103,14 +103,8 @@ else
                         <h6 class="fw-bold mb-3"><i class="bi bi-gear me-2"></i>Alterar Estado</h6>
                         <form method="post" asp-page-handler="AlterarEstado">
                             <input type="hidden" name="id" value="@Model.Pedido.Id" />
-                            <select name="novoEstado" class="form-select mb-2">
-                                @foreach (var estado in Enum.GetValues<WebServicos.Models.EstadoPedido>())
-                                {
-                                    <option value="@((int)estado)"
-                                            selected="@(Model.Pedido.Estado == estado)">
-                                        @estado.GetDisplayName()
-                                    </option>
-                                }
+                            <select asp-for="NovoEstado" class="form-select mb-2"
+                                    asp-items="Html.GetEnumSelectList<WebServicos.Models.EstadoPedido>()">
                             </select>
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="bi bi-save me-1"></i>Atualizar Estado

@@ -119,6 +119,11 @@ namespace WebServicos.Models
         [Display(Name = "Observações")]
         public string? Observacoes { get; set; }
 
+        [Url(ErrorMessage = "O endereço deve ser uma URL válida.")]
+        [StringLength(500)]
+        [Display(Name = "Endereço do Projeto (URL)")]
+        public string? EnderecoHttp { get; set; }
+
         // FK para o cliente (muitos-para-um)
         [Required]
         public string ClienteId { get; set; } = string.Empty;
@@ -129,6 +134,9 @@ namespace WebServicos.Models
 
         // Relação muitos-para-muitos com Servico
         public ICollection<PedidoServico> PedidoServicos { get; set; } = new List<PedidoServico>();
+
+        // Relação um-para-muitos com Mensagem
+        public ICollection<Mensagem> Mensagens { get; set; } = new List<Mensagem>();
     }
 
     // ──────────────────────────────────────────────────────────
@@ -181,4 +189,102 @@ namespace WebServicos.Models
         [Display(Name = "Cancelado")]
         Cancelado = 6
     }
+
+    // ──────────────────────────────────────────────────────────
+    // Mensagem de chat entre Cliente e Administrador
+    // ──────────────────────────────────────────────────────────
+    public class Mensagem
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        public int PedidoId { get; set; }
+
+        [ForeignKey(nameof(PedidoId))]
+        [Display(Name = "Pedido")]
+        public Pedido? Pedido { get; set; }
+
+        [Required]
+        public string RemetenteId { get; set; } = string.Empty;
+
+        [ForeignKey(nameof(RemetenteId))]
+        [Display(Name = "Remetente")]
+        public ApplicationUser? Remetente { get; set; }
+
+        [Required(ErrorMessage = "A mensagem é obrigatória.")]
+        [StringLength(2000, ErrorMessage = "A mensagem não pode exceder 2000 caracteres.")]
+        [Display(Name = "Mensagem")]
+        public string Conteudo { get; set; } = string.Empty;
+
+        [Display(Name = "Data/Hora")]
+        public DateTime DataHora { get; set; } = DateTime.UtcNow;
+
+        [Display(Name = "Lida")]
+        public bool Lida { get; set; } = false;
+    }
+
+    // ──────────────────────────────────────────────────────────
+    // Alterações Propostas pelo Cliente (Pendentes de Aprovação)
+    // ──────────────────────────────────────────────────────────
+    public class PedidoAlteracao
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        public int PedidoId { get; set; }
+
+        [ForeignKey(nameof(PedidoId))]
+        [Display(Name = "Pedido")]
+        public Pedido? Pedido { get; set; }
+
+        [StringLength(200)]
+        [Display(Name = "Título Proposto")]
+        public string? TituloProjetoProposto { get; set; }
+
+        [StringLength(2000)]
+        [Display(Name = "Descrição Proposta")]
+        public string? DescricaoProposta { get; set; }
+
+        [StringLength(1000)]
+        [Display(Name = "Observações Propostas")]
+        public string? ObservacoesProposta { get; set; }
+
+        [Display(Name = "Data da Proposta")]
+        public DateTime DataPropostas { get; set; } = DateTime.UtcNow;
+
+        [Display(Name = "Estado")]
+        public EstadoAlteracao Estado { get; set; } = EstadoAlteracao.Pendente;
+
+        [StringLength(500)]
+        [Display(Name = "Motivo da Rejeição")]
+        public string? MotivoRejeicao { get; set; }
+
+        [Display(Name = "Data da Decisão")]
+        public DateTime? DataDecisao { get; set; }
+
+        [Display(Name = "Decidido por")]
+        public string? DecididoPorId { get; set; }
+
+        [ForeignKey(nameof(DecididoPorId))]
+        public ApplicationUser? DecididoPor { get; set; }
+    }
+
+    // ──────────────────────────────────────────────────────────
+    // Estados das Alterações Propostas
+    // ──────────────────────────────────────────────────────────
+    public enum EstadoAlteracao
+    {
+        [Display(Name = "Pendente")]
+        Pendente = 0,
+
+        [Display(Name = "Aprovado")]
+        Aprovado = 1,
+
+        [Display(Name = "Rejeitado")]
+        Rejeitado = 2
+    }
 }
+
+

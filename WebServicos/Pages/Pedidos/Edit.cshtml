@@ -2,6 +2,7 @@
 @model WebServicos.Pages.Pedidos.EditModel
 @{
     ViewData["Title"] = "Editar Pedido";
+    var isAdmin = User.IsInRole("Administrador");
 }
 
 <div class="row justify-content-center">
@@ -13,46 +14,197 @@
             <div class="card-body p-4">
                 <form method="post">
                     <input type="hidden" asp-for="Pedido.Id" />
+                    <input type="hidden" asp-for="Pedido.DataPedido" />
+                    <input type="hidden" asp-for="Pedido.ClienteId" />
+                    
+                    @if (isAdmin)
+                    {
+                        <input type="hidden" asp-for="Pedido.TituloProjeto" />
+                        <input type="hidden" asp-for="Pedido.Descricao" />
+                        <input type="hidden" asp-for="Pedido.Observacoes" />
+                    }
+                    else
+                    {
+                        <input type="hidden" asp-for="Pedido.Estado" />
+                        <input type="hidden" asp-for="Pedido.PrazoEstimado" />
+                    }
+
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-                    <div class="mb-3">
-                        <label asp-for="Pedido.TituloProjeto" class="form-label fw-semibold"></label>
-                        <input asp-for="Pedido.TituloProjeto" class="form-control" />
-                        <span asp-validation-for="Pedido.TituloProjeto" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Pedido.Descricao" class="form-label fw-semibold"></label>
-                        <textarea asp-for="Pedido.Descricao" class="form-control" rows="5"></textarea>
-                        <span asp-validation-for="Pedido.Descricao" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Pedido.PrazoEstimado" class="form-label fw-semibold"></label>
-                        <input asp-for="Pedido.PrazoEstimado" class="form-control" type="date" />
-                    </div>
-
-                    <div class="mb-4">
-                        <label asp-for="Pedido.Observacoes" class="form-label fw-semibold"></label>
-                        <textarea asp-for="Pedido.Observacoes" class="form-control" rows="3"></textarea>
-                    </div>
-
-                    @if (User.IsInRole("Administrador"))
+                    <!-- ═══════════════════════════════════ -->
+                    <!-- CLIENTE: Edita Título, Descrição, Observações -->
+                    <!-- ═══════════════════════════════════ -->
+                    @if (!isAdmin)
                     {
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Você pode editar o título, descrição e observações. O estado do pedido é gerido pelo administrador.
+                        </div>
+
+                        <!-- Alteração Pendente -->
+                        @if (Model.AlteracaoPendente != null)
+                        {
+                            <div class="alert alert-warning border border-warning">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        <strong>Alterações Pendentes de Aprovação</strong>
+                                        <small class="d-block text-muted">
+                                            Proposto a @Model.AlteracaoPendente.DataPropostas.ToString("dd/MM/yyyy HH:mm")
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="mb-3">
+                            <label asp-for="Pedido.TituloProjeto" class="form-label fw-semibold"></label>
+                            <input asp-for="Pedido.TituloProjeto" class="form-control" />
+                            <span asp-validation-for="Pedido.TituloProjeto" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Pedido.Descricao" class="form-label fw-semibold"></label>
+                            <textarea asp-for="Pedido.Descricao" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Pedido.Descricao" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Pedido.Observacoes" class="form-label fw-semibold"></label>
+                            <textarea asp-for="Pedido.Observacoes" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Pedido.Observacoes" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Informações de Leitura -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Estado Atual</label>
+                                    <p class="form-control-plaintext">
+                                        <span class="badge" style="background-color: @GetEstadoColor(Model.Pedido.Estado)">
+                                            @Model.Pedido.Estado.GetDisplayName()
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Prazo Estimado</label>
+                                    <p class="form-control-plaintext">
+                                        @if (Model.Pedido.PrazoEstimado.HasValue)
+                                        {
+                                            @Model.Pedido.PrazoEstimado.Value.ToString("dd/MM/yyyy")
+                                        }
+                                        else
+                                        {
+                                            <em>Não definido</em>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- ═══════════════════════════════════ -->
+                    <!-- ADMINISTRADOR: Edita Prazo e Estado -->
+                    <!-- ═══════════════════════════════════ -->
+                    @if (isAdmin)
+                    {
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Como administrador, você edita o prazo estimado e o estado. O cliente criou este pedido.
+                        </div>
+
+                        <!-- Informações de Leitura do Cliente -->
+                        <div class="card mb-4 bg-light">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">Detalhes do Pedido (Cliente)</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Título do Projeto</label>
+                                    <p class="form-control-plaintext">@Model.Pedido.TituloProjeto</p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Descrição</label>
+                                    <p class="form-control-plaintext">@Model.Pedido.Descricao</p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Observações</label>
+                                    <p class="form-control-plaintext">
+                                        @if (!string.IsNullOrWhiteSpace(Model.Pedido.Observacoes))
+                                        {
+                                            @Model.Pedido.Observacoes
+                                        }
+                                        else
+                                        {
+                                            <em>Nenhuma observação</em>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Campos Editáveis do Admin -->
+                        <div class="mb-3">
+                            <label asp-for="Pedido.PrazoEstimado" class="form-label fw-semibold"></label>
+                            <input asp-for="Pedido.PrazoEstimado" class="form-control" type="date" />
+                            <span asp-validation-for="Pedido.PrazoEstimado" class="text-danger small"></span>
+                        </div>
+
                         <div class="mb-4">
                             <label asp-for="Pedido.Estado" class="form-label fw-semibold"></label>
                             <select asp-for="Pedido.Estado" class="form-select"
                                     asp-items="Html.GetEnumSelectList<WebServicos.Models.EstadoPedido>()"></select>
+                            <span asp-validation-for="Pedido.Estado" class="text-danger small"></span>
                         </div>
+
+                        <!-- Campo para URL quando concluído -->
+                        @if (Model.Pedido.Estado == WebServicos.Models.EstadoPedido.Concluido)
+                        {
+                            <div class="mb-4 p-3 bg-success bg-opacity-10 border border-success rounded">
+                                <label asp-for="NovoEnderecoHttp" class="form-label fw-semibold text-success">
+                                    <i class="bi bi-link-45deg me-2"></i>Endereço do Projeto (URL)
+                                </label>
+                                <input asp-for="NovoEnderecoHttp" class="form-control" 
+                                       placeholder="https://exemplo.com" />
+                                <small class="text-muted d-block mt-1">
+                                    Adicione o endereço do projeto concluído (ex: link para a aplicação ou demonstração)
+                                </small>
+                                <span asp-validation-for="NovoEnderecoHttp" class="text-danger small"></span>
+                            </div>
+                        }
+
+                        <!-- Exibir URL existente -->
+                        @if (!string.IsNullOrWhiteSpace(Model.Pedido.EnderecoHttp))
+                        {
+                            <div class="alert alert-success">
+                                <i class="bi bi-check-circle me-2"></i>
+                                <strong>Projeto Concluído:</strong>
+                                <a href="@Model.Pedido.EnderecoHttp" target="_blank" class="alert-link">
+                                    @Model.Pedido.EnderecoHttp
+                                </a>
+                            </div>
+                        }
                     }
 
-                    <div class="d-flex gap-2">
+                    <!-- Botões de Ação -->
+                    <div class="d-flex gap-2 mt-4">
                         <button type="submit" class="btn btn-warning">
                             <i class="bi bi-save me-1"></i>Guardar Alterações
                         </button>
                         <a asp-page="Index" class="btn btn-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Cancelar
                         </a>
+                        <a asp-page="Chat" asp-route-id="@Model.Pedido.Id" class="btn btn-info ms-auto">
+                            <i class="bi bi-chat-dots me-1"></i>Conversa
+                        </a>
+                        @if (isAdmin)
+                        {
+                            <a asp-page="RevisarAlteracoes" class="btn btn-primary ms-2">
+                                <i class="bi bi-clock-history me-1"></i>Alterações Pendentes
+                            </a>
+                        }
                     </div>
                 </form>
             </div>
@@ -62,4 +214,21 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+}
+
+@functions {
+    private string GetEstadoColor(WebServicos.Models.EstadoPedido estado)
+    {
+        return estado switch
+        {
+            WebServicos.Models.EstadoPedido.Pendente => "#FFC107",
+            WebServicos.Models.EstadoPedido.EmAnalise => "#17A2B8",
+            WebServicos.Models.EstadoPedido.Aprovado => "#28A745",
+            WebServicos.Models.EstadoPedido.EmDesenvolvimento => "#007BFF",
+            WebServicos.Models.EstadoPedido.EmRevisao => "#FD7E14",
+            WebServicos.Models.EstadoPedido.Concluido => "#20C997",
+            WebServicos.Models.EstadoPedido.Cancelado => "#DC3545",
+            _ => "#6C757D"
+        };
+    }
 }

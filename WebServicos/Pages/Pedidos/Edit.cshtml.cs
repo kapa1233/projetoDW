@@ -25,20 +25,35 @@ namespace WebServicos.Pages.Pedidos
         [BindProperty]
         public Pedido Pedido { get; set; } = null!;
 
+        [BindProperty]
+        public string? NovoEnderecoHttp { get; set; }
+
+        public PedidoAlteracao? AlteracaoPendente { get; set; }
+
         public async Task<IActionResult> OnGetAsync(int id)
         {
             var pedido = await _db.Pedidos.FindAsync(id);
             if (pedido == null) return NotFound();
 
             var userId = _userManager.GetUserId(User);
-            if (!User.IsInRole("Administrador") && pedido.ClienteId != userId)
+            var isAdmin = User.IsInRole("Administrador");
+
+            // Apenas o cliente ou admin podem ver
+            if (!isAdmin && pedido.ClienteId != userId)
                 return Forbid();
 
-            if (!User.IsInRole("Administrador") && pedido.Estado != EstadoPedido.Pendente)
+            // Cliente só pode editar se pedido está Pendente
+            if (!isAdmin && pedido.Estado != EstadoPedido.Pendente)
             {
                 TempData["Erro"] = "Só é possível editar pedidos no estado Pendente.";
                 return RedirectToPage("Index");
             }
+
+            // Carrega a alteração pendente mais recente (se existir)
+            AlteracaoPendente = await _db.PedidoAlteracoes
+                .Where(a => a.PedidoId == id && a.Estado == EstadoAlteracao.Pendente)
+                .OrderByDescending(a => a.DataPropostas)
+                .FirstOrDefaultAsync();
 
             Pedido = pedido;
             return Page();
@@ -46,35 +61,113 @@ namespace WebServicos.Pages.Pedidos
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid) return Page();
-
             var pedidoExistente = await _db.Pedidos.FindAsync(Pedido.Id);
             if (pedidoExistente == null) return NotFound();
 
             var userId = _userManager.GetUserId(User);
-            if (!User.IsInRole("Administrador") && pedidoExistente.ClienteId != userId)
+            var isAdmin = User.IsInRole("Administrador");
+
+            // Autorização
+            if (!isAdmin && pedidoExistente.ClienteId != userId)
                 return Forbid();
 
             try
             {
-                pedidoExistente.TituloProjeto = Pedido.TituloProjeto;
-                pedidoExistente.Descricao = Pedido.Descricao;
-                pedidoExistente.PrazoEstimado = Pedido.PrazoEstimado;
-                pedidoExistente.Observacoes = Pedido.Observacoes;
+                // ── CLIENTE: Propõe alterações (não aplicadas direto) ──
+                if (!isAdmin)
+                {
+                    if (string.IsNullOrWhiteSpace(Pedido.TituloProjeto))
+                        ModelState.AddModelError("Pedido.TituloProjeto", "O título do projeto é obrigatório.");
+                    if (string.IsNullOrWhiteSpace(Pedido.Descricao))
+                        ModelState.AddModelError("Pedido.Descricao", "A descrição do pedido é obrigatória.");
 
-                // Apenas admins podem alterar o estado via edição
-                if (User.IsInRole("Administrador"))
+                    if (!ModelState.IsValid)
+                    {
+                        Pedido = pedidoExistente;
+                        return Page();
+                    }
+
+                    // Verifica se há alterações reais
+                    bool houveAlteracoes = 
+                        pedidoExistente.TituloProjeto != Pedido.TituloProjeto ||
+                        pedidoExistente.Descricao != Pedido.Descricao ||
+                        pedidoExistente.Observacoes != Pedido.Observacoes;
+
+                    if (houveAlteracoes)
+                    {
+                        // Cria uma proposta de alteração pendente de aprovação
+                        var alteracao = new PedidoAlteracao
+                        {
+                            PedidoId = Pedido.Id,
+                            TituloProjetoProposto = Pedido.TituloProjeto,
+                            DescricaoProposta = Pedido.Descricao,
+                            ObservacoesProposta = Pedido.Observacoes,
+                            DataPropostas = DateTime.UtcNow,
+                            Estado = EstadoAlteracao.Pendente
+                        };
+
+                        _db.PedidoAlteracoes.Add(alteracao);
+                        await _db.SaveChangesAsync();
+
+                        _logger.LogInformation("Cliente {ClienteId} propôs alterações ao pedido #{Id}.", userId, Pedido.Id);
+                        TempData["Sucesso"] = "Alterações propostas! Aguardando aprovação do administrador.";
+                    }
+                    else
+                    {
+                        TempData["Aviso"] = "Nenhuma alteração foi feita.";
+                    }
+
+                    return RedirectToPage("Index");
+                }
+
+                // ── ADMINISTRADOR: edita apenas PrazoEstimado e Estado ──
+                else
+                {
+                    if (!ModelState.IsValid)
+                    {
+                        ModelState.Clear(); // Ignora erros de validação de outros campos
+                    }
+
+                    pedidoExistente.PrazoEstimado = Pedido.PrazoEstimado;
                     pedidoExistente.Estado = Pedido.Estado;
 
-                await _db.SaveChangesAsync();
-                _logger.LogInformation("Pedido #{Id} atualizado.", Pedido.Id);
-                TempData["Sucesso"] = "Pedido atualizado com sucesso.";
+                    // Se está marcando como concluído, pode adicionar o URL
+                    if (Pedido.Estado == EstadoPedido.Concluido && !string.IsNullOrWhiteSpace(NovoEnderecoHttp))
+                    {
+                        if (Uri.TryCreate(NovoEnderecoHttp, UriKind.Absolute, out _))
+                        {
+                            pedidoExistente.EnderecoHttp = NovoEnderecoHttp;
+                            _logger.LogInformation("Admin adicionou URL ao pedido #{Id}: {Url}", Pedido.Id, NovoEnderecoHttp);
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("NovoEnderecoHttp", "O endereço deve ser uma URL válida.");
+                            Pedido = pedidoExistente;
+                            return Page();
+                        }
+                    }
+
+                    int rowsAffected = await _db.SaveChangesAsync();
+                    _logger.LogInformation("Admin alterou o pedido #{Id}. Linhas afetadas: {RowsAffected}.", 
+                        Pedido.Id, rowsAffected);
+
+                    TempData["Sucesso"] = "Pedido atualizado com sucesso.";
+                }
+
                 return RedirectToPage("Index");
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Erro de base de dados ao atualizar pedido #{Id}.", Pedido.Id);
+                ModelState.AddModelError(string.Empty, "Erro ao guardar as alterações na base de dados.");
+                Pedido = pedidoExistente;
+                return Page();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao editar pedido #{Id}.", Pedido.Id);
+                _logger.LogError(ex, "Erro inesperado ao editar pedido #{Id}.", Pedido.Id);
                 ModelState.AddModelError(string.Empty, "Erro ao guardar as alterações.");
+                Pedido = pedidoExistente;
                 return Page();
             }
         }
