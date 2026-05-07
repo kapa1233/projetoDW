@@ -1,0 +1,177 @@
+@page
+@model WebServicos.Pages.SobreModel
+@{
+    ViewData["Title"] = "Sobre o Projeto";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-9">
+
+        <!-- Cabeçalho -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-5 text-center">
+                <i class="bi bi-info-circle display-3 text-primary mb-3"></i>
+                <h2 class="fw-bold">Sobre o Projeto</h2>
+                <p class="text-muted">Informações sobre o trabalho prático de Desenvolvimento Web</p>
+            </div>
+        </div>
+
+        <!-- Informações académicas -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-mortarboard me-2"></i>Informações Académicas</h5>
+            </div>
+            <div class="card-body p-4">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <td class="fw-bold text-muted" style="width:200px">Instituição</td>
+                            <td>Instituto Politécnico de Tomar (IPT)</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-muted">Curso</td>
+                            <td>Licenciatura em Engenharia Informática</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-muted">Unidade Curricular</td>
+                            <td>Desenvolvimento Web</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-muted">Ano / Semestre</td>
+                            <td>2º Ano, 2º Semestre</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-muted">Ano Letivo</td>
+                            <td>2024/2025</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Autores -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-people me-2"></i>Autores</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center gap-3 p-3 border rounded">
+                            <i class="bi bi-person-circle display-6 text-primary"></i>
+                            <div>
+                                <p class="fw-bold mb-0">Aluno 1</p>
+                                <p class="text-muted small mb-0">Nº: XXXXX</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center gap-3 p-3 border rounded">
+                            <i class="bi bi-person-circle display-6 text-primary"></i>
+                            <div>
+                                <p class="fw-bold mb-0">Aluno 2</p>
+                                <p class="text-muted small mb-0">Nº: XXXXX</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Credenciais de acesso -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-key me-2"></i>Credenciais de Acesso (Demonstração)</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card border-danger">
+                            <div class="card-header bg-danger text-white py-2">
+                                <strong><i class="bi bi-shield-fill me-1"></i>Administrador</strong>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-1"><strong>Email:</strong> <code>admin@webservicos.pt</code></p>
+                                <p class="mb-0"><strong>Password:</strong> <code>Admin@123</code></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-secondary">
+                            <div class="card-header bg-secondary text-white py-2">
+                                <strong><i class="bi bi-person me-1"></i>Cliente</strong>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-1"><strong>Email:</strong> <code>cliente@webservicos.pt</code></p>
+                                <p class="mb-0"><strong>Password:</strong> <code>Cliente@123</code></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tecnologias e bibliotecas -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-info text-dark">
+                <h5 class="mb-0"><i class="bi bi-stack me-2"></i>Tecnologias e Bibliotecas Utilizadas</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Framework Principal</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="bi bi-dot text-primary"></i> <strong>ASP.NET Core 8.0</strong> — Razor Pages (aplicação web)</li>
+                            <li><i class="bi bi-dot text-primary"></i> <strong>ASP.NET Core MVC</strong> — API REST</li>
+                            <li><i class="bi bi-dot text-primary"></i> <strong>Entity Framework Core 8.0</strong> — ORM e acesso a dados</li>
+                            <li><i class="bi bi-dot text-primary"></i> <strong>LINQ</strong> — Consultas tipadas à base de dados</li>
+                            <li><i class="bi bi-dot text-primary"></i> <strong>SignalR</strong> — Notificações em tempo real</li>
+                            <li><i class="bi bi-dot text-primary"></i> <strong>ASP.NET Core Identity</strong> — Autenticação e autorização</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Bibliotecas Frontend</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="bi bi-dot text-success"></i>
+                                <strong>Bootstrap 5.3.2</strong> — Framework CSS
+                                (<a href="https://getbootstrap.com" target="_blank">getbootstrap.com</a>)
+                            </li>
+                            <li><i class="bi bi-dot text-success"></i>
+                                <strong>Bootstrap Icons 1.11.3</strong> — Ícones SVG
+                                (<a href="https://icons.getbootstrap.com" target="_blank">icons.getbootstrap.com</a>)
+                            </li>
+                            <li><i class="bi bi-dot text-success"></i>
+                                <strong>jQuery 3.7.1</strong> — Biblioteca JavaScript
+                                (<a href="https://jquery.com" target="_blank">jquery.com</a>)
+                            </li>
+                            <li><i class="bi bi-dot text-success"></i>
+                                <strong>Microsoft SignalR JS 8.0</strong> — Cliente SignalR
+                                (<a href="https://learn.microsoft.com/aspnet/signalr" target="_blank">learn.microsoft.com</a>)
+                            </li>
+                        </ul>
+                        <h6 class="fw-bold mt-3">Base de Dados</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="bi bi-dot text-warning"></i>
+                                <strong>SQLite</strong> — Motor de base de dados local
+                                (<a href="https://sqlite.org" target="_blank">sqlite.org</a>)
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Repositório GitHub -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 text-center">
+                <i class="bi bi-github display-4 mb-3"></i>
+                <h5 class="fw-bold">Código Fonte</h5>
+                <p class="text-muted">O código fonte do projeto está disponível no repositório GitHub.</p>
+                <a href="https://github.com/SEU-USERNAME/WebServicos" target="_blank" class="btn btn-dark px-4">
+                    <i class="bi bi-github me-2"></i>Ver no GitHub
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>

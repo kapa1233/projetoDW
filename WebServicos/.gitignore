@@ -1,0 +1,46 @@
+## .gitignore para projetos ASP.NET Core
+
+# Build
+bin/
+obj/
+out/
+
+# Base de dados local (não versionar)
+*.db
+*.db-shm
+*.db-wal
+
+# User secrets
+**/secrets.json
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / JetBrains
+.idea/
+*.DotSettings.user
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# NuGet
+*.nupkg
+**/[Pp]ackages/
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Publicação
+publish/

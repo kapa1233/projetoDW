@@ -1,0 +1,52 @@
+@page "{id:int}"
+@model WebServicos.Pages.Servicos.DeleteModel
+@{
+    ViewData["Title"] = "Eliminar Serviço";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger border-0 shadow-sm">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Confirmar Eliminação</h4>
+            </div>
+            <div class="card-body p-4 text-center">
+                <i class="bi bi-trash3 display-3 text-danger mb-3"></i>
+                <h5>Tem a certeza que pretende eliminar este serviço?</h5>
+                <div class="card bg-light my-3 text-start">
+                    <div class="card-body">
+                        <p><strong>Nome:</strong> @Model.Servico?.Nome</p>
+                        <p class="mb-0"><strong>Preço Base:</strong>
+                            @Model.Servico?.PrecoBase.ToString("C", new System.Globalization.CultureInfo("pt-PT"))
+                        </p>
+                    </div>
+                </div>
+
+                @if (Model.TotalPedidos > 0)
+                {
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        Este serviço está associado a <strong>@Model.TotalPedidos pedido(s)</strong>. A eliminação não é permitida.
+                    </div>
+                    <a asp-page="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Voltar
+                    </a>
+                }
+                else
+                {
+                    <form method="post">
+                        <input type="hidden" asp-for="Servico!.Id" />
+                        <div class="d-flex justify-content-center gap-3">
+                            <button type="submit" class="btn btn-danger px-4">
+                                <i class="bi bi-trash me-1"></i>Eliminar Definitivamente
+                            </button>
+                            <a asp-page="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-1"></i>Cancelar
+                            </a>
+                        </div>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>
