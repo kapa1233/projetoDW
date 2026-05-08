@@ -2,7 +2,7 @@
 
 **Instituto Politécnico de Tomar (IPT)**
 Licenciatura em Engenharia Informática — 2º Ano, 2º Semestre
-Unidade Curricular: Desenvolvimento Web | Ano Letivo: 2024/2025
+Unidade Curricular: Desenvolvimento Web | Ano Letivo: 2025/2026
 
 ---
 
