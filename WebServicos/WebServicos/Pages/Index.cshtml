@@ -9,10 +9,10 @@
 <!-- ── Hero com vídeo de fundo ── -->
 <section id="heroSection" class="hero-video-section">
 
-    <!-- Vídeo YouTube fundo -->
-    <div class="yt-bg-wrapper" aria-hidden="true">
-        <div id="ytBg"></div>
-    </div>
+    <!-- Vídeo MP4 fundo -->
+    <video class="yt-bg-wrapper" autoplay muted loop playsinline aria-hidden="true">
+        <source src="/videos/hero.mp4" type="video/mp4">
+    </video>
 
     <!-- Overlay branco semitransparente -->
     <div class="hero-overlay"></div>
@@ -238,48 +238,6 @@
 
 @section Scripts {
 <script>
-    // ── YouTube background video ──
-    (function () {
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        document.head.appendChild(tag);
-    })();
-
-    var ytPlayer;
-    function onYouTubeIframeAPIReady() {
-        ytPlayer = new YT.Player('ytBg', {
-            videoId: 'it-jSj7hA_Y', // Software developer programming code — looping 4K
-            playerVars: {
-                autoplay: 1, mute: 1, loop: 1, controls: 0,
-                showinfo: 0, rel: 0, iv_load_policy: 3,
-                modestbranding: 1, playsinline: 1, disablekb: 1,
-                playlist: 'it-jSj7hA_Y'
-            },
-            events: {
-                onReady: function (e) {
-                    e.target.playVideo();
-                    resizeYT();
-                }
-            }
-        });
-    }
-
-    function resizeYT() {
-        var hero = document.getElementById('heroSection');
-        if (!hero || !ytPlayer || !ytPlayer.getIframe) return;
-        var iframe = ytPlayer.getIframe();
-        var w = hero.offsetWidth;
-        var h = hero.offsetHeight;
-        var vw = Math.max(w, h * 16 / 9);
-        var vh = Math.max(h, w * 9 / 16);
-        iframe.style.width  = vw + 'px';
-        iframe.style.height = vh + 'px';
-        iframe.style.left   = ((w - vw) / 2) + 'px';
-        iframe.style.top    = ((h - vh) / 2) + 'px';
-    }
-
-    window.addEventListener('resize', resizeYT);
-
     // ── CountUp nas estatísticas ──
     function countUp(el, target, duration) {
         var start = performance.now();
