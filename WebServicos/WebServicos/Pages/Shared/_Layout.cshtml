@@ -5,37 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] – WebServicos</title>
 
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
     <!-- Bootstrap 5 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <!-- CSS próprio -->
+    <!-- Tailwind utilities -->
+    <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
+    <!-- Estilos próprios -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
 
     <!-- ── Navbar ── -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light-clean sticky-top" style="z-index:1030;">
         <div class="container">
-            <a class="navbar-brand fw-bold" asp-page="/Index">
-                <i class="bi bi-globe2 me-1"></i> WebServicos
+            <!-- Brand -->
+            <a class="navbar-brand" asp-page="/Index">
+                <div class="d-flex align-items-center justify-content-center rounded-2 flex-shrink-0"
+                     style="width:28px;height:28px;background:#2563eb;">
+                    <i class="bi bi-globe2 text-white" style="font-size:0.8rem;"></i>
+                </div>
+                WebServicos
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
-                <span class="navbar-toggler-icon"></span>
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
+                    style="box-shadow:none;color:#64748b;">
+                <i class="bi bi-list fs-4"></i>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarMain">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
                     <li class="nav-item">
-                        <a class="nav-link" asp-page="/Index"><i class="bi bi-house-door me-1"></i>Início</a>
+                        <a class="nav-link" asp-page="/Index">
+                            <i class="bi bi-house-door me-1"></i>Início
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-page="/Servicos/Index"><i class="bi bi-grid me-1"></i>Serviços</a>
+                        <a class="nav-link" asp-page="/Servicos/Index">
+                            <i class="bi bi-grid me-1"></i>Serviços
+                        </a>
                     </li>
                     @if (User.Identity?.IsAuthenticated == true)
                     {
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="/Pedidos/Index"><i class="bi bi-file-earmark-text me-1"></i>Pedidos</a>
+                            <a class="nav-link" asp-page="/Pedidos/Index">
+                                <i class="bi bi-file-earmark-text me-1"></i>Pedidos
+                            </a>
                         </li>
                     }
                     @if (User.IsInRole("Administrador"))
@@ -45,103 +65,123 @@
                                 <i class="bi bi-gear me-1"></i>Administração
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-page="/Clientes/Index"><i class="bi bi-people me-2"></i>Clientes</a></li>
-                                <li><a class="dropdown-item" asp-page="/Servicos/Create"><i class="bi bi-plus-circle me-2"></i>Novo Serviço</a></li>
+                                <li>
+                                    <a class="dropdown-item" asp-page="/Clientes/Index">
+                                        <i class="bi bi-people me-2" style="color:#2563eb;"></i>Clientes
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-page="/Servicos/Create">
+                                        <i class="bi bi-plus-circle me-2" style="color:#16a34a;"></i>Novo Serviço
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     }
                     <li class="nav-item">
-                        <a class="nav-link" asp-page="/Sobre"><i class="bi bi-info-circle me-1"></i>Sobre</a>
+                        <a class="nav-link" asp-page="/Sobre">
+                            <i class="bi bi-info-circle me-1"></i>Sobre
+                        </a>
                     </li>
                 </ul>
 
-                <!-- Autenticação -->
-                <partial name="_LoginPartial" />
+                <div class="d-flex align-items-center gap-2">
+                    <partial name="_LoginPartial" />
 
-                <!-- Sino de notificações SignalR (apenas autenticados) -->
-                @if (User.Identity?.IsAuthenticated == true)
-                {
-                    <div class="ms-2 position-relative">
-                        <button class="btn btn-outline-light btn-sm" id="btnNotificacoes" title="Notificações">
-                            <i class="bi bi-bell"></i>
-                            <span class="badge bg-danger position-absolute top-0 start-100 translate-middle d-none" id="badgeNotif">0</span>
-                        </button>
-                    </div>
-                }
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="position-relative">
+                            <button class="btn-notif btn" id="btnNotificacoes" title="Notificações">
+                                <i class="bi bi-bell" style="font-size:0.9rem;"></i>
+                                <span id="badgeNotif" class="d-none position-absolute"
+                                      style="top:-4px;right:-4px;background:#ef4444;color:#fff;border-radius:50%;width:16px;height:16px;font-size:0.6rem;font-weight:700;display:flex!important;align-items:center;justify-content:center;">
+                                    0
+                                </span>
+                            </button>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- ── Toast de notificações SignalR ── -->
-    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999">
-        <div id="toastNotif" class="toast align-items-center text-bg-primary border-0" role="alert">
-            <div class="d-flex">
-                <div class="toast-body" id="toastNotifMsg">Notificação</div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    <!-- ── Toast de notificações ── -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999;margin-top:4.5rem;">
+        <div id="toastNotif" class="toast border-0" role="alert">
+            <div class="d-flex align-items-center p-3 gap-2">
+                <div style="color:#2563eb;flex-shrink:0;">
+                    <i class="bi bi-bell-fill"></i>
+                </div>
+                <div id="toastNotifMsg" style="font-size:0.85rem;color:#334155;flex:1;">Notificação</div>
+                <button type="button" class="btn-close ms-2" data-bs-dismiss="toast"></button>
             </div>
         </div>
     </div>
 
-    <!-- ── Conteúdo principal ── -->
-    <main class="container my-4">
+    <!-- ── Conteúdo ── -->
+    <main class="container my-5">
         @RenderBody()
     </main>
 
     <!-- ── Footer ── -->
-    <footer class="footer mt-auto py-3 bg-dark text-light">
-        <div class="container text-center">
-            <span>
-                &copy; @DateTime.Now.Year <strong>WebServicos</strong> —
-                Licenciatura em Eng. Informática, IPT |
-                <a class="text-light" asp-page="/Sobre">Sobre o projeto</a>
-            </span>
+    <footer class="footer-light mt-auto py-4">
+        <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center justify-content-center rounded-2"
+                         style="width:20px;height:20px;background:#2563eb;opacity:0.7;">
+                        <i class="bi bi-globe2 text-white" style="font-size:0.6rem;"></i>
+                    </div>
+                    <span style="color:#94a3b8;">
+                        <strong style="color:#64748b;">WebServicos</strong> — IPT, Eng. Informática
+                    </span>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span style="color:#cbd5e1;">&copy; @DateTime.Now.Year</span>
+                    <a asp-page="/Sobre">Sobre o projeto</a>
+                </div>
+            </div>
         </div>
     </footer>
 
-    <!-- Bootstrap 5 JS -->
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <!-- SignalR -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
-    <!-- JS próprio -->
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @if (User.Identity?.IsAuthenticated == true)
     {
         <script>
-            // ── Conexão ao Hub de Notificações (SignalR) ──
             const connection = new signalR.HubConnectionBuilder()
                 .withUrl("/hub/notificacoes")
                 .withAutomaticReconnect()
                 .build();
 
             connection.on("NovoPedido", (titulo, cliente, hora) => {
-                mostrarNotificacao(`🆕 Novo pedido: "${titulo}" de ${cliente} às ${hora}`);
+                mostrarNotificacao(`Novo pedido: "${titulo}" de ${cliente} às ${hora}`);
             });
 
             connection.on("PedidoAtualizado", (titulo, estado, hora) => {
-                mostrarNotificacao(`📋 O pedido "${titulo}" foi atualizado para: ${estado} (${hora})`);
+                mostrarNotificacao(`O pedido "${titulo}" foi atualizado para: ${estado} (${hora})`);
             });
 
             connection.start().catch(err => console.error("SignalR:", err));
 
             function mostrarNotificacao(msg) {
                 document.getElementById("toastNotifMsg").textContent = msg;
-                const toast = new bootstrap.Toast(document.getElementById("toastNotif"));
-                toast.show();
-
-                // Atualizar badge
+                new bootstrap.Toast(document.getElementById("toastNotif"), { delay: 5000 }).show();
                 const badge = document.getElementById("badgeNotif");
                 badge.classList.remove("d-none");
+                badge.style.display = "flex";
                 badge.textContent = parseInt(badge.textContent || "0") + 1;
             }
 
-            // Limpar badge ao clicar
             document.getElementById("btnNotificacoes")?.addEventListener("click", () => {
-                const badge = document.getElementById("badgeNotif");
-                badge.textContent = "0";
-                badge.classList.add("d-none");
+                const b = document.getElementById("badgeNotif");
+                b.textContent = "0";
+                b.classList.add("d-none");
+                b.style.display = "none";
             });
         </script>
     }
