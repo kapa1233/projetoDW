@@ -437,3 +437,245 @@ code {
     font-weight: 700;
     line-height: 1;
 }
+
+/* ════════════════════════════════════════════
+   HERO COM VÍDEO DE FUNDO
+════════════════════════════════════════════ */
+.hero-video-section {
+    position: relative;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    min-height: 92vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 3rem;
+}
+
+/* Container do iframe YouTube */
+.yt-bg-wrapper {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.yt-bg-wrapper iframe,
+#ytBg iframe {
+    position: absolute;
+    pointer-events: none;
+}
+
+/* Overlay semitransparente sobre o vídeo */
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(248, 250, 252, 0.82);
+    backdrop-filter: blur(1px);
+    z-index: 1;
+}
+
+/* Conteúdo do hero */
+.hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 5rem 1.5rem 4rem;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+/* Badge topo do hero */
+.hero-badge {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    font-size: 0.78rem;
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #2563eb;
+    display: inline-block;
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Título do hero */
+.hero-title {
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #0f172a;
+    line-height: 1.1;
+    margin-bottom: 1.25rem;
+}
+
+.hero-gradient-text {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Subtítulo */
+.hero-subtitle {
+    max-width: 460px;
+    color: #475569;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    margin: 0 auto 2rem;
+}
+
+/* Scroll indicator */
+.scroll-indicator {
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    animation: bounce-slow 2.5s ease-in-out infinite;
+}
+
+.scroll-mouse {
+    width: 22px;
+    height: 36px;
+    border: 2px solid #cbd5e1;
+    border-radius: 11px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 5px;
+}
+
+.scroll-wheel {
+    width: 3px;
+    height: 7px;
+    background: #94a3b8;
+    border-radius: 2px;
+    animation: scroll-wheel 2s ease-in-out infinite;
+}
+
+@keyframes scroll-wheel {
+    0%   { transform: translateY(0); opacity: 1; }
+    50%  { transform: translateY(6px); opacity: 0.4; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(6px); }
+}
+
+/* ════════════════════════════════════════════
+   CARROSSEL DE SERVIÇOS
+════════════════════════════════════════════ */
+
+/* Botões prev/next personalizados */
+.carousel-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #64748b;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    font-size: 0.85rem;
+}
+
+.carousel-btn:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+/* Indicadores abaixo do carrossel */
+.carousel-indicators-custom {
+    position: static !important;
+    margin: 1rem 0 0 !important;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.carousel-indicators-custom button {
+    width: 24px !important;
+    height: 4px !important;
+    border-radius: 2px !important;
+    background: #e2e8f0 !important;
+    border: none !important;
+    transition: background 0.2s, width 0.2s !important;
+    opacity: 1 !important;
+}
+
+.carousel-indicators-custom button.active {
+    background: #2563eb !important;
+    width: 36px !important;
+}
+
+/* Card de serviço */
+.service-card {
+    transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
+}
+
+.service-card:hover {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.09);
+    border-color: #bfdbfe;
+    transform: translateY(-3px);
+}
+
+.service-icon-box {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: #2563eb;
+    flex-shrink: 0;
+}
+
+.service-price {
+    color: #2563eb;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+/* ════════════════════════════════════════════
+   FEATURE ICONS (secção "porquê")
+════════════════════════════════════════════ */
+.feature-icon-box {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    border: 1px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    transition: transform 0.2s;
+}
+
+.feature-icon-box:hover {
+    transform: scale(1.08);
+}

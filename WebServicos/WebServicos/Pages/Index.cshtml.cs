@@ -29,12 +29,13 @@ namespace WebServicos.Pages
             TotalClientes = await _db.Users.CountAsync();
             TotalServicos = await _db.Servicos.Where(s => s.Ativo).CountAsync();
 
-            // Três serviços em destaque (LINQ com OrderBy e Take)
-            ServicosDestaque = await _db.Servicos
+            // Três serviços em destaque — OrderBy feito no cliente (decimal não suportado pelo SQLite)
+            ServicosDestaque = (await _db.Servicos
                 .Where(s => s.Ativo)
+                .ToListAsync())
                 .OrderBy(s => s.PrecoBase)
-                .Take(3)
-                .ToListAsync();
+                .Take(6)
+                .ToList();
         }
     }
 }
