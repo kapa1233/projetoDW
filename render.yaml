@@ -9,6 +9,8 @@ services:
         value: Production
       - key: ASPNETCORE_URLS
         value: http://+:10000
+      - key: ConnectionStrings__DefaultConnection
+        value: Data Source=/app/webservicos.db
 
   - type: web
     name: webservicos-api
@@ -20,3 +22,5 @@ services:
         value: Production
       - key: ASPNETCORE_URLS
         value: http://+:10000
+      - key: ConnectionStrings__DefaultConnection
+        value: Data Source=/app/webservicos.db
