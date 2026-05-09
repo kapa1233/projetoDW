@@ -22,8 +22,8 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
   </ItemGroup>
 
-  <!-- Build Tailwind CSS antes de publicar -->
-  <Target Name="BuildTailwind" BeforeTargets="Build" Condition="Exists('package.json')">
+  <!-- Build Tailwind CSS antes de publicar (pode ser saltado com -p:SkipNpmBuild=true) -->
+  <Target Name="BuildTailwind" BeforeTargets="Build" Condition="Exists('package.json') And '$(SkipNpmBuild)' != 'true'">
     <Exec Command="npm run build" WorkingDirectory="$(ProjectDir)" />
   </Target>
 

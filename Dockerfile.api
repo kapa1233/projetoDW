@@ -5,7 +5,7 @@ COPY WebServicos/WebServicos.API/WebServicos.API.csproj WebServicos/WebServicos.
 RUN dotnet restore WebServicos/WebServicos.API/WebServicos.API.csproj
 COPY . .
 WORKDIR /src/WebServicos/WebServicos.API
-RUN dotnet publish -c Release -o /app/publish --nologo
+RUN dotnet publish -c Release -o /app/publish --nologo -p:SkipNpmBuild=true
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app

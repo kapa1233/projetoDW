@@ -6,9 +6,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
 
 WORKDIR /src
 
-# Instalar dependências npm antes do resto (cache layer)
-COPY WebServicos/WebServicos/package*.json WebServicos/WebServicos/
-RUN cd WebServicos/WebServicos && npm ci
+COPY WebServicos/WebServicos/package.json WebServicos/WebServicos/
+RUN cd WebServicos/WebServicos && npm install
 
 COPY WebServicos/WebServicos/WebServicos.csproj WebServicos/WebServicos/
 RUN dotnet restore WebServicos/WebServicos/WebServicos.csproj
