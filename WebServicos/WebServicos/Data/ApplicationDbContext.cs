@@ -43,6 +43,13 @@ namespace WebServicos.Data
                 .WithMany(s => s.PedidoServicos)
                 .HasForeignKey(ps => ps.ServicoId);
 
+            // ── Relação muitos-para-um: Servico -> CategoriaServico ──
+            modelBuilder.Entity<Servico>()
+                .HasOne(s => s.CategoriaServico)
+                .WithMany(c => c.Servicos)
+                .HasForeignKey(s => s.CategoriaServicoId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             // ── Relação muitos-para-um: Pedido -> ApplicationUser (Cliente) ──
             modelBuilder.Entity<Pedido>()
                 .HasOne(p => p.Cliente)
@@ -55,7 +62,8 @@ namespace WebServicos.Data
                 new CategoriaServico { Id = 1, Nome = "Websites", Descricao = "Criação e desenvolvimento de websites" },
                 new CategoriaServico { Id = 2, Nome = "E-commerce", Descricao = "Lojas online e plataformas de venda" },
                 new CategoriaServico { Id = 3, Nome = "SEO & Marketing", Descricao = "Otimização para motores de busca e marketing digital" },
-                new CategoriaServico { Id = 4, Nome = "Manutenção", Descricao = "Suporte e manutenção de websites existentes" }
+                new CategoriaServico { Id = 4, Nome = "Manutenção", Descricao = "Suporte e manutenção de websites existentes" },
+                new CategoriaServico { Id = 5, Nome = "Hardware & Software", Descricao = "Recuperação de dados, restauro de sistemas e assistência técnica de hardware" }
             );
 
             // ── Seed de Serviços ──
@@ -63,27 +71,32 @@ namespace WebServicos.Data
                 new Servico
                 {
                     Id = 1, Nome = "Website Institucional", Descricao = "Website profissional para a sua empresa com até 5 páginas, design responsivo e SEO básico.",
-                    PrecoBase = 799.00m, Ativo = true, Icone = "bi-building", DataCriacao = new DateTime(2024, 1, 1)
+                    PrecoBase = 799.00m, Ativo = true, Icone = "bi-building", DataCriacao = new DateTime(2024, 1, 1), CategoriaServicoId = 1
                 },
                 new Servico
                 {
                     Id = 2, Nome = "Loja Online", Descricao = "Plataforma de e-commerce completa com carrinho de compras, pagamentos e gestão de stock.",
-                    PrecoBase = 1499.00m, Ativo = true, Icone = "bi-shop", DataCriacao = new DateTime(2024, 1, 1)
+                    PrecoBase = 1499.00m, Ativo = true, Icone = "bi-shop", DataCriacao = new DateTime(2024, 1, 1), CategoriaServicoId = 2
                 },
                 new Servico
                 {
                     Id = 3, Nome = "Landing Page", Descricao = "Página de conversão otimizada para campanhas de marketing.",
-                    PrecoBase = 349.00m, Ativo = true, Icone = "bi-layout-text-window", DataCriacao = new DateTime(2024, 1, 1)
+                    PrecoBase = 349.00m, Ativo = true, Icone = "bi-layout-text-window", DataCriacao = new DateTime(2024, 1, 1), CategoriaServicoId = 1
                 },
                 new Servico
                 {
                     Id = 4, Nome = "Otimização SEO", Descricao = "Auditoria e otimização completa do seu website para motores de busca.",
-                    PrecoBase = 299.00m, Ativo = true, Icone = "bi-search", DataCriacao = new DateTime(2024, 1, 1)
+                    PrecoBase = 299.00m, Ativo = true, Icone = "bi-search", DataCriacao = new DateTime(2024, 1, 1), CategoriaServicoId = 3
                 },
                 new Servico
                 {
                     Id = 5, Nome = "Manutenção Mensal", Descricao = "Suporte técnico, atualizações de segurança e backups regulares.",
-                    PrecoBase = 89.00m, Ativo = true, Icone = "bi-tools", DataCriacao = new DateTime(2024, 1, 1)
+                    PrecoBase = 89.00m, Ativo = true, Icone = "bi-tools", DataCriacao = new DateTime(2024, 1, 1), CategoriaServicoId = 4
+                },
+                new Servico
+                {
+                    Id = 6, Nome = "Recuperação de Software & Hardware", Descricao = "Restauro completo de sistemas operativos, recuperação de dados e reparação de hardware.",
+                    PrecoBase = 3000.00m, Ativo = true, Icone = "bi-pc-display-horizontal", DataCriacao = new DateTime(2024, 1, 1), CategoriaServicoId = 5
                 }
             );
         }

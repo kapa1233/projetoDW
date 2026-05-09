@@ -6,9 +6,21 @@ using WebServicos.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Suporte a Windows Service (funciona também como consola em desenvolvimento)
+builder.Host.UseWindowsService();
+
 // ── Base de dados (SQLite via appsettings.json) ──
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Resolve o caminho relativo para absoluto — necessário quando corre como Windows Service
+var rawConn = builder.Configuration.GetConnectionString("DefaultConnection")!;
+const string sqlitePrefix = "Data Source=";
+var dbConn = rawConn;
+if (rawConn.StartsWith(sqlitePrefix, StringComparison.OrdinalIgnoreCase))
+{
+    var dbFile = rawConn[sqlitePrefix.Length..];
+    if (!Path.IsPathRooted(dbFile))
+        dbConn = sqlitePrefix + Path.Combine(AppContext.BaseDirectory, dbFile);
+}
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(dbConn));
 
 // ── ASP.NET Core Identity ──
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>

@@ -57,6 +57,13 @@ namespace WebServicos.Models
         [Display(Name = "Ícone")]
         public string Icone { get; set; } = "bi-globe";
 
+        // FK para Categoria (muitos-para-um, opcional)
+        public int? CategoriaServicoId { get; set; }
+
+        [ForeignKey(nameof(CategoriaServicoId))]
+        [Display(Name = "Categoria")]
+        public CategoriaServico? CategoriaServico { get; set; }
+
         // Relação muitos-para-muitos com Pedido
         public ICollection<PedidoServico> PedidoServicos { get; set; } = new List<PedidoServico>();
     }
