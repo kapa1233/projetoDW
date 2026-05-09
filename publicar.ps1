@@ -1,81 +1,67 @@
 # ============================================================
-# publicar.ps1 — Deploy do WebServicos + WebServicos.API
-# Executar como Administrador
+# publicar.ps1 — Atualiza e publica o WebServicos no servidor
+# Executar como Administrador em C:\Projectos\KapaDW
 # ============================================================
 
 $ErrorActionPreference = "Stop"
 
-$appPath     = "C:\WebServicos_pub"
-$apiPath     = "C:\WebServicosAPI_pub"
-$projectApp  = "$PSScriptRoot\WebServicos\WebServicos"
-$projectApi  = "$PSScriptRoot\WebServicos\WebServicos.API"
+$appPath    = "C:\WebServicos"
+$apiPath    = "C:\WebServicosAPI"
+$projectApp = "$PSScriptRoot\WebServicos\WebServicos"
+$projectApi = "$PSScriptRoot\WebServicos\WebServicos.API"
 
-# ── Parar e matar qualquer processo WebServicos a correr ──
+Write-Host ""
+Write-Host "=== WEBSERVICOS — PUBLICACAO ===" -ForegroundColor Cyan
+Write-Host ""
+
+# ── 1. Buscar ultimas alteracoes do GitHub ──
+Write-Host "--> A fazer git pull..." -ForegroundColor Yellow
+git -C $PSScriptRoot pull
+Write-Host ""
+
+# ── 2. Parar servicos antes de publicar ──
 foreach ($svc in @("WebServicos", "WebServicosAPI")) {
     $s = Get-Service $svc -ErrorAction SilentlyContinue
-    if ($s) {
-        Write-Host "==> A parar servico $svc..." -ForegroundColor Yellow
+    if ($s -and $s.Status -eq "Running") {
+        Write-Host "--> A parar servico $svc..." -ForegroundColor Yellow
         sc.exe stop $svc 2>&1 | Out-Null
-        Start-Sleep 2
+        Start-Sleep 3
     }
 }
-# Matar processos pelo nome caso ainda estejam ativos
-@("WebServicos", "WebServicos.API") | ForEach-Object {
-    Get-Process -Name $_ -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-}
-Start-Sleep 1
 
-# ── Publicar App principal ──
-Write-Host "==> A publicar App principal..." -ForegroundColor Cyan
+# ── 3. Publicar App principal ──
+Write-Host "--> A publicar App principal..." -ForegroundColor Cyan
 dotnet publish "$projectApp" -c Release -r win-x64 --self-contained true -o "$appPath" --nologo
 if ($LASTEXITCODE -ne 0) { Write-Error "Erro ao publicar App."; exit 1 }
 
-# ── Publicar API ──
-Write-Host "==> A publicar API..." -ForegroundColor Cyan
+# ── 4. Publicar API ──
+Write-Host "--> A publicar API..." -ForegroundColor Cyan
 dotnet publish "$projectApi" -c Release -r win-x64 --self-contained true -o "$apiPath" --nologo
 if ($LASTEXITCODE -ne 0) { Write-Error "Erro ao publicar API."; exit 1 }
 
-# ── Copiar base de dados ──
+# ── 5. Copiar base de dados (so na primeira vez) ──
 $dbOrig = "$projectApp\webservicos.db"
-if (Test-Path $dbOrig) {
-    if (!(Test-Path "$appPath\webservicos.db")) {
-        Copy-Item $dbOrig "$appPath\webservicos.db"
-        Write-Host "==> Base de dados copiada para App." -ForegroundColor Green
-    }
-    if (!(Test-Path "$apiPath\webservicos.db")) {
-        Copy-Item $dbOrig "$apiPath\webservicos.db"
-        Write-Host "==> Base de dados copiada para API." -ForegroundColor Green
-    }
+if ((Test-Path $dbOrig) -and !(Test-Path "$appPath\webservicos.db")) {
+    Copy-Item $dbOrig "$appPath\webservicos.db"
+    Write-Host "--> Base de dados copiada." -ForegroundColor Green
 }
 
-# ── Gerar instalar.ps1 para o servidor ──
-$installerContent = @'
-# ============================================================
-# instalar.ps1 - Corre no PC SERVIDOR como Administrador
-# Set-Location "C:\WebServicos"; .\instalar.ps1
-# ============================================================
-
-$ErrorActionPreference = "Stop"
-
-function Install-Servico {
-    param($Nome, $Label, $ExePath, $Porta, $Descricao)
+# ── 6. Instalar/reiniciar servicos ──
+function Instalar-Servico {
+    param($Nome, $Label, $Exe, $Porta)
 
     $svc = Get-Service $Nome -ErrorAction SilentlyContinue
     if ($svc) {
-        Write-Host "--> A remover '$Nome' anterior..." -ForegroundColor Yellow
-        if ($svc.Status -eq "Running") { Stop-Service $Nome -Force }
+        sc.exe delete $Nome 2>&1 | Out-Null
         Start-Sleep 2
-        sc.exe delete $Nome | Out-Null
-        Start-Sleep 1
     }
 
-    Write-Host "--> A instalar '$Nome'..." -ForegroundColor Cyan
     New-Service -Name $Nome -DisplayName $Label `
-                -BinaryPathName "`"$ExePath`"" `
-                -StartupType Automatic -Description $Descricao
+                -BinaryPathName "`"$Exe`"" `
+                -StartupType Automatic | Out-Null
 
-    $regPath = "HKLM:\SYSTEM\CurrentControlSet\Services\$Nome"
-    New-ItemProperty -Path $regPath -Name "Environment" -PropertyType MultiString `
+    $reg = "HKLM:\SYSTEM\CurrentControlSet\Services\$Nome"
+    New-ItemProperty -Path $reg -Name "Environment" -PropertyType MultiString `
         -Value @("ASPNETCORE_ENVIRONMENT=Production", "ASPNETCORE_URLS=http://localhost:$Porta") `
         -Force | Out-Null
 
@@ -83,45 +69,21 @@ function Install-Servico {
     Start-Sleep 2
     $estado = (Get-Service $Nome).Status
     if ($estado -eq "Running") {
-        Write-Host "   OK - a correr em http://localhost:$Porta" -ForegroundColor Green
+        Write-Host "   OK - http://localhost:$Porta" -ForegroundColor Green
     } else {
         Write-Host "   ERRO - estado: $estado" -ForegroundColor Red
     }
 }
 
-Write-Host ""
-Write-Host "=== INSTALACAO WEBSERVICOS ===" -ForegroundColor Cyan
-Write-Host ""
-
-Install-Servico -Nome "WebServicos" `
-                -Label "WebServicos - App Principal" `
-                -ExePath "C:\WebServicos\WebServicos.exe" `
-                -Porta 5000 `
-                -Descricao "Plataforma de gestao de servicos web - IPT"
-
-Install-Servico -Nome "WebServicosAPI" `
-                -Label "WebServicos - API REST" `
-                -ExePath "C:\WebServicosAPI\WebServicos.API.exe" `
-                -Porta 5001 `
-                -Descricao "API REST WebServicos - IPT"
+Write-Host "--> A instalar servicos..." -ForegroundColor Cyan
+Instalar-Servico -Nome "WebServicos"    -Label "WebServicos - App Principal" -Exe "$appPath\WebServicos.exe"    -Porta 5000
+Instalar-Servico -Nome "WebServicosAPI" -Label "WebServicos - API REST"       -Exe "$apiPath\WebServicos.API.exe" -Porta 5001
 
 Write-Host ""
-Write-Host "Instalacao concluida!" -ForegroundColor Green
-Write-Host "  App:    http://localhost:5000" -ForegroundColor White
-Write-Host "  API:    http://localhost:5001" -ForegroundColor White
-Write-Host "  Swagger: http://localhost:5001/index.html" -ForegroundColor White
+Write-Host "Concluido!" -ForegroundColor Green
+Write-Host "  App:     http://localhost:5000"
+Write-Host "  API:     http://localhost:5001"
+Write-Host "  Swagger: http://localhost:5001/index.html"
 Write-Host ""
-Write-Host "Proximo passo: Cloudflare Tunnel" -ForegroundColor Yellow
+Write-Host "Para expor ao exterior:" -ForegroundColor Yellow
 Write-Host "  cloudflared tunnel --url http://localhost:5000 --protocol http2"
-'@
-
-$installerContent | Out-File -FilePath "$appPath\instalar.ps1" -Encoding utf8
-Write-Host "==> instalar.ps1 gerado em $appPath" -ForegroundColor Green
-
-Write-Host ""
-Write-Host "Publicacao concluida!" -ForegroundColor Green
-Write-Host "  App -> $appPath"
-Write-Host "  API -> $apiPath"
-Write-Host ""
-Write-Host "Copia ambas as pastas para o PC servidor e corre:" -ForegroundColor Yellow
-Write-Host "  Set-Location C:\WebServicos; .\instalar.ps1"
