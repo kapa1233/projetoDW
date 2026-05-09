@@ -2,125 +2,268 @@
 @model WebServicos.Pages.IndexModel
 @{
     ViewData["Title"] = "Início";
+    var servicos = Model.ServicosDestaque.ToList();
+    var slides = servicos.Chunk(3).ToList();
 }
 
-<!-- Hero Section -->
-<section class="hero-section text-center text-white py-5 mb-5 rounded-4"
-         style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);">
-    <div class="py-3">
-        <h1 class="display-4 fw-bold mb-3">
-            <i class="bi bi-globe2 me-2"></i>WebServicos
+<!-- ── Hero com vídeo de fundo ── -->
+<section id="heroSection" class="hero-video-section">
+
+    <!-- Vídeo MP4 fundo -->
+    <video class="yt-bg-wrapper" autoplay muted loop playsinline aria-hidden="true">
+        <source src="/videos/hero.mp4" type="video/mp4">
+    </video>
+
+    <!-- Overlay branco semitransparente -->
+    <div class="hero-overlay"></div>
+
+    <!-- Conteúdo por cima do vídeo -->
+    <div class="hero-content text-center">
+
+        <div class="d-inline-flex align-items-center gap-2 mb-4 px-3 py-2 rounded-pill hero-badge"
+             data-aos="fade-down">
+            <span class="badge-dot"></span>
+            Plataforma de Desenvolvimento Web
+        </div>
+
+        <h1 class="hero-title" data-aos="fade-up" data-aos-delay="100">
+            Websites profissionais<br />
+            <span class="hero-gradient-text">que fazem a diferença</span>
         </h1>
-        <p class="lead mb-4">
-            Criamos websites profissionais que impulsionam o seu negócio.<br />
-            Do conceito à publicação — com qualidade e rigor.
+
+        <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
+            Do conceito à publicação — soluções web com qualidade,
+            rigor e suporte contínuo.
         </p>
-        <div class="d-flex justify-content-center gap-3">
-            <a asp-page="/Servicos/Index" class="btn btn-light btn-lg px-4">
+
+        <div class="d-flex justify-content-center gap-3 flex-wrap" data-aos="fade-up" data-aos-delay="300">
+            <a asp-page="/Servicos/Index" class="btn btn-primary rounded-3 px-4 py-2 fw-500">
                 <i class="bi bi-grid me-2"></i>Ver Serviços
             </a>
             @if (!User.Identity!.IsAuthenticated)
             {
-                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-light btn-lg px-4">
+                <a asp-area="Identity" asp-page="/Account/Register"
+                   class="btn btn-outline-secondary rounded-3 px-4 py-2">
                     <i class="bi bi-person-plus me-2"></i>Pedir Orçamento
                 </a>
             }
             else
             {
-                <a asp-page="/Pedidos/Create" class="btn btn-outline-light btn-lg px-4">
+                <a asp-page="/Pedidos/Create"
+                   class="btn btn-outline-secondary rounded-3 px-4 py-2">
                     <i class="bi bi-plus-circle me-2"></i>Novo Pedido
                 </a>
             }
         </div>
+
+        <!-- Scroll indicator -->
+        <div class="scroll-indicator" data-aos="fade-up" data-aos-delay="500">
+            <div class="scroll-mouse">
+                <div class="scroll-wheel"></div>
+            </div>
+            <span>Scroll</span>
+        </div>
     </div>
 </section>
 
-<!-- Estatísticas -->
-<div class="row text-center mb-5 g-3">
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <i class="bi bi-check-circle-fill text-success fs-1"></i>
-                <h3 class="mt-2 fw-bold">@Model.TotalPedidosConcluidos</h3>
-                <p class="text-muted mb-0">Projetos Concluídos</p>
-            </div>
+<!-- ── Estatísticas com counter ── -->
+<div class="row g-3 mb-5">
+    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="0">
+        <div class="stat-card">
+            <span class="stat-icon" style="color:#16a34a;"><i class="bi bi-check-circle-fill"></i></span>
+            <div class="stat-value" data-count="@Model.TotalPedidosConcluidos">0</div>
+            <div class="stat-label">Projetos Concluídos</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <i class="bi bi-people-fill text-primary fs-1"></i>
-                <h3 class="mt-2 fw-bold">@Model.TotalClientes</h3>
-                <p class="text-muted mb-0">Clientes Satisfeitos</p>
-            </div>
+    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="80">
+        <div class="stat-card">
+            <span class="stat-icon" style="color:#2563eb;"><i class="bi bi-people-fill"></i></span>
+            <div class="stat-value" data-count="@Model.TotalClientes">0</div>
+            <div class="stat-label">Clientes</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <i class="bi bi-grid-fill text-warning fs-1"></i>
-                <h3 class="mt-2 fw-bold">@Model.TotalServicos</h3>
-                <p class="text-muted mb-0">Serviços Disponíveis</p>
-            </div>
+    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="160">
+        <div class="stat-card">
+            <span class="stat-icon" style="color:#7c3aed;"><i class="bi bi-grid-fill"></i></span>
+            <div class="stat-value" data-count="@Model.TotalServicos">0</div>
+            <div class="stat-label">Serviços Disponíveis</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <i class="bi bi-star-fill text-danger fs-1"></i>
-                <h3 class="mt-2 fw-bold">5★</h3>
-                <p class="text-muted mb-0">Avaliação Média</p>
-            </div>
+    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="240">
+        <div class="stat-card">
+            <span class="stat-icon" style="color:#d97706;"><i class="bi bi-star-fill"></i></span>
+            <div class="stat-value">5★</div>
+            <div class="stat-label">Avaliação Média</div>
         </div>
     </div>
 </div>
 
-<!-- Serviços em destaque -->
-<section class="mb-5">
-    <h2 class="text-center fw-bold mb-4">Os Nossos Serviços</h2>
-    <div class="row g-4">
-        @foreach (var servico in Model.ServicosDestaque)
-        {
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm hover-card">
-                    <div class="card-body text-center p-4">
-                        <i class="bi @servico.Icone fs-1 text-primary mb-3"></i>
-                        <h5 class="card-title fw-bold">@servico.Nome</h5>
-                        <p class="card-text text-muted">@servico.Descricao</p>
-                        <p class="fw-bold text-primary fs-5">A partir de @servico.PrecoBase.ToString("C", new System.Globalization.CultureInfo("pt-PT"))</p>
-                    </div>
-                    <div class="card-footer bg-transparent border-0 text-center pb-4">
-                        <a asp-page="/Servicos/Details" asp-route-id="@servico.Id" class="btn btn-outline-primary">
-                            Saber Mais
-                        </a>
-                    </div>
-                </div>
-            </div>
-        }
+<!-- ── Carrossel de Serviços ── -->
+<section class="mb-5" data-aos="fade-up">
+    <div class="d-flex align-items-end justify-content-between mb-4">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-size:1.5rem;letter-spacing:-0.03em;color:#0f172a;">
+                Os Nossos Serviços
+            </h2>
+            <p class="mb-0" style="color:#94a3b8;font-size:0.875rem;">
+                Soluções à medida para cada necessidade
+            </p>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+            <!-- Controlos do carrossel -->
+            <button class="carousel-btn" data-bs-target="#servicosCarousel" data-bs-slide="prev" title="Anterior">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+            <button class="carousel-btn" data-bs-target="#servicosCarousel" data-bs-slide="next" title="Seguinte">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+        </div>
     </div>
-    <div class="text-center mt-4">
-        <a asp-page="/Servicos/Index" class="btn btn-primary px-5">Ver Todos os Serviços</a>
+
+    @if (servicos.Any())
+    {
+        <div id="servicosCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+            <!-- Indicadores -->
+            <div class="carousel-indicators carousel-indicators-custom">
+                @for (int i = 0; i < slides.Count; i++)
+                {
+                    <button type="button"
+                            data-bs-target="#servicosCarousel"
+                            data-bs-slide-to="@i"
+                            class="@(i == 0 ? "active" : "")"
+                            aria-label="Slide @(i+1)"></button>
+                }
+            </div>
+
+            <div class="carousel-inner pb-4">
+                @for (int i = 0; i < slides.Count; i++)
+                {
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <div class="row g-4">
+                            @foreach (var servico in slides[i])
+                            {
+                                <div class="col-md-4">
+                                    <div class="card-clean h-100 p-4 d-flex flex-column service-card">
+                                        <div class="d-flex align-items-center gap-3 mb-3">
+                                            <div class="service-icon-box">
+                                                <i class="bi @servico.Icone"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="mb-0 fw-semibold" style="color:#0f172a;font-size:0.95rem;">@servico.Nome</h5>
+                                                <span class="service-price">
+                                                    A partir de @servico.PrecoBase.ToString("C", new System.Globalization.CultureInfo("pt-PT"))
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <p style="color:#64748b;font-size:0.875rem;line-height:1.7;flex:1;">@servico.Descricao</p>
+                                        <a asp-page="/Servicos/Details" asp-route-id="@servico.Id"
+                                           class="btn btn-outline-primary btn-sm rounded-3 mt-2 align-self-start">
+                                            Saber Mais <i class="bi bi-arrow-right ms-1"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="text-center mt-3">
+        <a asp-page="/Servicos/Index" class="btn btn-outline-secondary btn-sm rounded-3 px-4">
+            Ver Todos os Serviços <i class="bi bi-arrow-right ms-1"></i>
+        </a>
     </div>
 </section>
 
-<!-- Porquê escolher-nos -->
-<section class="bg-light rounded-4 p-5 mb-4">
-    <h2 class="text-center fw-bold mb-4">Porquê escolher a WebServicos?</h2>
+<!-- ── Porquê escolher-nos ── -->
+<section class="section-highlight p-4 p-md-5 mb-4" data-aos="fade-up">
+    <h2 class="text-center fw-bold mb-1"
+        style="font-size:1.4rem;letter-spacing:-0.03em;color:#0f172a;">
+        Porquê escolher a WebServicos?
+    </h2>
+    <p class="text-center mb-5" style="color:#94a3b8;font-size:0.875rem;">O que nos distingue</p>
+
     <div class="row g-4">
-        <div class="col-md-4 text-center">
-            <i class="bi bi-lightning-fill text-warning fs-1"></i>
-            <h5 class="mt-3 fw-bold">Entrega Rápida</h5>
-            <p class="text-muted">Cumprimos prazos. O seu projeto é entregue a tempo e com qualidade.</p>
+        <div class="col-md-4 text-center" data-aos="fade-up" data-aos-delay="0">
+            <div class="feature-icon-box mx-auto mb-3" style="background:#fefce8;border-color:#fde68a;">
+                <i class="bi bi-lightning-fill" style="color:#d97706;"></i>
+            </div>
+            <h6 class="fw-bold mb-2" style="color:#0f172a;">Entrega Rápida</h6>
+            <p style="color:#64748b;font-size:0.85rem;line-height:1.7;max-width:240px;margin:0 auto;">
+                Cumprimos prazos. O seu projeto é entregue a tempo e com qualidade garantida.
+            </p>
         </div>
-        <div class="col-md-4 text-center">
-            <i class="bi bi-phone-fill text-success fs-1"></i>
-            <h5 class="mt-3 fw-bold">Design Responsivo</h5>
-            <p class="text-muted">Todos os nossos websites funcionam perfeitamente em qualquer dispositivo.</p>
+        <div class="col-md-4 text-center" data-aos="fade-up" data-aos-delay="100">
+            <div class="feature-icon-box mx-auto mb-3" style="background:#f0fdf4;border-color:#bbf7d0;">
+                <i class="bi bi-phone-fill" style="color:#16a34a;"></i>
+            </div>
+            <h6 class="fw-bold mb-2" style="color:#0f172a;">Design Responsivo</h6>
+            <p style="color:#64748b;font-size:0.85rem;line-height:1.7;max-width:240px;margin:0 auto;">
+                Todos os websites funcionam perfeitamente em qualquer dispositivo.
+            </p>
         </div>
-        <div class="col-md-4 text-center">
-            <i class="bi bi-shield-check-fill text-primary fs-1"></i>
-            <h5 class="mt-3 fw-bold">Suporte Contínuo</h5>
-            <p class="text-muted">Estamos sempre disponíveis para ajudar após a entrega do projeto.</p>
+        <div class="col-md-4 text-center" data-aos="fade-up" data-aos-delay="200">
+            <div class="feature-icon-box mx-auto mb-3" style="background:#eff6ff;border-color:#bfdbfe;">
+                <i class="bi bi-shield-check-fill" style="color:#2563eb;"></i>
+            </div>
+            <h6 class="fw-bold mb-2" style="color:#0f172a;">Suporte Contínuo</h6>
+            <p style="color:#64748b;font-size:0.85rem;line-height:1.7;max-width:240px;margin:0 auto;">
+                Estamos sempre disponíveis para ajudar após a entrega do projeto.
+            </p>
         </div>
     </div>
 </section>
+
+<!-- ── CTA final ── -->
+<section class="text-center py-5 mb-2" data-aos="zoom-in">
+    <h3 class="fw-bold mb-2" style="color:#0f172a;letter-spacing:-0.02em;">Pronto para começar?</h3>
+    <p class="mb-4" style="color:#64748b;">Crie a sua conta e submeta o seu primeiro pedido hoje.</p>
+    @if (!User.Identity!.IsAuthenticated)
+    {
+        <a asp-area="Identity" asp-page="/Account/Register"
+           class="btn btn-primary rounded-3 px-5 py-2 fw-semibold">
+            <i class="bi bi-rocket-takeoff me-2"></i>Começar Agora
+        </a>
+    }
+    else
+    {
+        <a asp-page="/Pedidos/Create"
+           class="btn btn-primary rounded-3 px-5 py-2 fw-semibold">
+            <i class="bi bi-plus-circle me-2"></i>Novo Pedido
+        </a>
+    }
+</section>
+
+@section Scripts {
+<script>
+    // ── CountUp nas estatísticas ──
+    function countUp(el, target, duration) {
+        var start = performance.now();
+        var update = function (now) {
+            var p = Math.min((now - start) / duration, 1);
+            var eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.floor(eased * target);
+            if (p < 1) requestAnimationFrame(update);
+            else el.textContent = target;
+        };
+        requestAnimationFrame(update);
+    }
+
+    var statsObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                var el = entry.target;
+                var n = parseInt(el.dataset.count);
+                if (!isNaN(n)) countUp(el, n, 1400);
+                statsObs.unobserve(el);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('[data-count]').forEach(function (el) {
+        statsObs.observe(el);
+    });
+</script>
+}

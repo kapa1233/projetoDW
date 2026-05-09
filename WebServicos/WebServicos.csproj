@@ -8,6 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="WebServicos\**" />
+    <Compile Remove="WebServicos.API\**" />
+    <Content Remove="WebServicos\**" />
+    <Content Remove="WebServicos.API\**" />
+    <EmbeddedResource Remove="WebServicos\**" />
+    <EmbeddedResource Remove="WebServicos.API\**" />
+    <None Remove="WebServicos\**" />
+    <None Remove="WebServicos.API\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Entity Framework Core com SQLite -->
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0" />

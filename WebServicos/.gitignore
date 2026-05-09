@@ -44,3 +44,7 @@ desktop.ini
 
 # Publicação
 publish/
+
+# Node / Tailwind
+node_modules/
+package-lock.json

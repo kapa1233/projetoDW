@@ -1,0 +1,12 @@
+{
+  "name": "webservicos",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tailwindcss -i ./wwwroot/css/tailwind.css -o ./wwwroot/css/app.css --minify",
+    "watch": "tailwindcss -i ./wwwroot/css/tailwind.css -o ./wwwroot/css/app.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}

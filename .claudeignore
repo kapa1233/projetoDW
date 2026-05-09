@@ -1,0 +1,65 @@
+# === Build artifacts (.NET) ===
+**/bin/
+**/obj/
+**/out/
+**/publish/
+*.dll
+*.pdb
+*.exe
+
+# === IDE / Editor ===
+.vs/
+.vscode/
+*.user
+*.suo
+
+# === Base de dados SQLite ===
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# === Logs ===
+*.log
+logs/
+**/Logs/
+
+# === Frontend / Pacotes ===
+node_modules/
+wwwroot/lib/
+**/wwwroot/lib/
+package-lock.json
+
+# === Ficheiros sensíveis ===
+appsettings.Production.json
+appsettings.*.Local.json
+secrets.json
+.env
+.env.*
+*.pfx
+*.key
+
+# === Testes / Coverage ===
+TestResults/
+coverage/
+*.coverage
+*.trx
+
+# === Sistema ===
+.DS_Store
+Thumbs.db
+
+# === Binários grandes ===
+*.pdf
+*.docx
+*.pptx
+*.xlsx
+*.zip
+*.rar
+*.7z
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
