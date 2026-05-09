@@ -5,8 +5,8 @@
 
 $ErrorActionPreference = "Stop"
 
-$appPath    = "C:\WebServicos"
-$apiPath    = "C:\WebServicosAPI"
+$appPath    = "C:\WebServicos\app"
+$apiPath    = "C:\WebServicos\api"
 $projectApp = "$PSScriptRoot\WebServicos\WebServicos"
 $projectApi = "$PSScriptRoot\WebServicos\WebServicos.API"
 
@@ -81,8 +81,8 @@ Instalar-Servico -Nome "WebServicosAPI" -Label "WebServicos - API REST"       -E
 
 Write-Host ""
 Write-Host "Concluido!" -ForegroundColor Green
-Write-Host "  App:     http://localhost:5000"
-Write-Host "  API:     http://localhost:5001"
+Write-Host "  App:     http://localhost:5000  (C:\WebServicos\app)"
+Write-Host "  API:     http://localhost:5001  (C:\WebServicos\api)"
 Write-Host "  Swagger: http://localhost:5001/index.html"
 Write-Host ""
 Write-Host "Para expor ao exterior:" -ForegroundColor Yellow
