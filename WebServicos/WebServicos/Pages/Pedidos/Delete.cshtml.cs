@@ -7,6 +7,10 @@ using WebServicos.Models;
 
 namespace WebServicos.Pages.Pedidos
 {
+    /// <summary>
+    /// Página de confirmação de cancelamento de um pedido.
+    /// Clientes só podem cancelar pedidos no estado Pendente; admins podem cancelar qualquer um.
+    /// </summary>
     [Authorize]
     public class DeleteModel : PageModel
     {
@@ -14,6 +18,7 @@ namespace WebServicos.Pages.Pedidos
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<DeleteModel> _logger;
 
+        /// <summary>Construtor com injeção de dependências.</summary>
         public DeleteModel(ApplicationDbContext db, UserManager<ApplicationUser> um, ILogger<DeleteModel> logger)
         {
             _db = db;
@@ -21,9 +26,11 @@ namespace WebServicos.Pages.Pedidos
             _logger = logger;
         }
 
+        /// <summary>Pedido a cancelar, ligado ao formulário hidden via model binding.</summary>
         [BindProperty]
         public Pedido? Pedido { get; set; }
 
+        /// <summary>Carrega o pedido para mostrar na página de confirmação.</summary>
         public async Task<IActionResult> OnGetAsync(int id)
         {
             Pedido = await _db.Pedidos.FindAsync(id);
@@ -42,6 +49,9 @@ namespace WebServicos.Pages.Pedidos
             return Page();
         }
 
+        /// <summary>
+        /// Remove o pedido e todas as suas relações (PedidoServicos) da base de dados.
+        /// </summary>
         public async Task<IActionResult> OnPostAsync()
         {
             var pedido = await _db.Pedidos.FindAsync(Pedido!.Id);

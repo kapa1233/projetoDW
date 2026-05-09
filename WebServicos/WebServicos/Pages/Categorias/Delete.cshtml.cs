@@ -7,21 +7,33 @@ using WebServicos.Models;
 
 namespace WebServicos.Pages.Categorias
 {
+    /// <summary>
+    /// Página de confirmação de eliminação de uma categoria. Exclusiva para administradores.
+    /// Informa quantos serviços ficarão sem categoria após a eliminação.
+    /// </summary>
     [Authorize(Roles = "Administrador")]
     public class DeleteModel : PageModel
     {
         private readonly ApplicationDbContext _db;
         private readonly ILogger<DeleteModel> _logger;
 
+        /// <summary>Construtor com injeção de dependências.</summary>
         public DeleteModel(ApplicationDbContext db, ILogger<DeleteModel> logger)
         {
             _db = db;
             _logger = logger;
         }
 
+        /// <summary>Categoria a eliminar, carregada para mostrar na página de confirmação.</summary>
         public CategoriaServico Categoria { get; set; } = null!;
+
+        /// <summary>Número de serviços associados a esta categoria (ficam sem categoria após eliminação).</summary>
         public int NumServicos { get; set; }
 
+        /// <summary>
+        /// Carrega a categoria com os serviços associados via eager loading
+        /// para mostrar o aviso de impacto antes da confirmação.
+        /// </summary>
         public async Task<IActionResult> OnGetAsync(int id)
         {
             var cat = await _db.CategoriasServico
@@ -33,6 +45,10 @@ namespace WebServicos.Pages.Categorias
             return Page();
         }
 
+        /// <summary>
+        /// Elimina a categoria. Os serviços associados ficam com CategoriaId = null
+        /// graças à configuração de cascade definida no ApplicationDbContext.
+        /// </summary>
         public async Task<IActionResult> OnPostAsync(int id)
         {
             var cat = await _db.CategoriasServico

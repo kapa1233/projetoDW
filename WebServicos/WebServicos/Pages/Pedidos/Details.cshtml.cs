@@ -10,6 +10,10 @@ using WebServicos.Models;
 
 namespace WebServicos.Pages.Pedidos
 {
+    /// <summary>
+    /// Página de detalhes de um pedido. Mostra todos os dados do pedido e os serviços incluídos.
+    /// Administradores podem alterar o estado diretamente nesta página.
+    /// </summary>
     [Authorize]
     public class DetailsModel : PageModel
     {
@@ -17,6 +21,7 @@ namespace WebServicos.Pages.Pedidos
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHubContext<NotificacoesHub> _hub;
 
+        /// <summary>Construtor com injeção de dependências.</summary>
         public DetailsModel(ApplicationDbContext db, UserManager<ApplicationUser> um, IHubContext<NotificacoesHub> hub)
         {
             _db = db;
@@ -24,11 +29,17 @@ namespace WebServicos.Pages.Pedidos
             _hub = hub;
         }
 
+        /// <summary>Pedido a apresentar na página.</summary>
         public Pedido? Pedido { get; set; }
 
+        /// <summary>Novo estado selecionado pelo administrador no formulário.</summary>
         [BindProperty]
         public EstadoPedido NovoEstado { get; set; }
 
+        /// <summary>
+        /// Carrega os detalhes do pedido com eager loading de cliente e serviços.
+        /// Clientes só podem ver os seus próprios pedidos.
+        /// </summary>
         public async Task<IActionResult> OnGetAsync(int id)
         {
             Pedido = await _db.Pedidos
@@ -49,7 +60,10 @@ namespace WebServicos.Pages.Pedidos
             return Page();
         }
 
-        // Handler para administrador alterar estado
+        /// <summary>
+        /// Handler POST para alterar o estado do pedido. Restrito a administradores.
+        /// Após guardar, notifica o cliente via SignalR em tempo real.
+        /// </summary>
         public async Task<IActionResult> OnPostAlterarEstadoAsync(int id)
         {
             if (!User.IsInRole("Administrador"))

@@ -8,6 +8,11 @@ using WebServicos.Models;
 
 namespace WebServicos.Pages.Pedidos
 {
+    /// <summary>
+    /// Página de chat associado a um pedido.
+    /// Permite comunicação em tempo real entre o cliente e o administrador.
+    /// Ao carregar, marca automaticamente as mensagens não lidas como lidas.
+    /// </summary>
     [Authorize]
     public class ChatModel : PageModel
     {
@@ -15,6 +20,7 @@ namespace WebServicos.Pages.Pedidos
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<ChatModel> _logger;
 
+        /// <summary>Construtor com injeção de dependências.</summary>
         public ChatModel(ApplicationDbContext db, UserManager<ApplicationUser> um, ILogger<ChatModel> logger)
         {
             _db = db;
@@ -22,12 +28,19 @@ namespace WebServicos.Pages.Pedidos
             _logger = logger;
         }
 
+        /// <summary>Pedido ao qual este chat pertence.</summary>
         public Pedido? Pedido { get; set; }
+
+        /// <summary>Lista de mensagens ordenadas cronologicamente.</summary>
         public List<Mensagem> Mensagens { get; set; } = new();
-        
+
+        /// <summary>Texto da nova mensagem a enviar, ligado ao formulário via model binding.</summary>
         [BindProperty]
         public string? NovaMsg { get; set; }
 
+        /// <summary>
+        /// Carrega o pedido e as mensagens do chat. Marca as mensagens não lidas como lidas.
+        /// </summary>
         public async Task<IActionResult> OnGetAsync(int id)
         {
             var pedido = await _db.Pedidos
@@ -62,6 +75,9 @@ namespace WebServicos.Pages.Pedidos
             return Page();
         }
 
+        /// <summary>
+        /// Guarda a nova mensagem na base de dados e redireciona para a mesma página.
+        /// </summary>
         public async Task<IActionResult> OnPostAsync(int id)
         {
             if (string.IsNullOrWhiteSpace(NovaMsg))

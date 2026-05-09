@@ -6,11 +6,13 @@ using WebServicos.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Suporte a Windows Service (funciona também como consola em desenvolvimento)
+// ── Suporte a Windows Service (no-op noutras plataformas) ──
+// Permite executar a aplicação como serviço Windows sem janela de consola
 builder.Host.UseWindowsService();
 
-// ── Base de dados (SQLite via appsettings.json) ──
-// Resolve o caminho relativo para absoluto — necessário quando corre como Windows Service
+// ── Base de dados SQLite ──
+// Resolve o caminho relativo para absoluto, necessário quando corre como Windows Service
+// (o working directory do serviço não é o diretório da aplicação)
 var rawConn = builder.Configuration.GetConnectionString("DefaultConnection")!;
 const string sqlitePrefix = "Data Source=";
 var dbConn = rawConn;
@@ -23,25 +25,26 @@ if (rawConn.StartsWith(sqlitePrefix, StringComparison.OrdinalIgnoreCase))
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(dbConn));
 
 // ── ASP.NET Core Identity ──
+// Configura autenticação com utilizadores personalizados (ApplicationUser) e roles
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = false;
+    options.SignIn.RequireConfirmedAccount = false;   // Sem verificação de email
     options.Password.RequireDigit = true;
     options.Password.RequiredLength = 8;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequireUppercase = true;
-    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.MaxFailedAccessAttempts = 5;      // Bloqueia após 5 tentativas falhadas
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
 })
-.AddRoles<IdentityRole>()
+.AddRoles<IdentityRole>()                             // Suporte a roles (Administrador, Cliente)
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 // ── Razor Pages ──
+// Configura autorização por pasta/página (sem necessidade de [Authorize] em cada page model)
 builder.Services.AddRazorPages(options =>
 {
-    // Áreas protegidas — requerem autenticação
-    options.Conventions.AuthorizeFolder("/Pedidos");
-    options.Conventions.AuthorizeFolder("/Clientes", "Administrador");
+    options.Conventions.AuthorizeFolder("/Pedidos");                              // Todos os pedidos requerem login
+    options.Conventions.AuthorizeFolder("/Clientes", "Administrador");            // Apenas admins
     options.Conventions.AuthorizePage("/Servicos/Create", "Administrador");
     options.Conventions.AuthorizePage("/Servicos/Edit", "Administrador");
     options.Conventions.AuthorizePage("/Servicos/Delete", "Administrador");
@@ -54,15 +57,16 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Cliente", policy => policy.RequireRole(DbSeeder.RoleCliente, DbSeeder.RoleAdmin));
 });
 
-// ── SignalR (notificações em tempo real) ──
+// ── SignalR ──
+// Usado para notificações em tempo real (novos pedidos, atualizações de estado)
 builder.Services.AddSignalR();
 
-// ── Configuração de cookies ──
+// ── Configuração de cookies de autenticação ──
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Identity/Account/Login";
-    options.AccessDeniedPath = "/Erro/AcessoNegado";
-    options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    options.LoginPath = "/Identity/Account/Login";         // Redireciona para login se não autenticado
+    options.AccessDeniedPath = "/Erro/AcessoNegado";       // Página de acesso negado
+    options.ExpireTimeSpan = TimeSpan.FromHours(8);        // Sessão expira em 8 horas
 });
 
 var app = builder.Build();
@@ -70,31 +74,35 @@ var app = builder.Build();
 // ── Pipeline HTTP ──
 if (app.Environment.IsDevelopment())
 {
+    // Em desenvolvimento usa HTTPS local; em produção o proxy (Render/Cloudflare) trata do HTTPS
     app.UseHttpsRedirection();
 }
 else
 {
+    // Em produção, redireciona erros para página personalizada
     app.UseExceptionHandler("/Erro/Geral");
     app.UseHsts();
 }
 
-// Páginas de erro personalizadas
+// Redireciona códigos de erro HTTP (404, 403, etc.) para páginas personalizadas
 app.UseStatusCodePagesWithRedirects("/Erro/{0}");
-app.UseStaticFiles();
+
+app.UseStaticFiles();    // Serve ficheiros estáticos (CSS, JS, imagens)
 app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseAuthentication(); // Verifica quem é o utilizador (cookie de sessão)
+app.UseAuthorization();  // Verifica o que o utilizador pode fazer (roles e políticas)
 
-// ── Rotas ──
+// ── Mapeamento de rotas ──
 app.MapRazorPages();
-app.MapHub<NotificacoesHub>("/hub/notificacoes");
+app.MapHub<NotificacoesHub>("/hub/notificacoes"); // Endpoint WebSocket do SignalR
 
-// ── Seed da base de dados ──
+// ── Inicialização da base de dados ──
+// Aplica migrações pendentes e faz seed de dados iniciais ao arrancar
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
-    await DbSeeder.SeedAsync(scope.ServiceProvider);
+    db.Database.Migrate();                              // Cria/atualiza o schema da BD
+    await DbSeeder.SeedAsync(scope.ServiceProvider);   // Cria roles e utilizadores padrão
 }
 
 app.Run();

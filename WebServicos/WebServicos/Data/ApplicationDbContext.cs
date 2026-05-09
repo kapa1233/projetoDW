@@ -5,59 +5,83 @@ using WebServicos.Models;
 namespace WebServicos.Data
 {
     /// <summary>
-    /// Contexto da base de dados da aplicação WebServicos.
-    /// Herda de IdentityDbContext para suporte a autenticação ASP.NET Core Identity.
+    /// Contexto principal da base de dados da aplicação WebServicos.
+    /// Herda de IdentityDbContext para integrar autenticação ASP.NET Core Identity
+    /// com as tabelas de utilizadores e roles.
     /// </summary>
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        /// <summary>
+        /// Construtor que recebe as opções de configuração (connection string, provider, etc.).
+        /// </summary>
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
 
-        // DbSets — tabelas da aplicação
+        // ── Tabelas da aplicação (mapeadas para tabelas SQLite) ──
+
+        /// <summary>Tabela de serviços oferecidos pela empresa.</summary>
         public DbSet<Servico> Servicos { get; set; }
+
+        /// <summary>Tabela de categorias de serviços.</summary>
         public DbSet<CategoriaServico> CategoriasServico { get; set; }
+
+        /// <summary>Tabela de pedidos submetidos pelos clientes.</summary>
         public DbSet<Pedido> Pedidos { get; set; }
+
+        /// <summary>Tabela de junção muitos-para-muitos entre Pedido e Servico.</summary>
         public DbSet<PedidoServico> PedidoServicos { get; set; }
+
+        /// <summary>Tabela de mensagens de chat por pedido.</summary>
         public DbSet<Mensagem> Mensagens { get; set; }
+
+        /// <summary>Tabela de propostas de alteração submetidas por clientes.</summary>
         public DbSet<PedidoAlteracao> PedidoAlteracoes { get; set; }
 
+        /// <summary>
+        /// Configura as relações entre entidades e os dados de seed iniciais.
+        /// Chamado automaticamente pelo EF Core ao criar/migrar a base de dados.
+        /// </summary>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Configuração base do Identity (tabelas de utilizadores, roles, claims, etc.)
             base.OnModelCreating(modelBuilder);
 
-            // ── Chave composta para a tabela de junção (muitos-para-muitos) ──
+            // ── Chave composta para a tabela de junção PedidoServico ──
+            // Garante unicidade por combinação PedidoId + ServicoId
             modelBuilder.Entity<PedidoServico>()
                 .HasKey(ps => new { ps.PedidoId, ps.ServicoId });
 
-            // ── Relação Pedido -> PedidoServico ──
+            // ── Relação Pedido -> PedidoServico (um-para-muitos) ──
             modelBuilder.Entity<PedidoServico>()
                 .HasOne(ps => ps.Pedido)
                 .WithMany(p => p.PedidoServicos)
                 .HasForeignKey(ps => ps.PedidoId);
 
-            // ── Relação Servico -> PedidoServico ──
+            // ── Relação Servico -> PedidoServico (um-para-muitos) ──
             modelBuilder.Entity<PedidoServico>()
                 .HasOne(ps => ps.Servico)
                 .WithMany(s => s.PedidoServicos)
                 .HasForeignKey(ps => ps.ServicoId);
 
-            // ── Relação muitos-para-um: Servico -> CategoriaServico ──
+            // ── Relação Servico -> CategoriaServico (muitos-para-um) ──
+            // OnDelete SetNull: ao eliminar categoria, os serviços ficam sem categoria
             modelBuilder.Entity<Servico>()
                 .HasOne(s => s.CategoriaServico)
                 .WithMany(c => c.Servicos)
                 .HasForeignKey(s => s.CategoriaServicoId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            // ── Relação muitos-para-um: Pedido -> ApplicationUser (Cliente) ──
+            // ── Relação Pedido -> ApplicationUser (muitos-para-um) ──
+            // OnDelete Restrict: não permite eliminar cliente com pedidos associados
             modelBuilder.Entity<Pedido>()
                 .HasOne(p => p.Cliente)
                 .WithMany(u => u.Pedidos)
                 .HasForeignKey(p => p.ClienteId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // ── Seed de Categorias ──
+            // ── Seed de Categorias (dados iniciais inseridos via migração) ──
             modelBuilder.Entity<CategoriaServico>().HasData(
                 new CategoriaServico { Id = 1, Nome = "Websites", Descricao = "Criação e desenvolvimento de websites" },
                 new CategoriaServico { Id = 2, Nome = "E-commerce", Descricao = "Lojas online e plataformas de venda" },
@@ -66,7 +90,7 @@ namespace WebServicos.Data
                 new CategoriaServico { Id = 5, Nome = "Hardware & Software", Descricao = "Recuperação de dados, restauro de sistemas e assistência técnica de hardware" }
             );
 
-            // ── Seed de Serviços ──
+            // ── Seed de Serviços (6 serviços pré-configurados com preços e ícones) ──
             modelBuilder.Entity<Servico>().HasData(
                 new Servico
                 {

@@ -8,6 +8,10 @@ using WebServicos.Models;
 
 namespace WebServicos.Pages.Pedidos
 {
+    /// <summary>
+    /// Página de edição de um pedido existente.
+    /// Clientes propõem alterações (sujeitas a aprovação); administradores editam diretamente.
+    /// </summary>
     [Authorize]
     public class EditModel : PageModel
     {
@@ -15,6 +19,7 @@ namespace WebServicos.Pages.Pedidos
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<EditModel> _logger;
 
+        /// <summary>Construtor com injeção de dependências.</summary>
         public EditModel(ApplicationDbContext db, UserManager<ApplicationUser> um, ILogger<EditModel> logger)
         {
             _db = db;
@@ -22,14 +27,20 @@ namespace WebServicos.Pages.Pedidos
             _logger = logger;
         }
 
+        /// <summary>Pedido a editar, ligado ao formulário via model binding.</summary>
         [BindProperty]
         public Pedido Pedido { get; set; } = null!;
 
+        /// <summary>URL do projeto entregue, só usado pelo admin ao marcar como Concluído.</summary>
         [BindProperty]
         public string? NovoEnderecoHttp { get; set; }
 
+        /// <summary>Proposta de alteração pendente mais recente do cliente (se existir).</summary>
         public PedidoAlteracao? AlteracaoPendente { get; set; }
 
+        /// <summary>
+        /// Carrega o pedido para edição. Verifica autorização e restrições de estado.
+        /// </summary>
         public async Task<IActionResult> OnGetAsync(int id)
         {
             var pedido = await _db.Pedidos.FindAsync(id);
@@ -59,6 +70,10 @@ namespace WebServicos.Pages.Pedidos
             return Page();
         }
 
+        /// <summary>
+        /// Processa a submissão do formulário. Clientes criam uma PedidoAlteracao para aprovação;
+        /// administradores atualizam diretamente o estado e prazo.
+        /// </summary>
         public async Task<IActionResult> OnPostAsync()
         {
             var pedidoExistente = await _db.Pedidos.FindAsync(Pedido.Id);

@@ -7,22 +7,31 @@ using WebServicos.Models;
 
 namespace WebServicos.Pages.Servicos
 {
+    /// <summary>
+    /// Página de confirmação de eliminação de um serviço. Exclusiva para administradores.
+    /// Impede a eliminação se existirem pedidos associados ao serviço.
+    /// </summary>
     [Authorize(Roles = "Administrador")]
     public class DeleteModel : PageModel
     {
         private readonly ApplicationDbContext _db;
         private readonly ILogger<DeleteModel> _logger;
 
+        /// <summary>Construtor com injeção de dependências.</summary>
         public DeleteModel(ApplicationDbContext db, ILogger<DeleteModel> logger)
         {
             _db = db;
             _logger = logger;
         }
 
+        /// <summary>Serviço a eliminar, ligado ao formulário hidden via model binding.</summary>
         [BindProperty]
         public Servico? Servico { get; set; }
+
+        /// <summary>Número de pedidos que incluem este serviço (mostrado na página de confirmação).</summary>
         public int TotalPedidos { get; set; }
 
+        /// <summary>Carrega o serviço e conta os pedidos associados para mostrar no aviso.</summary>
         public async Task<IActionResult> OnGetAsync(int id)
         {
             Servico = await _db.Servicos.FindAsync(id);
@@ -33,6 +42,7 @@ namespace WebServicos.Pages.Servicos
             return Page();
         }
 
+        /// <summary>Elimina o serviço se não tiver pedidos associados.</summary>
         public async Task<IActionResult> OnPostAsync()
         {
             var servico = await _db.Servicos.FindAsync(Servico!.Id);

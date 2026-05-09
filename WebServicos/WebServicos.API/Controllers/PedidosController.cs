@@ -6,7 +6,8 @@ using WebServicos.Models;
 namespace WebServicos.API.Controllers
 {
     /// <summary>
-    /// API REST para gestão de pedidos.
+    /// API REST para gestão de pedidos da plataforma WebServicos.
+    /// Disponibiliza endpoints para consulta e atualização de pedidos.
     /// Endpoint base: /api/pedidos
     /// </summary>
     [ApiController]
@@ -17,13 +18,22 @@ namespace WebServicos.API.Controllers
         private readonly ApplicationDbContext _db;
         private readonly ILogger<PedidosController> _logger;
 
+        /// <summary>
+        /// Construtor com injeção de dependências (contexto da BD e logger).
+        /// </summary>
         public PedidosController(ApplicationDbContext db, ILogger<PedidosController> logger)
         {
             _db = db;
             _logger = logger;
         }
 
-        // GET /api/pedidos
+        /// <summary>
+        /// Obtém a lista de todos os pedidos, com filtros opcionais por cliente e/ou estado.
+        /// Inclui informação do cliente e dos serviços associados.
+        /// GET /api/pedidos?clienteId=xxx&amp;estado=1
+        /// </summary>
+        /// <param name="clienteId">ID do cliente para filtrar (opcional).</param>
+        /// <param name="estado">Estado do pedido para filtrar (opcional).</param>
         [HttpGet]
         public async Task<ActionResult> GetPedidos([FromQuery] string? clienteId, [FromQuery] EstadoPedido? estado)
         {
@@ -33,12 +43,14 @@ namespace WebServicos.API.Controllers
                     .ThenInclude(ps => ps.Servico)
                 .AsQueryable();
 
+            // Aplicar filtros opcionais via query string
             if (!string.IsNullOrEmpty(clienteId))
                 query = query.Where(p => p.ClienteId == clienteId);
 
             if (estado.HasValue)
                 query = query.Where(p => p.Estado == estado.Value);
 
+            // Projeção para DTO anónimo (evita serialização circular)
             var pedidos = await query
                 .OrderByDescending(p => p.DataPedido)
                 .Select(p => new
@@ -57,10 +69,16 @@ namespace WebServicos.API.Controllers
             return Ok(pedidos);
         }
 
-        // GET /api/pedidos/{id}
+        /// <summary>
+        /// Obtém os detalhes completos de um pedido específico pelo seu ID.
+        /// Inclui informação do cliente e de todos os serviços associados.
+        /// GET /api/pedidos/{id}
+        /// </summary>
+        /// <param name="id">ID do pedido a consultar.</param>
         [HttpGet("{id:int}")]
         public async Task<ActionResult> GetPedido(int id)
         {
+            // Eager loading das relações necessárias
             var pedido = await _db.Pedidos
                 .Include(p => p.Cliente)
                 .Include(p => p.PedidoServicos)
@@ -94,7 +112,12 @@ namespace WebServicos.API.Controllers
             });
         }
 
-        // PATCH /api/pedidos/{id}/estado
+        /// <summary>
+        /// Atualiza o estado de um pedido existente.
+        /// PATCH /api/pedidos/{id}/estado
+        /// </summary>
+        /// <param name="id">ID do pedido a atualizar.</param>
+        /// <param name="dto">Objeto com o novo estado a aplicar.</param>
         [HttpPatch("{id:int}/estado")]
         public async Task<IActionResult> AlterarEstado(int id, [FromBody] AlterarEstadoDto dto)
         {
@@ -110,8 +133,12 @@ namespace WebServicos.API.Controllers
         }
     }
 
+    /// <summary>
+    /// DTO (Data Transfer Object) para a operação de alteração de estado de um pedido.
+    /// </summary>
     public class AlterarEstadoDto
     {
+        /// <summary>Novo estado a aplicar ao pedido.</summary>
         public EstadoPedido NovoEstado { get; set; }
     }
 }

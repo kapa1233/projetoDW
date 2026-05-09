@@ -7,21 +7,27 @@ using WebServicos.Models;
 
 namespace WebServicos.Pages.Categorias
 {
+    /// <summary>
+    /// Página de edição de uma categoria de serviços existente. Exclusiva para administradores.
+    /// </summary>
     [Authorize(Roles = "Administrador")]
     public class EditModel : PageModel
     {
         private readonly ApplicationDbContext _db;
         private readonly ILogger<EditModel> _logger;
 
+        /// <summary>Construtor com injeção de dependências.</summary>
         public EditModel(ApplicationDbContext db, ILogger<EditModel> logger)
         {
             _db = db;
             _logger = logger;
         }
 
+        /// <summary>Categoria a editar, ligada ao formulário via model binding.</summary>
         [BindProperty]
         public CategoriaServico Categoria { get; set; } = null!;
 
+        /// <summary>Carrega a categoria pelo ID para preencher o formulário de edição.</summary>
         public async Task<IActionResult> OnGetAsync(int id)
         {
             var cat = await _db.CategoriasServico.FindAsync(id);
@@ -30,6 +36,10 @@ namespace WebServicos.Pages.Categorias
             return Page();
         }
 
+        /// <summary>
+        /// Atualiza os campos editáveis da categoria (Nome e Descrição).
+        /// Preserva os serviços associados sem os alterar.
+        /// </summary>
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -40,6 +50,7 @@ namespace WebServicos.Pages.Categorias
 
             try
             {
+                // Atualizar apenas os campos editáveis (evita sobrescrever a lista de serviços)
                 existente.Nome = Categoria.Nome;
                 existente.Descricao = Categoria.Descricao;
                 await _db.SaveChangesAsync();

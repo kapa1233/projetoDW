@@ -11,6 +11,10 @@ using WebServicos.Models;
 
 namespace WebServicos.Pages.Pedidos
 {
+    /// <summary>
+    /// Página de criação de um novo pedido de serviço.
+    /// Apenas acessível a clientes; administradores são redirecionados.
+    /// </summary>
     [Authorize]
     public class CreateModel : PageModel
     {
@@ -19,6 +23,7 @@ namespace WebServicos.Pages.Pedidos
         private readonly IHubContext<NotificacoesHub> _hub;
         private readonly ILogger<CreateModel> _logger;
 
+        /// <summary>Construtor com injeção de todas as dependências necessárias.</summary>
         public CreateModel(
             ApplicationDbContext db,
             UserManager<ApplicationUser> userManager,
@@ -31,16 +36,26 @@ namespace WebServicos.Pages.Pedidos
             _logger = logger;
         }
 
+        /// <summary>Dados do novo pedido, ligado ao formulário via model binding.</summary>
         [BindProperty]
         public Pedido Pedido { get; set; } = new();
 
+        /// <summary>IDs dos serviços selecionados pelo cliente no formulário.</summary>
         [BindProperty]
         [Required(ErrorMessage = "Selecione pelo menos um serviço.")]
         public List<int> ServicosIds { get; set; } = new();
 
+        /// <summary>Lista de serviços disponíveis para apresentar no formulário.</summary>
         public List<Servico> ServicosDisponiveis { get; set; } = new();
+
+        /// <summary>Mensagem de erro específica para a seleção de serviços.</summary>
         public string? ErroServicos { get; set; }
 
+        /// <summary>
+        /// Carrega a lista de serviços ativos. Aceita um servicoId opcional para pré-selecionar
+        /// um serviço quando o utilizador clica "Contratar" na página de serviços.
+        /// </summary>
+        /// <param name="servicoId">ID do serviço a pré-selecionar (opcional).</param>
         public async Task<IActionResult> OnGetAsync(int? servicoId)
         {
             // ── Apenas clientes podem criar pedidos ──
@@ -59,6 +74,10 @@ namespace WebServicos.Pages.Pedidos
             return Page();
         }
 
+        /// <summary>
+        /// Processa o formulário de criação do pedido. Valida os dados, calcula o orçamento
+        /// e persiste o pedido e os serviços numa transação para garantir consistência.
+        /// </summary>
         public async Task<IActionResult> OnPostAsync()
         {
             // ── Apenas clientes podem criar pedidos ──

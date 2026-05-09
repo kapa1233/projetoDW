@@ -8,6 +8,11 @@ using WebServicos.Models;
 
 namespace WebServicos.Pages.Pedidos
 {
+    /// <summary>
+    /// Página de revisão de alterações propostas por clientes. Exclusiva para administradores.
+    /// Sem ID: lista todas as alterações pendentes.
+    /// Com ID: mostra o detalhe de uma alteração para aprovar ou rejeitar.
+    /// </summary>
     [Authorize(Roles = "Administrador")]
     public class RevisarAlteracoesModel : PageModel
     {
@@ -15,6 +20,7 @@ namespace WebServicos.Pages.Pedidos
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<RevisarAlteracoesModel> _logger;
 
+        /// <summary>Construtor com injeção de dependências.</summary>
         public RevisarAlteracoesModel(ApplicationDbContext db, UserManager<ApplicationUser> um, ILogger<RevisarAlteracoesModel> logger)
         {
             _db = db;
@@ -22,13 +28,22 @@ namespace WebServicos.Pages.Pedidos
             _logger = logger;
         }
 
+        /// <summary>Alteração específica a rever (quando a página é acedida com ?id=X).</summary>
         public PedidoAlteracao? Alteracao { get; set; }
+
+        /// <summary>Pedido original ao qual a alteração se refere.</summary>
         public Pedido? Pedido { get; set; }
+
+        /// <summary>Lista de todas as alterações pendentes (quando sem ID).</summary>
         public List<PedidoAlteracao> AlteracoesPendentes { get; set; } = new();
 
+        /// <summary>Motivo de rejeição preenchido pelo administrador.</summary>
         [BindProperty]
         public string? MotivoRejeicao { get; set; }
 
+        /// <summary>
+        /// Carrega a página. Com ID, mostra detalhe da alteração. Sem ID, lista todas pendentes.
+        /// </summary>
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             // Se tem ID, mostra o detalhe de uma alteração específica
@@ -56,6 +71,9 @@ namespace WebServicos.Pages.Pedidos
             return Page();
         }
 
+        /// <summary>
+        /// Aprova a alteração proposta: aplica as mudanças ao pedido original e marca como Aprovado.
+        /// </summary>
         public async Task<IActionResult> OnPostAprovarAsync(int id)
         {
             var alteracao = await _db.PedidoAlteracoes
@@ -94,6 +112,9 @@ namespace WebServicos.Pages.Pedidos
             }
         }
 
+        /// <summary>
+        /// Rejeita a alteração proposta e regista o motivo de rejeição indicado pelo administrador.
+        /// </summary>
         public async Task<IActionResult> OnPostRejeitarAsync(int id)
         {
             if (string.IsNullOrWhiteSpace(MotivoRejeicao))

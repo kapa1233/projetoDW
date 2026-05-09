@@ -7,21 +7,27 @@ using WebServicos.Models;
 
 namespace WebServicos.Pages.Servicos
 {
+    /// <summary>
+    /// Página de edição de um serviço existente. Exclusiva para administradores.
+    /// </summary>
     [Authorize(Roles = "Administrador")]
     public class EditModel : PageModel
     {
         private readonly ApplicationDbContext _db;
         private readonly ILogger<EditModel> _logger;
 
+        /// <summary>Construtor com injeção de dependências.</summary>
         public EditModel(ApplicationDbContext db, ILogger<EditModel> logger)
         {
             _db = db;
             _logger = logger;
         }
 
+        /// <summary>Serviço a editar, ligado ao formulário via model binding.</summary>
         [BindProperty]
         public Servico Servico { get; set; } = null!;
 
+        /// <summary>Carrega o serviço pelo ID para preencher o formulário de edição.</summary>
         public async Task<IActionResult> OnGetAsync(int id)
         {
             var servico = await _db.Servicos.FindAsync(id);
@@ -32,6 +38,9 @@ namespace WebServicos.Pages.Servicos
             return Page();
         }
 
+        /// <summary>
+        /// Atualiza os campos editáveis do serviço. Preserva DataCriacao para não sobrescrever.
+        /// </summary>
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)

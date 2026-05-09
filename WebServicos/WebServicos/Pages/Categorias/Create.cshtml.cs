@@ -6,23 +6,30 @@ using WebServicos.Models;
 
 namespace WebServicos.Pages.Categorias
 {
+    /// <summary>
+    /// Página de criação de uma nova categoria de serviços. Exclusiva para administradores.
+    /// </summary>
     [Authorize(Roles = "Administrador")]
     public class CreateModel : PageModel
     {
         private readonly ApplicationDbContext _db;
         private readonly ILogger<CreateModel> _logger;
 
+        /// <summary>Construtor com injeção de dependências.</summary>
         public CreateModel(ApplicationDbContext db, ILogger<CreateModel> logger)
         {
             _db = db;
             _logger = logger;
         }
 
+        /// <summary>Dados da nova categoria, ligado ao formulário via model binding.</summary>
         [BindProperty]
         public CategoriaServico Categoria { get; set; } = new();
 
+        /// <summary>Apresenta o formulário de criação.</summary>
         public IActionResult OnGet() => Page();
 
+        /// <summary>Valida e guarda a nova categoria na base de dados.</summary>
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
