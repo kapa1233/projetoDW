@@ -5,7 +5,9 @@
 @if (SignInManager.IsSignedIn(User))
 {
     var user = await UserManager.GetUserAsync(User);
-    var inicial = user?.NomeCompleto?.Substring(0, 1).ToUpper() ?? "U";
+    var inicial = string.IsNullOrWhiteSpace(user?.NomeCompleto)
+    ? "U"
+    : user.NomeCompleto.Trim().Substring(0, 1).ToUpper();
     <ul class="navbar-nav">
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 py-1" href="#" data-bs-toggle="dropdown">
