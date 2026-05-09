@@ -4,73 +4,88 @@
     ViewData["Title"] = "Criar Conta";
 }
 
+<style>
+    .auth-card {
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 24px rgba(37,99,235,0.08);
+    }
+    .auth-icon-wrap {
+        width: 56px; height: 56px;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        border-radius: 14px;
+        display: inline-flex; align-items: center; justify-content: center;
+    }
+    .form-control-auth {
+        border-radius: 10px;
+        border: 1.5px solid #e2e8f0;
+        padding: 0.7rem 1rem;
+        font-size: 0.95rem;
+        transition: border-color .2s, box-shadow .2s;
+    }
+    .form-control-auth:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    }
+    .btn-auth {
+        border-radius: 10px;
+        padding: 0.7rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        border: none;
+        letter-spacing: 0.01em;
+        transition: opacity .2s, transform .1s;
+    }
+    .btn-auth:hover { opacity: 0.92; transform: translateY(-1px); }
+    .field-label { font-size: 0.82rem; font-weight: 600; color: #475569; margin-bottom: 6px; }
+</style>
+
 <div class="row justify-content-center">
-    <div class="col-sm-10 col-md-7 col-lg-5 col-xl-4">
+    <div class="col-12 col-sm-9 col-md-7 col-lg-5 col-xl-4">
 
-        <!-- Cabeçalho -->
-        <div class="text-center mb-4">
-            <div class="d-inline-flex align-items-center justify-content-center rounded-3 mb-3"
-                 style="width:52px;height:52px;background:#2563eb;">
-                <i class="bi bi-globe2 text-white fs-4"></i>
+        <div class="text-center mb-4 mt-2">
+            <div class="auth-icon-wrap mb-3">
+                <i class="bi bi-globe2 text-white" style="font-size:1.4rem;"></i>
             </div>
-            <h1 class="fw-bold fs-3 mb-1">Criar conta</h1>
-            <p class="text-muted">Regista-te para submeter pedidos de serviço</p>
+            <h2 class="fw-bold mb-1" style="color:#0f172a;">Criar conta</h2>
+            <p class="text-muted mb-0" style="font-size:0.9rem;">Regista-te para submeter pedidos de serviço</p>
         </div>
 
-        <!-- Card de registo -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-4">
+        <div class="auth-card bg-white p-4">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small rounded-3 mb-3"></div>
 
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                <div class="mb-3">
+                    <div class="field-label">Email</div>
+                    <input asp-for="Input.Email" class="form-control form-control-auth w-100"
+                           autocomplete="username" placeholder="o.teu@email.com" />
+                    <span asp-validation-for="Input.Email" class="text-danger" style="font-size:0.8rem;"></span>
+                </div>
 
-                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                    <div class="mb-3">
-                        <label asp-for="Input.Email" class="form-label fw-semibold small">Email</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0">
-                                <i class="bi bi-envelope text-muted"></i>
-                            </span>
-                            <input asp-for="Input.Email" class="form-control border-start-0 ps-0"
-                                   autocomplete="username" placeholder="o.teu@email.com" />
-                        </div>
-                        <span asp-validation-for="Input.Email" class="text-danger small"></span>
-                    </div>
+                <div class="mb-3">
+                    <div class="field-label">Password</div>
+                    <input asp-for="Input.Password" class="form-control form-control-auth w-100"
+                           autocomplete="new-password" placeholder="Mínimo 8 caracteres" />
+                    <span asp-validation-for="Input.Password" class="text-danger" style="font-size:0.8rem;"></span>
+                </div>
 
-                    <div class="mb-3">
-                        <label asp-for="Input.Password" class="form-label fw-semibold small">Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0">
-                                <i class="bi bi-lock text-muted"></i>
-                            </span>
-                            <input asp-for="Input.Password" class="form-control border-start-0 ps-0"
-                                   autocomplete="new-password" placeholder="Mínimo 8 caracteres" />
-                        </div>
-                        <span asp-validation-for="Input.Password" class="text-danger small"></span>
-                    </div>
+                <div class="mb-4">
+                    <div class="field-label">Confirmar Password</div>
+                    <input asp-for="Input.ConfirmPassword" class="form-control form-control-auth w-100"
+                           autocomplete="new-password" placeholder="Repete a password" />
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger" style="font-size:0.8rem;"></span>
+                </div>
 
-                    <div class="mb-4">
-                        <label asp-for="Input.ConfirmPassword" class="form-label fw-semibold small">Confirmar Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0">
-                                <i class="bi bi-lock-fill text-muted"></i>
-                            </span>
-                            <input asp-for="Input.ConfirmPassword" class="form-control border-start-0 ps-0"
-                                   autocomplete="new-password" placeholder="Repete a password" />
-                        </div>
-                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-                        <i class="bi bi-person-plus me-2"></i>Criar Conta
-                    </button>
-                </form>
-            </div>
+                <button type="submit" class="btn btn-auth btn-primary w-100">
+                    <i class="bi bi-person-plus me-2"></i>Criar Conta
+                </button>
+            </form>
         </div>
 
-        <!-- Link para login -->
-        <p class="text-center text-muted mt-3 small">
+        <p class="text-center mt-3 mb-0" style="font-size:0.875rem;color:#64748b;">
             Já tens conta?
-            <a asp-page="./Login" class="text-primary fw-semibold text-decoration-none">
+            <a asp-page="./Login" class="fw-semibold text-decoration-none" style="color:#2563eb;">
                 Inicia sessão
             </a>
         </p>
