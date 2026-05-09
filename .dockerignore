@@ -3,5 +3,6 @@
 **/bin
 **/obj
 **/*.user
+**/node_modules
 servidor/
 servidor.zip
