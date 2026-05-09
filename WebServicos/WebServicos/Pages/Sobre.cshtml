@@ -4,106 +4,282 @@
     ViewData["Title"] = "Sobre o Projeto";
 }
 
+<style>
+    .sobre-hero {
+        background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+        border-radius: 1rem;
+        color: white;
+        padding: 3rem 2rem;
+    }
+    .avatar-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+    .tech-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 2rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin: 4px;
+    }
+    .cred-card {
+        border-radius: .75rem;
+        overflow: hidden;
+    }
+    .cred-card .cred-header {
+        padding: .6rem 1rem;
+        font-weight: 600;
+        font-size: .9rem;
+    }
+    .cred-card .cred-body {
+        padding: .9rem 1rem;
+        background: #f8f9fa;
+    }
+    .cred-field {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: .4rem;
+    }
+    .cred-field:last-child { margin-bottom: 0; }
+    .cred-label { color: #6c757d; font-size: .8rem; margin-bottom: 2px; }
+    .info-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: .75rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: .5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .flow-step {
+        text-align: center;
+        padding: 1.25rem 1rem;
+    }
+    .flow-step .step-num {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #0d6efd;
+        color: white;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto .75rem;
+        font-size: .9rem;
+    }
+</style>
+
 <div class="row justify-content-center">
-    <div class="col-md-9">
+    <div class="col-lg-9">
 
-        <!-- Cabeçalho -->
+        <!-- Hero -->
+        <div class="sobre-hero mb-4 text-center">
+            <div class="mb-3">
+                <span style="font-size:3rem;">🌐</span>
+            </div>
+            <h1 class="fw-bold mb-2" style="font-size:2rem;">KapaDW — Plataforma de Gestão de Serviços Web</h1>
+            <p class="mb-0 opacity-75" style="max-width:520px; margin:0 auto;">
+                Trabalho prático da unidade curricular de <strong>Desenvolvimento Web</strong> —
+                plataforma onde clientes submetem pedidos e o administrador faz a gestão completa.
+            </p>
+        </div>
+
+        <!-- O que faz a plataforma (fluxo rápido) -->
         <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body p-5 text-center">
-                <i class="bi bi-info-circle display-3 text-primary mb-3"></i>
-                <h2 class="fw-bold">Sobre o Projeto</h2>
-                <p class="text-muted">Informações sobre o trabalho prático de Desenvolvimento Web</p>
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3 text-center">Como funciona?</h5>
+                <div class="row g-2 text-center">
+                    <div class="col flow-step">
+                        <div class="step-num">1</div>
+                        <div class="fw-semibold small">Registo</div>
+                        <div class="text-muted" style="font-size:.8rem;">Cliente cria conta na plataforma</div>
+                    </div>
+                    <div class="col d-flex align-items-center justify-content-center text-muted">
+                        <i class="bi bi-arrow-right fs-4"></i>
+                    </div>
+                    <div class="col flow-step">
+                        <div class="step-num">2</div>
+                        <div class="fw-semibold small">Pedido</div>
+                        <div class="text-muted" style="font-size:.8rem;">Submete pedido de serviço web</div>
+                    </div>
+                    <div class="col d-flex align-items-center justify-content-center text-muted">
+                        <i class="bi bi-arrow-right fs-4"></i>
+                    </div>
+                    <div class="col flow-step">
+                        <div class="step-num">3</div>
+                        <div class="fw-semibold small">Gestão</div>
+                        <div class="text-muted" style="font-size:.8rem;">Admin acompanha e altera estado</div>
+                    </div>
+                    <div class="col d-flex align-items-center justify-content-center text-muted">
+                        <i class="bi bi-arrow-right fs-4"></i>
+                    </div>
+                    <div class="col flow-step">
+                        <div class="step-num">4</div>
+                        <div class="fw-semibold small">Chat</div>
+                        <div class="text-muted" style="font-size:.8rem;">Comunicação em tempo real</div>
+                    </div>
+                    <div class="col d-flex align-items-center justify-content-center text-muted">
+                        <i class="bi bi-arrow-right fs-4"></i>
+                    </div>
+                    <div class="col flow-step">
+                        <div class="step-num">5</div>
+                        <div class="fw-semibold small">Entrega</div>
+                        <div class="text-muted" style="font-size:.8rem;">Pedido concluído e faturado</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Informações académicas -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-mortarboard me-2"></i>Informações Académicas</h5>
-            </div>
-            <div class="card-body p-4">
-                <table class="table table-borderless">
-                    <tbody>
-                        <tr>
-                            <td class="fw-bold text-muted" style="width:200px">Instituição</td>
-                            <td>Instituto Politécnico de Tomar (IPT)</td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold text-muted">Curso</td>
-                            <td>Licenciatura em Engenharia Informática</td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold text-muted">Unidade Curricular</td>
-                            <td>Desenvolvimento Web</td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold text-muted">Ano / Semestre</td>
-                            <td>2º Ano, 2º Semestre</td>
-                        </tr>
-                        <tr>
-                            <td class="fw-bold text-muted">Ano Letivo</td>
-                            <td>2024/2025</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <div class="row g-4 mb-4">
 
-        <!-- Autores -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0"><i class="bi bi-people me-2"></i>Autores</h5>
-            </div>
-            <div class="card-body p-4">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center gap-3 p-3 border rounded">
-                            <i class="bi bi-person-circle display-6 text-primary"></i>
+            <!-- Informações Académicas -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-mortarboard text-primary me-2"></i>Ficha Académica
+                        </h5>
+
+                        <div class="info-row">
+                            <div class="info-icon bg-primary bg-opacity-10">
+                                <i class="bi bi-building text-primary"></i>
+                            </div>
                             <div>
-                                <p class="fw-bold mb-0">Aluno 1</p>
-                                <p class="text-muted small mb-0">Nº: XXXXX</p>
+                                <div class="text-muted" style="font-size:.75rem;">Instituição</div>
+                                <div class="fw-semibold small">Instituto Politécnico de Tomar</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center gap-3 p-3 border rounded">
-                            <i class="bi bi-person-circle display-6 text-primary"></i>
+
+                        <div class="info-row">
+                            <div class="info-icon bg-success bg-opacity-10">
+                                <i class="bi bi-journal-code text-success"></i>
+                            </div>
                             <div>
-                                <p class="fw-bold mb-0">Aluno 2</p>
-                                <p class="text-muted small mb-0">Nº: XXXXX</p>
+                                <div class="text-muted" style="font-size:.75rem;">Curso</div>
+                                <div class="fw-semibold small">Licenciatura em Engenharia Informática</div>
                             </div>
                         </div>
+
+                        <div class="info-row">
+                            <div class="info-icon bg-warning bg-opacity-10">
+                                <i class="bi bi-laptop text-warning"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted" style="font-size:.75rem;">Unidade Curricular</div>
+                                <div class="fw-semibold small">Desenvolvimento Web</div>
+                            </div>
+                        </div>
+
+                        <div class="info-row">
+                            <div class="info-icon bg-info bg-opacity-10">
+                                <i class="bi bi-calendar3 text-info"></i>
+                            </div>
+                            <div>
+                                <div class="text-muted" style="font-size:.75rem;">Ano / Semestre / Letivo</div>
+                                <div class="fw-semibold small">2º Ano · 2º Semestre · 2024/2025</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Autores -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-people text-success me-2"></i>Autores
+                        </h5>
+
+                        <div class="d-flex align-items-center gap-3 p-3 rounded mb-3" style="background:#f0f7ff; border:1px solid #cce0ff;">
+                            <div class="avatar-circle" style="background:linear-gradient(135deg,#0d6efd,#6610f2); color:white;">DG</div>
+                            <div>
+                                <div class="fw-bold">Diogo Godinho</div>
+                                <div class="text-muted small">Nº 27220</div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-3 p-3 rounded" style="background:#f0fff4; border:1px solid #b3e6c8;">
+                            <div class="avatar-circle" style="background:linear-gradient(135deg,#198754,#20c997); color:white;">KK</div>
+                            <div>
+                                <div class="fw-bold">Kanstantsin Khomchanka</div>
+                                <div class="text-muted small">Nº 27230</div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Credenciais de acesso -->
+        <!-- Credenciais -->
         <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-warning text-dark">
-                <h5 class="mb-0"><i class="bi bi-key me-2"></i>Credenciais de Acesso (Demonstração)</h5>
-            </div>
             <div class="card-body p-4">
+                <h5 class="fw-bold mb-1">
+                    <i class="bi bi-key text-warning me-2"></i>Credenciais de Demonstração
+                </h5>
+                <p class="text-muted small mb-3">Use estas contas para explorar as funcionalidades da plataforma.</p>
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <div class="card border-danger">
-                            <div class="card-header bg-danger text-white py-2">
-                                <strong><i class="bi bi-shield-fill me-1"></i>Administrador</strong>
+                        <div class="cred-card border border-danger">
+                            <div class="cred-header bg-danger text-white">
+                                <i class="bi bi-shield-fill-check me-1"></i> Administrador — acesso total
                             </div>
-                            <div class="card-body">
-                                <p class="mb-1"><strong>Email:</strong> <code>admin@webservicos.pt</code></p>
-                                <p class="mb-0"><strong>Password:</strong> <code>Admin@123</code></p>
+                            <div class="cred-body">
+                                <div class="cred-field">
+                                    <div>
+                                        <div class="cred-label">Email</div>
+                                        <code>admin@webservicos.pt</code>
+                                    </div>
+                                </div>
+                                <div class="cred-field">
+                                    <div>
+                                        <div class="cred-label">Password</div>
+                                        <code>Admin@123</code>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card border-secondary">
-                            <div class="card-header bg-secondary text-white py-2">
-                                <strong><i class="bi bi-person me-1"></i>Cliente</strong>
+                        <div class="cred-card border border-secondary">
+                            <div class="cred-header bg-secondary text-white">
+                                <i class="bi bi-person-fill me-1"></i> Cliente — submeter pedidos
                             </div>
-                            <div class="card-body">
-                                <p class="mb-1"><strong>Email:</strong> <code>cliente@webservicos.pt</code></p>
-                                <p class="mb-0"><strong>Password:</strong> <code>Cliente@123</code></p>
+                            <div class="cred-body">
+                                <div class="cred-field">
+                                    <div>
+                                        <div class="cred-label">Email</div>
+                                        <code>cliente@webservicos.pt</code>
+                                    </div>
+                                </div>
+                                <div class="cred-field">
+                                    <div>
+                                        <div class="cred-label">Password</div>
+                                        <code>Cliente@123</code>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -111,64 +287,71 @@
             </div>
         </div>
 
-        <!-- Tecnologias e bibliotecas -->
+        <!-- Stack tecnológico -->
         <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-info text-dark">
-                <h5 class="mb-0"><i class="bi bi-stack me-2"></i>Tecnologias e Bibliotecas Utilizadas</h5>
-            </div>
             <div class="card-body p-4">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <h6 class="fw-bold">Framework Principal</h6>
-                        <ul class="list-unstyled">
-                            <li><i class="bi bi-dot text-primary"></i> <strong>ASP.NET Core 8.0</strong> — Razor Pages (aplicação web)</li>
-                            <li><i class="bi bi-dot text-primary"></i> <strong>ASP.NET Core MVC</strong> — API REST</li>
-                            <li><i class="bi bi-dot text-primary"></i> <strong>Entity Framework Core 8.0</strong> — ORM e acesso a dados</li>
-                            <li><i class="bi bi-dot text-primary"></i> <strong>LINQ</strong> — Consultas tipadas à base de dados</li>
-                            <li><i class="bi bi-dot text-primary"></i> <strong>SignalR</strong> — Notificações em tempo real</li>
-                            <li><i class="bi bi-dot text-primary"></i> <strong>ASP.NET Core Identity</strong> — Autenticação e autorização</li>
-                        </ul>
+                <h5 class="fw-bold mb-3">
+                    <i class="bi bi-stack text-info me-2"></i>Stack Tecnológico
+                </h5>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="text-muted small fw-semibold text-uppercase mb-2">Backend</div>
+                        <span class="tech-badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
+                            <i class="bi bi-microsoft"></i> ASP.NET Core 8
+                        </span>
+                        <span class="tech-badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
+                            <i class="bi bi-database"></i> Entity Framework Core
+                        </span>
+                        <span class="tech-badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
+                            <i class="bi bi-broadcast"></i> SignalR
+                        </span>
+                        <span class="tech-badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
+                            <i class="bi bi-shield-lock"></i> ASP.NET Identity
+                        </span>
                     </div>
-                    <div class="col-md-6">
-                        <h6 class="fw-bold">Bibliotecas Frontend</h6>
-                        <ul class="list-unstyled">
-                            <li><i class="bi bi-dot text-success"></i>
-                                <strong>Bootstrap 5.3.2</strong> — Framework CSS
-                                (<a href="https://getbootstrap.com" target="_blank">getbootstrap.com</a>)
-                            </li>
-                            <li><i class="bi bi-dot text-success"></i>
-                                <strong>Bootstrap Icons 1.11.3</strong> — Ícones SVG
-                                (<a href="https://icons.getbootstrap.com" target="_blank">icons.getbootstrap.com</a>)
-                            </li>
-                            <li><i class="bi bi-dot text-success"></i>
-                                <strong>jQuery 3.7.1</strong> — Biblioteca JavaScript
-                                (<a href="https://jquery.com" target="_blank">jquery.com</a>)
-                            </li>
-                            <li><i class="bi bi-dot text-success"></i>
-                                <strong>Microsoft SignalR JS 8.0</strong> — Cliente SignalR
-                                (<a href="https://learn.microsoft.com/aspnet/signalr" target="_blank">learn.microsoft.com</a>)
-                            </li>
-                        </ul>
-                        <h6 class="fw-bold mt-3">Base de Dados</h6>
-                        <ul class="list-unstyled">
-                            <li><i class="bi bi-dot text-warning"></i>
-                                <strong>SQLite</strong> — Motor de base de dados local
-                                (<a href="https://sqlite.org" target="_blank">sqlite.org</a>)
-                            </li>
-                        </ul>
+                    <div class="col-md-4">
+                        <div class="text-muted small fw-semibold text-uppercase mb-2">Frontend</div>
+                        <span class="tech-badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">
+                            <i class="bi bi-bootstrap"></i> Bootstrap 5.3
+                        </span>
+                        <span class="tech-badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">
+                            <i class="bi bi-grid-1x2"></i> Bootstrap Icons
+                        </span>
+                        <span class="tech-badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">
+                            <i class="bi bi-filetype-js"></i> jQuery 3.7
+                        </span>
+                        <span class="tech-badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">
+                            <i class="bi bi-palette"></i> Tailwind CSS
+                        </span>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-muted small fw-semibold text-uppercase mb-2">Dados & API</div>
+                        <span class="tech-badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25">
+                            <i class="bi bi-archive"></i> SQLite
+                        </span>
+                        <span class="tech-badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25">
+                            <i class="bi bi-code-slash"></i> REST API (MVC)
+                        </span>
+                        <span class="tech-badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25">
+                            <i class="bi bi-file-earmark-code"></i> Swagger / OpenAPI
+                        </span>
+                        <span class="tech-badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25">
+                            <i class="bi bi-search"></i> LINQ
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Repositório GitHub -->
-        <div class="card border-0 shadow-sm">
+        <!-- GitHub -->
+        <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#1a1a2e,#16213e); color:white;">
             <div class="card-body p-4 text-center">
-                <i class="bi bi-github display-4 mb-3"></i>
-                <h5 class="fw-bold">Código Fonte</h5>
-                <p class="text-muted">O código fonte do projeto está disponível no repositório GitHub.</p>
-                <a href="https://github.com/SEU-USERNAME/WebServicos" target="_blank" class="btn btn-dark px-4">
-                    <i class="bi bi-github me-2"></i>Ver no GitHub
+                <i class="bi bi-github" style="font-size:2.5rem;"></i>
+                <h5 class="fw-bold mt-2 mb-1">Código Fonte no GitHub</h5>
+                <p class="mb-3 opacity-75 small">Repositório com todo o código do projeto, histórico de commits e documentação.</p>
+                <a href="https://github.com/diogogodinhowaze/projetodw" target="_blank"
+                   class="btn btn-light px-4">
+                    <i class="bi bi-github me-2"></i>Ver Repositório
                 </a>
             </div>
         </div>
