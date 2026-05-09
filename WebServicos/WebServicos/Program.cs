@@ -68,7 +68,11 @@ builder.Services.ConfigureApplicationCookie(options =>
 var app = builder.Build();
 
 // ── Pipeline HTTP ──
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+else
 {
     app.UseExceptionHandler("/Erro/Geral");
     app.UseHsts();
@@ -76,8 +80,6 @@ if (!app.Environment.IsDevelopment())
 
 // Páginas de erro personalizadas
 app.UseStatusCodePagesWithRedirects("/Erro/{0}");
-
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
