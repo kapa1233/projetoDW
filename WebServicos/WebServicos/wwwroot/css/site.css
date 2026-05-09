@@ -454,27 +454,22 @@ code {
     margin-bottom: 3rem;
 }
 
-/* Container do iframe YouTube */
+/* Canvas de fundo interativo */
 .yt-bg-wrapper {
     position: absolute;
     inset: 0;
-    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    display: block;
     pointer-events: none;
     z-index: 0;
 }
 
-.yt-bg-wrapper iframe,
-#ytBg iframe {
-    position: absolute;
-    pointer-events: none;
-}
-
-/* Overlay semitransparente sobre o vídeo */
+/* Overlay escuro subtil sobre o canvas */
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(248, 250, 252, 0.82);
-    backdrop-filter: blur(1px);
+    background: rgba(6, 13, 31, 0.28);
     z-index: 1;
 }
 
@@ -489,10 +484,10 @@ code {
 
 /* Badge topo do hero */
 .hero-badge {
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
+    background: rgba(96, 165, 250, 0.12);
+    border: 1px solid rgba(96, 165, 250, 0.35);
     font-size: 0.78rem;
-    color: #2563eb;
+    color: #93c5fd;
     font-weight: 600;
 }
 
@@ -500,7 +495,7 @@ code {
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #2563eb;
+    background: #60a5fa;
     display: inline-block;
     animation: pulse-dot 2s ease-in-out infinite;
 }
@@ -515,7 +510,7 @@ code {
     font-size: clamp(2rem, 5vw, 3.4rem);
     font-weight: 800;
     letter-spacing: -0.04em;
-    color: #0f172a;
+    color: #f1f5f9;
     line-height: 1.1;
     margin-bottom: 1.25rem;
 }
@@ -530,10 +525,21 @@ code {
 /* Subtítulo */
 .hero-subtitle {
     max-width: 460px;
-    color: #475569;
+    color: #94a3b8;
     font-size: 1.05rem;
     line-height: 1.75;
     margin: 0 auto 2rem;
+}
+
+/* Botões do hero em fundo escuro */
+.hero-video-section .btn-outline-secondary {
+    color: #94a3b8;
+    border-color: rgba(148, 163, 184, 0.45);
+}
+.hero-video-section .btn-outline-secondary:hover {
+    background: rgba(148, 163, 184, 0.12);
+    color: #f1f5f9;
+    border-color: #94a3b8;
 }
 
 /* Scroll indicator */
@@ -543,7 +549,7 @@ code {
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    color: #94a3b8;
+    color: #475569;
     font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 0.08em;
@@ -554,7 +560,7 @@ code {
 .scroll-mouse {
     width: 22px;
     height: 36px;
-    border: 2px solid #cbd5e1;
+    border: 2px solid rgba(96, 165, 250, 0.35);
     border-radius: 11px;
     display: flex;
     align-items: flex-start;
@@ -565,7 +571,7 @@ code {
 .scroll-wheel {
     width: 3px;
     height: 7px;
-    background: #94a3b8;
+    background: #60a5fa;
     border-radius: 2px;
     animation: scroll-wheel 2s ease-in-out infinite;
 }

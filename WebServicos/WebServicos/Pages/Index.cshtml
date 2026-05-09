@@ -6,15 +6,13 @@
     var slides = servicos.Chunk(3).ToList();
 }
 
-<!-- ── Hero com vídeo de fundo ── -->
+<!-- ── Hero com canvas interativo ── -->
 <section id="heroSection" class="hero-video-section">
 
-    <!-- Vídeo MP4 fundo -->
-    <video class="yt-bg-wrapper" autoplay muted loop playsinline aria-hidden="true">
-        <source src="/videos/hero.mp4" type="video/mp4">
-    </video>
+    <!-- Canvas com partículas e elementos tech -->
+    <canvas id="heroCanvas" class="yt-bg-wrapper" aria-hidden="true"></canvas>
 
-    <!-- Overlay branco semitransparente -->
+    <!-- Overlay escuro subtil -->
     <div class="hero-overlay"></div>
 
     <!-- Conteúdo por cima do vídeo -->
@@ -238,6 +236,134 @@
 
 @section Scripts {
 <script>
+// ── Canvas interativo: partículas tech ──
+(function () {
+    var canvas = document.getElementById('heroCanvas');
+    var ctx = canvas.getContext('2d');
+    var section = document.getElementById('heroSection');
+    var mouse = { x: -999, y: -999 };
+
+    var SYMBOLS = ['</>', '{ }', '[ ]', '=>', '01', '10', 'API', 'null', 'fn()', 'HTTP', 'git', 'npm', '<div>', 'CSS', '404', 'async', 'JSON'];
+    var DOT_COUNT = 75;
+    var SYM_COUNT = 20;
+    var CONNECT = 130;
+
+    function Dot() { this.init(); }
+    Dot.prototype.init = function () {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.45;
+        this.vy = (Math.random() - 0.5) * 0.45;
+        this.r = Math.random() * 1.6 + 0.4;
+        this.a = Math.random() * 0.45 + 0.25;
+    };
+    Dot.prototype.tick = function () {
+        var dx = mouse.x - this.x, dy = mouse.y - this.y;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 200 && d > 0) {
+            this.vx += (dx / d) * 0.05;
+            this.vy += (dy / d) * 0.05;
+        }
+        this.vx *= 0.97; this.vy *= 0.97;
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.x > canvas.width) this.x = 0;
+        if (this.y < 0) this.y = canvas.height;
+        if (this.y > canvas.height) this.y = 0;
+    };
+    Dot.prototype.draw = function () {
+        ctx.globalAlpha = this.a;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = '#60a5fa';
+        ctx.fill();
+    };
+
+    function Sym() { this.init(); }
+    Sym.prototype.init = function () {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.22;
+        this.vy = (Math.random() - 0.5) * 0.22;
+        this.text = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+        this.size = Math.floor(Math.random() * 8 + 10);
+        this.a = Math.random() * 0.18 + 0.06;
+        this.color = Math.random() < 0.55 ? '#60a5fa' : '#a78bfa';
+    };
+    Sym.prototype.tick = function () {
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < -60) this.x = canvas.width + 60;
+        if (this.x > canvas.width + 60) this.x = -60;
+        if (this.y < -20) this.y = canvas.height + 20;
+        if (this.y > canvas.height + 20) this.y = -20;
+    };
+    Sym.prototype.draw = function () {
+        ctx.globalAlpha = this.a;
+        ctx.font = this.size + "px 'Courier New', monospace";
+        ctx.fillStyle = this.color;
+        ctx.fillText(this.text, this.x, this.y);
+    };
+
+    var dots = [], syms = [];
+
+    function setup() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        dots = []; syms = [];
+        for (var i = 0; i < DOT_COUNT; i++) dots.push(new Dot());
+        for (var j = 0; j < SYM_COUNT; j++) syms.push(new Sym());
+    }
+
+    function drawLines() {
+        for (var i = 0; i < dots.length; i++) {
+            for (var j = i + 1; j < dots.length; j++) {
+                var dx = dots[i].x - dots[j].x, dy = dots[i].y - dots[j].y;
+                var d = Math.sqrt(dx * dx + dy * dy);
+                if (d < CONNECT) {
+                    ctx.globalAlpha = (1 - d / CONNECT) * 0.28;
+                    ctx.strokeStyle = '#60a5fa';
+                    ctx.lineWidth = 0.6;
+                    ctx.beginPath();
+                    ctx.moveTo(dots[i].x, dots[i].y);
+                    ctx.lineTo(dots[j].x, dots[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    function frame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        var bg = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        bg.addColorStop(0, '#060d1f');
+        bg.addColorStop(1, '#0d1b2a');
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        syms.forEach(function (s) { s.tick(); s.draw(); });
+        drawLines();
+        dots.forEach(function (d) { d.tick(); d.draw(); });
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(frame);
+    }
+
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(setup, 150);
+    });
+    section.addEventListener('mousemove', function (e) {
+        var r = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - r.left;
+        mouse.y = e.clientY - r.top;
+    });
+    section.addEventListener('mouseleave', function () { mouse.x = -999; mouse.y = -999; });
+
+    setup();
+    frame();
+})();
+
     // ── CountUp nas estatísticas ──
     function countUp(el, target, duration) {
         var start = performance.now();
