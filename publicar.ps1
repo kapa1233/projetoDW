@@ -5,10 +5,25 @@
 
 $ErrorActionPreference = "Stop"
 
-$appPath     = "C:\WebServicos"
-$apiPath     = "C:\WebServicosAPI"
+$appPath     = "C:\WebServicos_pub"
+$apiPath     = "C:\WebServicosAPI_pub"
 $projectApp  = "$PSScriptRoot\WebServicos\WebServicos"
 $projectApi  = "$PSScriptRoot\WebServicos\WebServicos.API"
+
+# ── Parar e matar qualquer processo WebServicos a correr ──
+foreach ($svc in @("WebServicos", "WebServicosAPI")) {
+    $s = Get-Service $svc -ErrorAction SilentlyContinue
+    if ($s) {
+        Write-Host "==> A parar servico $svc..." -ForegroundColor Yellow
+        sc.exe stop $svc 2>&1 | Out-Null
+        Start-Sleep 2
+    }
+}
+# Matar processos pelo nome caso ainda estejam ativos
+@("WebServicos", "WebServicos.API") | ForEach-Object {
+    Get-Process -Name $_ -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+}
+Start-Sleep 1
 
 # ── Publicar App principal ──
 Write-Host "==> A publicar App principal..." -ForegroundColor Cyan
