@@ -12,7 +12,7 @@ using WebServicos.Data;
 namespace WebServicos.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260510003440_InitialCreate")]
+    [Migration("20260510005310_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -170,7 +170,7 @@ namespace WebServicos.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("DataRegisto")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -297,7 +297,7 @@ namespace WebServicos.Migrations
                         .HasColumnType("character varying(2000)");
 
                     b.Property<DateTime>("DataHora")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("Lida")
                         .HasColumnType("boolean");
@@ -331,7 +331,7 @@ namespace WebServicos.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("DataPedido")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
@@ -353,7 +353,7 @@ namespace WebServicos.Migrations
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime?>("PrazoEstimado")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("TituloProjeto")
                         .IsRequired()
@@ -376,10 +376,10 @@ namespace WebServicos.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("DataDecisao")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("DataPropostas")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("DecididoPorId")
                         .HasColumnType("text");
@@ -455,7 +455,7 @@ namespace WebServicos.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("DataCriacao")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Descricao")
                         .IsRequired()

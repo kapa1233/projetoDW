@@ -12,6 +12,8 @@ namespace WebServicos.Data
     {
         public ApplicationDbContext CreateDbContext(string[] args)
         {
+            // Usa timestamp without time zone (sem exigência de UTC) nas migrations
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             var connStr = Environment.GetEnvironmentVariable("DATABASE_URL")
                 ?? "Host=localhost;Database=webservicos;Username=postgres;Password=postgres";

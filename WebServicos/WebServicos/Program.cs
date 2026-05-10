@@ -4,6 +4,9 @@ using WebServicos.Data;
 using WebServicos.Hubs;
 using WebServicos.Models;
 
+// Permite DateTime sem Kind=Utc no seed data das migrations do PostgreSQL
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ── Suporte a Windows Service (no-op noutras plataformas) ──

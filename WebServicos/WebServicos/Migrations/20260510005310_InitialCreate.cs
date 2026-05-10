@@ -34,7 +34,7 @@ namespace WebServicos.Migrations
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
                     NomeCompleto = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
-                    DataRegisto = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DataRegisto = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -183,8 +183,8 @@ namespace WebServicos.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TituloProjeto = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     Descricao = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
-                    DataPedido = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    PrazoEstimado = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DataPedido = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    PrazoEstimado = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Estado = table.Column<int>(type: "integer", nullable: false),
                     OrcamentoTotal = table.Column<decimal>(type: "numeric(10,2)", nullable: true),
                     Observacoes = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
@@ -212,7 +212,7 @@ namespace WebServicos.Migrations
                     Descricao = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
                     PrecoBase = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     Ativo = table.Column<bool>(type: "boolean", nullable: false),
-                    DataCriacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DataCriacao = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     Icone = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     CategoriaServicoId = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -236,7 +236,7 @@ namespace WebServicos.Migrations
                     PedidoId = table.Column<int>(type: "integer", nullable: false),
                     RemetenteId = table.Column<string>(type: "text", nullable: false),
                     Conteudo = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
-                    DataHora = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DataHora = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     Lida = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -266,10 +266,10 @@ namespace WebServicos.Migrations
                     TituloProjetoProposto = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     DescricaoProposta = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
                     ObservacoesProposta = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    DataPropostas = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DataPropostas = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     Estado = table.Column<int>(type: "integer", nullable: false),
                     MotivoRejeicao = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    DataDecisao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DataDecisao = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     DecididoPorId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
