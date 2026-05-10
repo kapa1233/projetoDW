@@ -10,19 +10,27 @@ var builder = WebApplication.CreateBuilder(args);
 // Permite executar a aplicação como serviço Windows sem janela de consola
 builder.Host.UseWindowsService();
 
-// ── Base de dados SQLite ──
-// Resolve o caminho relativo para absoluto, necessário quando corre como Windows Service
-// (o working directory do serviço não é o diretório da aplicação)
-var rawConn = builder.Configuration.GetConnectionString("DefaultConnection")!;
-const string sqlitePrefix = "Data Source=";
-var dbConn = rawConn;
-if (rawConn.StartsWith(sqlitePrefix, StringComparison.OrdinalIgnoreCase))
+// ── Base de dados ──
+// Em produção (Render) usa PostgreSQL via DATABASE_URL; localmente usa SQLite
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+if (databaseUrl != null)
 {
-    var dbFile = rawConn[sqlitePrefix.Length..];
-    if (!Path.IsPathRooted(dbFile))
-        dbConn = sqlitePrefix + Path.Combine(AppContext.BaseDirectory, dbFile);
+    builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(databaseUrl));
 }
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(dbConn));
+else
+{
+    // SQLite local: resolve caminho relativo para absoluto (necessário como Windows Service)
+    var rawConn = builder.Configuration.GetConnectionString("DefaultConnection")!;
+    const string sqlitePrefix = "Data Source=";
+    var dbConn = rawConn;
+    if (rawConn.StartsWith(sqlitePrefix, StringComparison.OrdinalIgnoreCase))
+    {
+        var dbFile = rawConn[sqlitePrefix.Length..];
+        if (!Path.IsPathRooted(dbFile))
+            dbConn = sqlitePrefix + Path.Combine(AppContext.BaseDirectory, dbFile);
+    }
+    builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(dbConn));
+}
 
 // ── ASP.NET Core Identity ──
 // Configura autenticação com utilizadores personalizados (ApplicationUser) e roles
@@ -101,7 +109,10 @@ app.MapHub<NotificacoesHub>("/hub/notificacoes"); // Endpoint WebSocket do Signa
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();                              // Cria/atualiza o schema da BD
+    if (Environment.GetEnvironmentVariable("DATABASE_URL") != null)
+        db.Database.Migrate();        // PostgreSQL produção: aplica migrações
+    else
+        db.Database.EnsureCreated(); // SQLite local: cria schema diretamente
     await DbSeeder.SeedAsync(scope.ServiceProvider);   // Cria roles e utilizadores padrão
 }
 

@@ -8,19 +8,26 @@ var builder = WebApplication.CreateBuilder(args);
 // ── Suporte a Windows Service (no-op noutras plataformas como Linux/Docker) ──
 builder.Host.UseWindowsService();
 
-// ── Base de dados SQLite ──
-// Resolve o caminho relativo para absoluto, necessário quando corre como Windows Service
-// Em Docker, a variável de ambiente ConnectionStrings__DefaultConnection sobrepõe este valor
-var rawConn = builder.Configuration.GetConnectionString("DefaultConnection")!;
-const string sqlitePrefix = "Data Source=";
-var dbConn = rawConn;
-if (rawConn.StartsWith(sqlitePrefix, StringComparison.OrdinalIgnoreCase))
+// ── Base de dados ──
+// Em produção (Render) usa PostgreSQL via DATABASE_URL; localmente usa SQLite
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+if (databaseUrl != null)
 {
-    var dbFile = rawConn[sqlitePrefix.Length..];
-    if (!Path.IsPathRooted(dbFile))
-        dbConn = sqlitePrefix + Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, dbFile));
+    builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(databaseUrl));
 }
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(dbConn));
+else
+{
+    var rawConn = builder.Configuration.GetConnectionString("DefaultConnection")!;
+    const string sqlitePrefix = "Data Source=";
+    var dbConn = rawConn;
+    if (rawConn.StartsWith(sqlitePrefix, StringComparison.OrdinalIgnoreCase))
+    {
+        var dbFile = rawConn[sqlitePrefix.Length..];
+        if (!Path.IsPathRooted(dbFile))
+            dbConn = sqlitePrefix + Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, dbFile));
+    }
+    builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(dbConn));
+}
 
 // ── ASP.NET Core Identity ──
 // Necessário para aceder às tabelas de utilizadores partilhadas com a app principal
@@ -53,7 +60,10 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
+    if (Environment.GetEnvironmentVariable("DATABASE_URL") != null)
+        db.Database.Migrate();        // PostgreSQL produção: aplica migrações
+    else
+        db.Database.EnsureCreated(); // SQLite local: cria schema diretamente
 }
 
 // ── Swagger sempre ativo ──
