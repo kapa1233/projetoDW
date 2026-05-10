@@ -389,8 +389,9 @@
     <li><a href="#sec11">Tecnologias e Dependências</a></li>
     <li><a href="#sec12">Padrões de Desenvolvimento</a></li>
     <li><a href="#sec13">Dificuldades e Soluções</a></li>
-    <li><a href="#sec14">Conclusão</a></li>
-    <li><a href="#sec15">Referências</a></li>
+    <li><a href="#sec14">Melhorias e Evolução da Plataforma</a></li>
+    <li><a href="#sec15">Conclusão</a></li>
+    <li><a href="#sec16">Referências</a></li>
   </ol>
 </div>
 
@@ -1255,9 +1256,112 @@ ENTRYPOINT ["dotnet", "WebServicos.API.dll"]</pre>
   </tr>
 </table>
 
-<!-- ═══════════════════════════════════════════════════════════ 14. CONCLUSÃO -->
+<!-- ═══════════════════════════════════════════════════════════ 14. MELHORIAS -->
 <div class="page-break"></div>
-<h1 class="section-title" id="sec14">14. Conclusão</h1>
+<h1 class="section-title" id="sec14">14. Melhorias e Evolução da Plataforma</h1>
+
+<p>Ao longo do desenvolvimento, a plataforma passou por melhorias concretas que a aproximam de um produto real. Esta secção documenta as evoluções mais significativas face à versão inicial.</p>
+
+<h2 class="sub-title">14.1 Persistência de Dados com PostgreSQL</h2>
+
+<p>A alteração mais impactante foi a <strong>migração de SQLite para PostgreSQL</strong> como base de dados de produção. Esta mudança resolve um problema fundamental que existia na versão inicial da plataforma publicada na Render.com.</p>
+
+<h3 class="sub-sub">O problema com SQLite na cloud</h3>
+
+<p>Na versão original, a base de dados era um ficheiro SQLite (<code>webservicos.db</code>) armazenado no sistema de ficheiros do container Docker. O plano gratuito da Render não fornece disco persistente, o que significa que:</p>
+
+<ul>
+  <li>Cada novo <strong>deploy apagava toda a base de dados</strong> — utilizadores registados, pedidos criados e mensagens de chat desapareciam</li>
+  <li>O serviço <strong>adormece após 15 minutos</strong> de inatividade no plano gratuito; ao acordar, o container reiniciava e o ficheiro SQLite era destruído</li>
+  <li>Apenas as contas de demonstração (admin e cliente demo) sobreviviam, porque são recriadas pelo seed automático a cada arranque</li>
+  <li>Era impossível demonstrar continuidade — qualquer utilizador que se registasse antes de uma apresentação poderia já não existir no dia seguinte</li>
+</ul>
+
+<div class="warn-box">
+  <strong>Exemplo concreto:</strong> Um utilizador registava-se, submetia um pedido e trocava mensagens com o admin. No dia seguinte, ao tentar fazer login, a conta já não existia — porque entretanto houve um novo deploy ou o container reiniciou por inatividade.
+</div>
+
+<h3 class="sub-sub">A solução: PostgreSQL gerido pela Render</h3>
+
+<p>A solução foi integrar uma base de dados <strong>PostgreSQL gerida pela própria Render</strong>, independente dos containers das aplicações. O PostgreSQL é um serviço separado com disco persistente próprio — os dados vivem fora dos containers e sobrevivem a qualquer número de deploys, reinícios ou hibernações.</p>
+
+<table class="data-table">
+  <tr><th></th><th>Antes (SQLite)</th><th>Depois (PostgreSQL)</th></tr>
+  <tr><td><strong>Onde vivem os dados</strong></td><td>Ficheiro no container Docker</td><td>Servidor PostgreSQL dedicado na Render</td></tr>
+  <tr><td><strong>Utilizadores registados</strong></td><td>Apagados a cada deploy/reinício</td><td><strong>Persistem para sempre</strong></td></tr>
+  <tr><td><strong>Pedidos e mensagens</strong></td><td>Perdidos com o container</td><td><strong>Guardados permanentemente</strong></td></tr>
+  <tr><td><strong>Após hibernação (15 min)</strong></td><td>Base de dados reiniciada do zero</td><td>Dados intactos — só o container acorda</td></tr>
+  <tr><td><strong>Após novo deploy</strong></td><td>Tudo apagado</td><td>Apenas o schema é atualizado (migrations)</td></tr>
+  <tr><td><strong>Partilha entre serviços</strong></td><td>Impossível (ficheiro local)</td><td>App web e API acedem à mesma BD</td></tr>
+</table>
+
+<h3 class="sub-sub">Implementação técnica</h3>
+
+<p>A integração foi feita de forma a <strong>não quebrar o desenvolvimento local</strong>: a aplicação deteta automaticamente se está em produção (presença da variável <code>DATABASE_URL</code> injetada pela Render) e escolhe o provider adequado:</p>
+
+<pre><span class="k">var</span> databaseUrl = Environment.GetEnvironmentVariable(<span class="s">"DATABASE_URL"</span>);
+<span class="k">if</span> (databaseUrl != <span class="k">null</span>)
+{
+    <span class="c">// Produção: PostgreSQL gerido pela Render</span>
+    <span class="k">var</span> npgsqlConn = ConvertDatabaseUrl(databaseUrl);
+    options.UseNpgsql(npgsqlConn);
+}
+<span class="k">else</span>
+{
+    <span class="c">// Local: SQLite — sem necessidade de instalar PostgreSQL</span>
+    options.UseSqlite(sqliteConnStr);
+}</pre>
+
+<p>O ficheiro <code>render.yaml</code> foi atualizado para declarar a base de dados e ligar automaticamente os dois serviços (app web e API) à mesma instância PostgreSQL:</p>
+
+<pre>databases:
+  - name: webservicos-db
+    plan: free
+
+services:
+  - name: webservicos
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: webservicos-db
+          property: connectionString</pre>
+
+<p>A gestão do schema é feita pelo <strong>EF Core Migrations</strong>: no arranque em produção, <code>db.Database.Migrate()</code> aplica automaticamente quaisquer alterações de schema pendentes, garantindo que a base de dados está sempre sincronizada com o código sem intervenção manual.</p>
+
+<h2 class="sub-title">14.2 Outras Melhorias de Produto</h2>
+
+<table class="data-table">
+  <tr><th>Melhoria</th><th>Descrição</th><th>Impacto</th></tr>
+  <tr>
+    <td><strong>Página "Sobre" redesenhada</strong></td>
+    <td>Substituição da tabela estática por layout com hero, diagrama de fluxo, cards de autores com avatares, badges de tecnologias e secção GitHub</td>
+    <td>Mais apelativa para avaliação académica; auto-explicativa para visitantes</td>
+  </tr>
+  <tr>
+    <td><strong>Relatório técnico descarregável</strong></td>
+    <td>Botão "Descarregar Relatório" na página Sobre serve o HTML diretamente de <code>wwwroot/</code></td>
+    <td>Documentação acessível a partir da própria plataforma</td>
+  </tr>
+  <tr>
+    <td><strong>Comentários XML em todo o código</strong></td>
+    <td>Adição de <code>/// &lt;summary&gt;</code> em todas as classes, métodos e propriedades; comentários inline na lógica não óbvia</td>
+    <td>Código legível no IntelliSense; facilita a avaliação e manutenção</td>
+  </tr>
+  <tr>
+    <td><strong>Animação de partículas na homepage</strong></td>
+    <td>Canvas HTML5 interativo com partículas que formam conexões ao aproximar o rato</td>
+    <td>Estética tech moderna, diferenciadora visualmente</td>
+  </tr>
+  <tr>
+    <td><strong>Deploy automático (CI/CD)</strong></td>
+    <td>Qualquer <code>git push</code> para o repositório desencadeia automaticamente um novo build e deploy na Render</td>
+    <td>Zero intervenção manual para publicar novas versões</td>
+  </tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════ 15. CONCLUSÃO -->
+<div class="page-break"></div>
+<h1 class="section-title" id="sec15">15. Conclusão</h1>
 
 <p>O projeto KapaDW concretizou com sucesso os objetivos definidos para a unidade curricular de Desenvolvimento Web. A plataforma implementada vai além dos requisitos mínimos de um CRUD, incorporando funcionalidades características de sistemas web profissionais: comunicação em tempo real, workflows de aprovação, documentação de API, e deployment em cloud com CI/CD.</p>
 
@@ -1277,7 +1381,7 @@ ENTRYPOINT ["dotnet", "WebServicos.API.dll"]</pre>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ 15. REFERÊNCIAS -->
-<h1 class="section-title" id="sec15">15. Referências</h1>
+<h1 class="section-title" id="sec16">16. Referências</h1>
 
 <ul style="list-style: none; padding:0;">
   <li style="padding: .4rem 0; border-bottom: 1px solid #f0f0f0;">
