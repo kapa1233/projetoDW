@@ -13,7 +13,8 @@ builder.Host.UseWindowsService();
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 if (databaseUrl != null)
 {
-    builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(databaseUrl));
+    var npgsqlConn = ConvertDatabaseUrl(databaseUrl);
+    builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(npgsqlConn));
 }
 else
 {
@@ -81,3 +82,15 @@ app.UseAuthorization();         // Verificar autorização (roles)
 app.MapControllers();           // Mapear rotas dos controllers
 
 app.Run();
+
+static string ConvertDatabaseUrl(string url)
+{
+    var uri = new Uri(url);
+    var userInfo = uri.UserInfo.Split(':', 2);
+    var host = uri.Host;
+    var port = uri.Port > 0 ? uri.Port : 5432;
+    var database = uri.AbsolutePath.TrimStart('/');
+    var username = userInfo[0];
+    var password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : "";
+    return $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+}
