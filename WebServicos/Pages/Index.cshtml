@@ -1,0 +1,126 @@
+@page
+@model WebServicos.Pages.IndexModel
+@{
+    ViewData["Title"] = "Início";
+}
+
+<!-- Hero Section -->
+<section class="hero-section text-center text-white py-5 mb-5 rounded-4"
+         style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);">
+    <div class="py-3">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="bi bi-globe2 me-2"></i>WebServicos
+        </h1>
+        <p class="lead mb-4">
+            Criamos websites profissionais que impulsionam o seu negócio.<br />
+            Do conceito à publicação — com qualidade e rigor.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            <a asp-page="/Servicos/Index" class="btn btn-light btn-lg px-4">
+                <i class="bi bi-grid me-2"></i>Ver Serviços
+            </a>
+            @if (!User.Identity!.IsAuthenticated)
+            {
+                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-light btn-lg px-4">
+                    <i class="bi bi-person-plus me-2"></i>Pedir Orçamento
+                </a>
+            }
+            else
+            {
+                <a asp-page="/Pedidos/Create" class="btn btn-outline-light btn-lg px-4">
+                    <i class="bi bi-plus-circle me-2"></i>Novo Pedido
+                </a>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Estatísticas -->
+<div class="row text-center mb-5 g-3">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <i class="bi bi-check-circle-fill text-success fs-1"></i>
+                <h3 class="mt-2 fw-bold">@Model.TotalPedidosConcluidos</h3>
+                <p class="text-muted mb-0">Projetos Concluídos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <i class="bi bi-people-fill text-primary fs-1"></i>
+                <h3 class="mt-2 fw-bold">@Model.TotalClientes</h3>
+                <p class="text-muted mb-0">Clientes Satisfeitos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <i class="bi bi-grid-fill text-warning fs-1"></i>
+                <h3 class="mt-2 fw-bold">@Model.TotalServicos</h3>
+                <p class="text-muted mb-0">Serviços Disponíveis</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <i class="bi bi-star-fill text-danger fs-1"></i>
+                <h3 class="mt-2 fw-bold">5★</h3>
+                <p class="text-muted mb-0">Avaliação Média</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Serviços em destaque -->
+<section class="mb-5">
+    <h2 class="text-center fw-bold mb-4">Os Nossos Serviços</h2>
+    <div class="row g-4">
+        @foreach (var servico in Model.ServicosDestaque)
+        {
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-card">
+                    <div class="card-body text-center p-4">
+                        <i class="bi @servico.Icone fs-1 text-primary mb-3"></i>
+                        <h5 class="card-title fw-bold">@servico.Nome</h5>
+                        <p class="card-text text-muted">@servico.Descricao</p>
+                        <p class="fw-bold text-primary fs-5">A partir de @servico.PrecoBase.ToString("C", new System.Globalization.CultureInfo("pt-PT"))</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 text-center pb-4">
+                        <a asp-page="/Servicos/Details" asp-route-id="@servico.Id" class="btn btn-outline-primary">
+                            Saber Mais
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="text-center mt-4">
+        <a asp-page="/Servicos/Index" class="btn btn-primary px-5">Ver Todos os Serviços</a>
+    </div>
+</section>
+
+<!-- Porquê escolher-nos -->
+<section class="bg-light rounded-4 p-5 mb-4">
+    <h2 class="text-center fw-bold mb-4">Porquê escolher a WebServicos?</h2>
+    <div class="row g-4">
+        <div class="col-md-4 text-center">
+            <i class="bi bi-lightning-fill text-warning fs-1"></i>
+            <h5 class="mt-3 fw-bold">Entrega Rápida</h5>
+            <p class="text-muted">Cumprimos prazos. O seu projeto é entregue a tempo e com qualidade.</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <i class="bi bi-phone-fill text-success fs-1"></i>
+            <h5 class="mt-3 fw-bold">Design Responsivo</h5>
+            <p class="text-muted">Todos os nossos websites funcionam perfeitamente em qualquer dispositivo.</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <i class="bi bi-shield-check-fill text-primary fs-1"></i>
+            <h5 class="mt-3 fw-bold">Suporte Contínuo</h5>
+            <p class="text-muted">Estamos sempre disponíveis para ajudar após a entrega do projeto.</p>
+        </div>
+    </div>
+</section>

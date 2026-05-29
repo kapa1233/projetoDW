@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Relatório KapaDW — Plataforma de Gestão de Serviços Web</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    font-size: 11pt;
+    line-height: 1.7;
+    color: #1a1a2e;
+    background: #fff;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    .no-print { display: none; }
+    .page-break { page-break-before: always; }
+    body { font-size: 10.5pt; }
+    a { color: inherit; text-decoration: none; }
+  }
+
+  @page {
+    size: A4;
+    margin: 2.2cm 2.5cm 2.2cm 2.5cm;
+  }
+
+  /* ── CAPA ── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem;
+    background: linear-gradient(160deg, #0d6efd11 0%, #6610f211 100%);
+    border-bottom: 4px solid #0d6efd;
+  }
+  .cover .logo-box {
+    width: 90px; height: 90px;
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto 2rem;
+    box-shadow: 0 8px 32px #0d6efd44;
+  }
+  .cover h1 {
+    font-size: 2rem; font-weight: 800;
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: .5rem;
+  }
+  .cover .subtitle {
+    font-size: 1rem; color: #555; margin-bottom: 3rem;
+  }
+  .cover table {
+    border-collapse: collapse;
+    margin: 0 auto;
+    min-width: 360px;
+  }
+  .cover table td {
+    padding: 6px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 10pt;
+  }
+  .cover table td:first-child {
+    font-weight: 600; color: #555; text-align: right;
+    padding-right: 1.5rem;
+  }
+  .cover table td:last-child { text-align: left; color: #1a1a2e; }
+  .cover .footer-note {
+    position: fixed; bottom: 2rem;
+    font-size: 9pt; color: #999;
+  }
+
+  /* ── CONTENT WRAPPER ── */
+  .content { max-width: 820px; margin: 0 auto; padding: 2rem 3rem; }
+
+  /* ── ÍNDICE ── */
+  .toc { background: #f8f9ff; border-left: 4px solid #0d6efd; border-radius: 0 8px 8px 0; padding: 1.5rem 2rem; margin-bottom: 2rem; }
+  .toc h2 { font-size: 1.1rem; margin-bottom: 1rem; color: #0d6efd; }
+  .toc ol { padding-left: 1.2rem; }
+  .toc li { padding: 2px 0; font-size: 10pt; }
+  .toc li a { color: #333; text-decoration: none; }
+  .toc li a:hover { color: #0d6efd; }
+  .toc ol ol { margin-top: 4px; margin-bottom: 4px; }
+  .toc ol ol li { font-size: 9.5pt; color: #555; }
+
+  /* ── HEADINGS ── */
+  h1.section-title {
+    font-size: 1.6rem; font-weight: 800;
+    color: #0d6efd;
+    border-bottom: 3px solid #0d6efd22;
+    padding-bottom: .5rem;
+    margin: 2.5rem 0 1.2rem;
+  }
+  h2.sub-title {
+    font-size: 1.15rem; font-weight: 700;
+    color: #1a1a2e;
+    margin: 2rem 0 .7rem;
+    padding-left: .8rem;
+    border-left: 3px solid #0d6efd;
+  }
+  h3.sub-sub {
+    font-size: 1rem; font-weight: 600;
+    color: #333; margin: 1.4rem 0 .5rem;
+  }
+
+  /* ── PARAGRAPHS ── */
+  p { margin-bottom: .9rem; text-align: justify; }
+
+  /* ── CODE ── */
+  code {
+    font-family: 'Fira Code', monospace;
+    font-size: 9pt;
+    background: #f0f4ff;
+    color: #0d6efd;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  pre {
+    font-family: 'Fira Code', monospace;
+    font-size: 9pt;
+    background: #1e1e2e;
+    color: #cdd6f4;
+    padding: 1rem 1.2rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1rem 0;
+    line-height: 1.5;
+  }
+  pre .k { color: #cba6f7; } /* keywords */
+  pre .s { color: #a6e3a1; } /* strings */
+  pre .c { color: #6c7086; font-style: italic; } /* comments */
+  pre .t { color: #89b4fa; } /* types */
+
+  /* ── TABLES ── */
+  table.data-table {
+    width: 100%; border-collapse: collapse;
+    margin: 1rem 0 1.5rem; font-size: 10pt;
+  }
+  table.data-table th {
+    background: #0d6efd;
+    color: white;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+  table.data-table td {
+    padding: 7px 12px;
+    border-bottom: 1px solid #e8ecf0;
+    vertical-align: top;
+  }
+  table.data-table tr:nth-child(even) td { background: #f8f9ff; }
+  table.data-table td code { background: #f0f4ff; }
+
+  /* ── BOXES ── */
+  .info-box {
+    background: #e8f4fd;
+    border-left: 4px solid #0d6efd;
+    border-radius: 0 8px 8px 0;
+    padding: .9rem 1.2rem;
+    margin: 1rem 0;
+    font-size: 10pt;
+  }
+  .warn-box {
+    background: #fff8e1;
+    border-left: 4px solid #ffc107;
+    border-radius: 0 8px 8px 0;
+    padding: .9rem 1.2rem;
+    margin: 1rem 0;
+    font-size: 10pt;
+  }
+  .success-box {
+    background: #e8f5e9;
+    border-left: 4px solid #28a745;
+    border-radius: 0 8px 8px 0;
+    padding: .9rem 1.2rem;
+    margin: 1rem 0;
+    font-size: 10pt;
+  }
+
+  /* ── LISTS ── */
+  ul, ol { padding-left: 1.4rem; margin-bottom: .8rem; }
+  li { margin-bottom: .3rem; }
+  li code { font-size: 9pt; }
+
+  /* ── ARCH DIAGRAM ── */
+  .arch-diagram {
+    display: flex; gap: 1rem; align-items: stretch;
+    margin: 1.5rem 0; flex-wrap: wrap;
+  }
+  .arch-box {
+    flex: 1; min-width: 160px;
+    border: 2px solid;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    font-size: 9.5pt;
+  }
+  .arch-box.blue { border-color: #0d6efd; background: #e8f0fe; }
+  .arch-box.green { border-color: #198754; background: #e8f5e9; }
+  .arch-box.purple { border-color: #6610f2; background: #f0e8fe; }
+  .arch-box.orange { border-color: #fd7e14; background: #fff3e0; }
+  .arch-box strong { display: block; font-size: 10pt; margin-bottom: .4rem; }
+  .arch-arrow {
+    display: flex; align-items: center;
+    font-size: 1.4rem; color: #666; margin: 0;
+  }
+
+  /* ── WORKFLOW ── */
+  .workflow {
+    display: flex; gap: 0; align-items: center;
+    margin: 1.2rem 0; flex-wrap: wrap;
+  }
+  .wf-step {
+    background: #0d6efd11;
+    border: 2px solid #0d6efd44;
+    border-radius: 8px;
+    padding: .5rem .9rem;
+    text-align: center;
+    font-size: 9.5pt;
+    min-width: 90px;
+  }
+  .wf-step strong { display: block; color: #0d6efd; font-size: 9pt; }
+  .wf-arrow { color: #0d6efd; font-size: 1.2rem; padding: 0 .3rem; }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block;
+    font-size: 8.5pt;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-weight: 600;
+    margin: 2px;
+  }
+  .badge-blue { background: #e8f0fe; color: #0d6efd; }
+  .badge-green { background: #e8f5e9; color: #198754; }
+  .badge-purple { background: #f0e8fe; color: #6610f2; }
+  .badge-orange { background: #fff3e0; color: #fd7e14; }
+  .badge-red { background: #fde8e8; color: #dc3545; }
+  .badge-yellow { background: #fffbe8; color: #856404; }
+
+  /* ── CAPTION ── */
+  .caption { font-size: 9pt; color: #666; text-align: center; margin-top: -.5rem; margin-bottom: 1rem; font-style: italic; }
+
+  /* ── ENDPOINT BLOCK ── */
+  .endpoint {
+    display: flex; align-items: flex-start; gap: .7rem;
+    background: #f8f9fa; border: 1px solid #dee2e6;
+    border-radius: 8px; padding: .7rem 1rem;
+    margin-bottom: .6rem; font-size: 10pt;
+  }
+  .endpoint .method {
+    font-weight: 700; font-family: 'Fira Code', monospace;
+    font-size: 9pt; padding: 2px 8px;
+    border-radius: 4px; flex-shrink: 0;
+    min-width: 56px; text-align: center;
+  }
+  .method.get { background: #d1e7dd; color: #0f5132; }
+  .method.post { background: #cfe2ff; color: #084298; }
+  .method.put { background: #fff3cd; color: #664d03; }
+  .method.patch { background: #e2d9f3; color: #432874; }
+  .method.delete { background: #f8d7da; color: #842029; }
+  .endpoint .route { font-family: 'Fira Code', monospace; font-size: 9pt; color: #333; }
+  .endpoint .desc { color: #555; font-size: 9.5pt; margin-left: auto; text-align: right; }
+
+  /* ── PAGE BREAK ── */
+  .page-break { page-break-before: always; margin-top: 0; }
+
+  /* ── PRINT BUTTON ── */
+  .print-btn {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: #0d6efd; color: white;
+    border: none; border-radius: 50px;
+    padding: .7rem 1.4rem;
+    font-size: 1rem; font-weight: 600;
+    cursor: pointer; box-shadow: 0 4px 20px #0d6efd44;
+    z-index: 100;
+  }
+  .print-btn:hover { background: #0b5ed7; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">🖨️ Imprimir / PDF</button>
+
+<!-- ═══════════════════════════════════════════════════════════ CAPA -->
+<div class="cover">
+  <div class="logo-box">🌐</div>
+  <h1>KapaDW</h1>
+  <p class="subtitle">Plataforma de Gestão de Serviços Web</p>
+  <p class="subtitle" style="font-size:.9rem; margin-top:-.5rem; margin-bottom:2rem;">Relatório Técnico do Projeto Prático</p>
+
+  <table>
+    <tr><td>Instituição</td><td>Instituto Politécnico de Tomar (IPT)</td></tr>
+    <tr><td>Curso</td><td>Licenciatura em Engenharia Informática</td></tr>
+    <tr><td>Unidade Curricular</td><td>Desenvolvimento Web</td></tr>
+    <tr><td>Ano / Semestre</td><td>2º Ano, 2º Semestre</td></tr>
+    <tr><td>Ano Letivo</td><td>2024 / 2025</td></tr>
+    <tr><td>Autores</td><td>Diogo Godinho (Nº 27220)<br>Kanstantsin Khomchanka (Nº 27230)</td></tr>
+    <tr><td>Data</td><td>Maio de 2025</td></tr>
+    <tr><td>Repositório</td><td>github.com/diogogodinhowaze/projetodw</td></tr>
+  </table>
+
+  <p class="footer-note no-print">Use o botão "Imprimir / PDF" no canto inferior direito para guardar como PDF</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ ÍNDICE -->
+<div class="content">
+<div class="page-break"></div>
+
+<div class="toc">
+  <h2>📋 Índice</h2>
+  <ol>
+    <li><a href="#sec1">Introdução e Objetivos</a></li>
+    <li><a href="#sec2">Arquitetura do Sistema</a>
+      <ol>
+        <li><a href="#sec2-1">Visão Geral</a></li>
+        <li><a href="#sec2-2">Estrutura de Ficheiros</a></li>
+        <li><a href="#sec2-3">Fluxo de uma Operação</a></li>
+      </ol>
+    </li>
+    <li><a href="#sec3">Modelos de Dados</a>
+      <ol>
+        <li><a href="#sec3-1">ApplicationUser</a></li>
+        <li><a href="#sec3-2">Servico e CategoriaServico</a></li>
+        <li><a href="#sec3-3">Pedido e PedidoServico</a></li>
+        <li><a href="#sec3-4">Mensagem</a></li>
+        <li><a href="#sec3-5">PedidoAlteracao</a></li>
+        <li><a href="#sec3-6">Enumerações</a></li>
+      </ol>
+    </li>
+    <li><a href="#sec4">Base de Dados e ORM</a>
+      <ol>
+        <li><a href="#sec4-1">ApplicationDbContext</a></li>
+        <li><a href="#sec4-2">Relações e Constraints</a></li>
+        <li><a href="#sec4-3">Seed de Dados</a></li>
+      </ol>
+    </li>
+    <li><a href="#sec5">Autenticação e Autorização</a>
+      <ol>
+        <li><a href="#sec5-1">ASP.NET Core Identity</a></li>
+        <li><a href="#sec5-2">Políticas e Convenções</a></li>
+        <li><a href="#sec5-3">Segurança de Passwords</a></li>
+      </ol>
+    </li>
+    <li><a href="#sec6">Aplicação Web — Razor Pages</a>
+      <ol>
+        <li><a href="#sec6-1">Gestão de Pedidos</a></li>
+        <li><a href="#sec6-2">Catálogo de Serviços</a></li>
+        <li><a href="#sec6-3">Gestão de Categorias</a></li>
+        <li><a href="#sec6-4">Gestão de Clientes</a></li>
+        <li><a href="#sec6-5">Sistema de Alterações Propostas</a></li>
+        <li><a href="#sec6-6">Chat por Pedido</a></li>
+      </ol>
+    </li>
+    <li><a href="#sec7">API REST</a>
+      <ol>
+        <li><a href="#sec7-1">PedidosController</a></li>
+        <li><a href="#sec7-2">ServicosController</a></li>
+        <li><a href="#sec7-3">DTOs e Validação</a></li>
+        <li><a href="#sec7-4">Swagger / OpenAPI</a></li>
+      </ol>
+    </li>
+    <li><a href="#sec8">Comunicação em Tempo Real — SignalR</a></li>
+    <li><a href="#sec9">Interface e Estética</a>
+      <ol>
+        <li><a href="#sec9-1">Layout Global</a></li>
+        <li><a href="#sec9-2">Stack de Estilização</a></li>
+        <li><a href="#sec9-3">Componentes Visuais</a></li>
+        <li><a href="#sec9-4">Página de Início</a></li>
+      </ol>
+    </li>
+    <li><a href="#sec10">Publicação e Infraestrutura</a>
+      <ol>
+        <li><a href="#sec10-1">Contentorização com Docker</a></li>
+        <li><a href="#sec10-2">Deployment na Render.com</a></li>
+        <li><a href="#sec10-3">Pipeline de Entrega Contínua</a></li>
+      </ol>
+    </li>
+    <li><a href="#sec11">Tecnologias e Dependências</a></li>
+    <li><a href="#sec12">Padrões de Desenvolvimento</a></li>
+    <li><a href="#sec13">Dificuldades e Soluções</a></li>
+    <li><a href="#sec14">Melhorias e Evolução da Plataforma</a></li>
+    <li><a href="#sec15">Conclusão</a></li>
+    <li><a href="#sec16">Referências</a></li>
+  </ol>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ 1. INTRODUÇÃO -->
+<div class="page-break"></div>
+<h1 class="section-title" id="sec1">1. Introdução e Objetivos</h1>
+
+<p>O projeto <strong>KapaDW</strong> foi desenvolvido no âmbito da unidade curricular de <em>Desenvolvimento Web</em> da Licenciatura em Engenharia Informática do Instituto Politécnico de Tomar. O objetivo central foi conceber e implementar uma plataforma completa de gestão de serviços web que demonstre a aplicação prática dos conteúdos lecionados ao longo do semestre.</p>
+
+<p>A plataforma simula o modelo de negócio de uma agência digital: clientes registam-se na plataforma, consultam o catálogo de serviços disponíveis (desenvolvimento de websites, lojas online, SEO, entre outros), submetem pedidos com requisitos específicos e acompanham o progresso dos seus projetos em tempo real. Do lado da administração, o gestor tem visibilidade total sobre todos os pedidos, pode gerir o ciclo de vida de cada um, comunicar com os clientes através de um sistema de chat integrado, e gerir os próprios serviços e categorias oferecidos.</p>
+
+<p>O projeto vai além de uma aplicação CRUD simples: inclui um <strong>sistema de notificações em tempo real</strong> baseado em WebSockets (SignalR), um <strong>workflow de aprovação de alterações</strong> para pedidos já submetidos, uma <strong>API REST documentada</strong> com Swagger, e um <strong>pipeline de publicação automatizado</strong> com Docker e Render.com, garantindo disponibilidade contínua.</p>
+
+<div class="info-box">
+  <strong>Objetivos técnicos alcançados:</strong>
+  <ul style="margin: .5rem 0 0 1rem;">
+    <li>Implementação de autenticação e autorização baseada em roles com ASP.NET Identity</li>
+    <li>Arquitetura de dois projetos: aplicação web (Razor Pages) + API REST (MVC Controllers)</li>
+    <li>Comunicação em tempo real com SignalR (WebSockets)</li>
+    <li>ORM Entity Framework Core com SQLite e migrations automáticas</li>
+    <li>Publicação em cloud com Docker multi-stage e Render.com</li>
+    <li>Interface responsiva com Bootstrap 5 e Tailwind CSS</li>
+  </ul>
+</div>
+
+<p>Este relatório descreve em detalhe todos os componentes do sistema: arquitetura, modelos de dados, funcionalidades, interface, segurança e infraestrutura de publicação.</p>
+
+<!-- ═══════════════════════════════════════════════════════════ 2. ARQUITETURA -->
+<div class="page-break"></div>
+<h1 class="section-title" id="sec2">2. Arquitetura do Sistema</h1>
+
+<h2 class="sub-title" id="sec2-1">2.1 Visão Geral</h2>
+
+<p>O sistema é composto por <strong>dois projetos ASP.NET Core 8</strong> que partilham a mesma base de dados SQLite e o mesmo conjunto de modelos de domínio. Esta separação segue o princípio da responsabilidade única: a aplicação web trata da interface com o utilizador, enquanto a API fornece acesso programático aos dados para integrações externas.</p>
+
+<div class="arch-diagram">
+  <div class="arch-box blue">
+    <strong>🖥️ WebServicos</strong>
+    Razor Pages<br>
+    Porta 7001 (local)<br>
+    Porta 10000 (cloud)
+    <br><br>
+    <span class="badge badge-blue">Bootstrap 5</span>
+    <span class="badge badge-blue">SignalR JS</span>
+    <span class="badge badge-blue">jQuery</span>
+  </div>
+  <div class="arch-arrow">⇄</div>
+  <div class="arch-box orange">
+    <strong>💾 SQLite</strong>
+    webservicos.db<br>
+    Entity Framework Core<br>
+    Migrations automáticas
+    <br><br>
+    <span class="badge badge-orange">8 tabelas</span>
+    <span class="badge badge-orange">Seed Data</span>
+  </div>
+  <div class="arch-arrow">⇄</div>
+  <div class="arch-box purple">
+    <strong>📡 WebServicos.API</strong>
+    MVC Controllers<br>
+    REST + Swagger<br>
+    Porta 7002 (local)<br>
+    Porta 10000 (cloud)
+    <br><br>
+    <span class="badge badge-purple">OpenAPI</span>
+    <span class="badge badge-purple">JSON</span>
+  </div>
+</div>
+<p class="caption">Figura 1 — Arquitetura geral do sistema com os dois projetos e a base de dados partilhada</p>
+
+<p>O projeto API referencia diretamente o projeto WebServicos como dependência (via <code>&lt;ProjectReference&gt;</code> no ficheiro <code>.csproj</code>), o que lhe permite reutilizar os modelos (<code>Models.cs</code>), o contexto de base de dados (<code>ApplicationDbContext</code>), as migrations e as entidades Identity, sem duplicação de código.</p>
+
+<h2 class="sub-title" id="sec2-2">2.2 Estrutura de Ficheiros</h2>
+
+<table class="data-table">
+  <tr><th>Pasta / Ficheiro</th><th>Descrição</th></tr>
+  <tr><td><code>WebServicos/WebServicos/</code></td><td>Projeto principal — aplicação web Razor Pages</td></tr>
+  <tr><td><code>WebServicos/WebServicos.API/</code></td><td>Projeto API REST com Swagger</td></tr>
+  <tr><td><code>Models/Models.cs</code></td><td>Todas as entidades do domínio</td></tr>
+  <tr><td><code>Data/ApplicationDbContext.cs</code></td><td>Contexto EF Core, relações, seed de dados</td></tr>
+  <tr><td><code>Data/DbSeeder.cs</code></td><td>Criação de roles e contas padrão</td></tr>
+  <tr><td><code>Hubs/NotificacoesHub.cs</code></td><td>Hub SignalR para notificações em tempo real</td></tr>
+  <tr><td><code>Pages/</code></td><td>26 ficheiros Razor Pages (.cshtml + .cshtml.cs)</td></tr>
+  <tr><td><code>Pages/Shared/_Layout.cshtml</code></td><td>Template global com navbar, footer e SignalR JS</td></tr>
+  <tr><td><code>Controllers/</code> (API)</td><td>PedidosController + ServicosController</td></tr>
+  <tr><td><code>wwwroot/css/app.css</code></td><td>CSS gerado pelo Tailwind CSS (minificado)</td></tr>
+  <tr><td><code>Dockerfile</code></td><td>Imagem Docker para o projeto web</td></tr>
+  <tr><td><code>Dockerfile.api</code></td><td>Imagem Docker para a API</td></tr>
+  <tr><td><code>render.yaml</code></td><td>Blueprint de deployment na Render.com</td></tr>
+</table>
+
+<h2 class="sub-title" id="sec2-3">2.3 Fluxo de uma Operação Típica</h2>
+
+<p>O ciclo de vida de um pedido ilustra como os vários componentes interagem entre si:</p>
+
+<div class="workflow">
+  <div class="wf-step"><strong>1</strong>Login</div>
+  <span class="wf-arrow">→</span>
+  <div class="wf-step"><strong>2</strong>Catalogo</div>
+  <span class="wf-arrow">→</span>
+  <div class="wf-step"><strong>3</strong>Pedido</div>
+  <span class="wf-arrow">→</span>
+  <div class="wf-step"><strong>4</strong>SignalR</div>
+  <span class="wf-arrow">→</span>
+  <div class="wf-step"><strong>5</strong>Admin</div>
+  <span class="wf-arrow">→</span>
+  <div class="wf-step"><strong>6</strong>Chat</div>
+  <span class="wf-arrow">→</span>
+  <div class="wf-step"><strong>7</strong>Entrega</div>
+</div>
+<p class="caption">Figura 2 — Fluxo típico de um pedido desde o registo até à entrega</p>
+
+<ol>
+  <li>O cliente autentica-se via formulário Identity (<code>/Identity/Account/Login</code>)</li>
+  <li>Consulta o catálogo de serviços (<code>/Servicos</code>), filtrável por pesquisa de texto</li>
+  <li>Submete um pedido (<code>/Pedidos/Create</code>) selecionando serviços e preenchendo requisitos</li>
+  <li>A aplicação aciona o hub SignalR para notificar o administrador em tempo real</li>
+  <li>O administrador analisa o pedido (<code>/Pedidos/Details</code>), atualiza estados e comunica via chat</li>
+  <li>O cliente e o admin trocam mensagens no chat integrado ao pedido</li>
+  <li>O admin marca como <em>Concluído</em> e introduz o URL de entrega do projeto</li>
+</ol>
+
+<!-- ═══════════════════════════════════════════════════════════ 3. MODELOS -->
+<div class="page-break"></div>
+<h1 class="section-title" id="sec3">3. Modelos de Dados</h1>
+
+<p>Todos os modelos estão definidos no ficheiro <code>WebServicos/WebServicos/Models/Models.cs</code>, dentro do namespace <code>WebServicos.Models</code>. O ficheiro contém 7 classes e 2 enumerações, cobrindo todas as entidades do domínio.</p>
+
+<h2 class="sub-title" id="sec3-1">3.1 ApplicationUser</h2>
+
+<p>Estende a classe <code>IdentityUser</code> do ASP.NET Core Identity, adicionando campos específicos da plataforma:</p>
+
+<table class="data-table">
+  <tr><th>Propriedade</th><th>Tipo</th><th>Validação</th><th>Descrição</th></tr>
+  <tr><td><code>NomeCompleto</code></td><td>string</td><td>Required, MaxLength(150)</td><td>Nome completo do utilizador</td></tr>
+  <tr><td><code>DataRegisto</code></td><td>DateTime</td><td>Default: UTC.Now</td><td>Data de registo na plataforma</td></tr>
+  <tr><td><code>Pedidos</code></td><td>ICollection&lt;Pedido&gt;</td><td>Navigation</td><td>Pedidos submetidos pelo utilizador</td></tr>
+</table>
+
+<p>A herança de <code>IdentityUser</code> acrescenta automaticamente campos como <code>Id</code> (GUID), <code>Email</code>, <code>PasswordHash</code>, <code>SecurityStamp</code>, <code>LockoutEnd</code>, entre outros, geridos pelo framework.</p>
+
+<h2 class="sub-title" id="sec3-2">3.2 Servico e CategoriaServico</h2>
+
+<p>A entidade <code>Servico</code> representa cada tipo de trabalho oferecido pela agência. Tem uma relação opcional com <code>CategoriaServico</code> (chave estrangeira nullable), o que permite que serviços existam sem categoria atribuída:</p>
+
+<table class="data-table">
+  <tr><th>Propriedade</th><th>Tipo</th><th>Validação</th><th>Descrição</th></tr>
+  <tr><td><code>Id</code></td><td>int</td><td>PK auto-increment</td><td>Identificador único</td></tr>
+  <tr><td><code>Nome</code></td><td>string</td><td>Required, Max(100)</td><td>Nome do serviço</td></tr>
+  <tr><td><code>Descricao</code></td><td>string</td><td>Required, Max(1000)</td><td>Descrição detalhada</td></tr>
+  <tr><td><code>PrecoBase</code></td><td>decimal(10,2)</td><td>Range(0, 99999.99)</td><td>Preço base em EUR</td></tr>
+  <tr><td><code>Ativo</code></td><td>bool</td><td>Default: true</td><td>Visível para clientes</td></tr>
+  <tr><td><code>DataCriacao</code></td><td>DateTime</td><td>Default: UTC.Now</td><td>Timestamp de criação</td></tr>
+  <tr><td><code>Icone</code></td><td>string</td><td>Max(50)</td><td>Classe Bootstrap Icons (ex: "bi-globe")</td></tr>
+  <tr><td><code>CategoriaServicoId</code></td><td>int?</td><td>FK nullable</td><td>Categoria a que pertence</td></tr>
+</table>
+
+<p>Foram inseridos 6 serviços pré-definidos via seed data, com preços reais de mercado:</p>
+
+<table class="data-table">
+  <tr><th>Nome</th><th>Preço Base</th><th>Ícone</th><th>Categoria</th></tr>
+  <tr><td>Website Institucional</td><td>€ 799,00</td><td>bi-globe</td><td>Websites</td></tr>
+  <tr><td>Loja Online</td><td>€ 1.499,00</td><td>bi-shop</td><td>E-commerce</td></tr>
+  <tr><td>Landing Page</td><td>€ 349,00</td><td>bi-layout-text-window</td><td>Websites</td></tr>
+  <tr><td>Otimização SEO</td><td>€ 299,00</td><td>bi-search</td><td>SEO &amp; Marketing</td></tr>
+  <tr><td>Manutenção Mensal</td><td>€ 89,00</td><td>bi-tools</td><td>Manutenção</td></tr>
+  <tr><td>Recuperação de Software &amp; Hardware</td><td>€ 3.000,00</td><td>bi-pc-display</td><td>Hardware &amp; Software</td></tr>
+</table>
+
+<h2 class="sub-title" id="sec3-3">3.3 Pedido e PedidoServico</h2>
+
+<p>O <code>Pedido</code> é a entidade central do sistema, representando um projeto contratado por um cliente. A relação com os serviços é muitos-para-muitos, implementada através da tabela de junção <code>PedidoServico</code>, que acrescenta campos próprios (quantidade, preço acordado, notas por serviço):</p>
+
+<table class="data-table">
+  <tr><th>Propriedade (Pedido)</th><th>Tipo</th><th>Descrição</th></tr>
+  <tr><td><code>TituloProjeto</code></td><td>string (Max 200)</td><td>Nome do projeto</td></tr>
+  <tr><td><code>Descricao</code></td><td>string (Max 2000)</td><td>Requisitos detalhados</td></tr>
+  <tr><td><code>Estado</code></td><td>EstadoPedido</td><td>Estado atual no workflow</td></tr>
+  <tr><td><code>OrcamentoTotal</code></td><td>decimal?</td><td>Soma dos preços dos serviços no momento da criação</td></tr>
+  <tr><td><code>PrazoEstimado</code></td><td>DateTime?</td><td>Data desejada de conclusão (opcional)</td></tr>
+  <tr><td><code>EnderecoHttp</code></td><td>string? (URL)</td><td>URL do projeto entregue (preenchido pelo admin)</td></tr>
+  <tr><td><code>ClienteId</code></td><td>string FK</td><td>Referência ao ApplicationUser</td></tr>
+</table>
+
+<table class="data-table">
+  <tr><th>Propriedade (PedidoServico)</th><th>Tipo</th><th>Descrição</th></tr>
+  <tr><td><code>PedidoId + ServicoId</code></td><td>int + int</td><td>Chave primária composta</td></tr>
+  <tr><td><code>Quantidade</code></td><td>int (1-100)</td><td>Unidades do serviço contratadas</td></tr>
+  <tr><td><code>PrecoAcordado</code></td><td>decimal?</td><td>Preço negociado (pode diferir do PrecoBase)</td></tr>
+  <tr><td><code>Notas</code></td><td>string? (Max 500)</td><td>Requisitos específicos para este serviço</td></tr>
+</table>
+
+<h2 class="sub-title" id="sec3-4">3.4 Mensagem</h2>
+
+<p>A entidade <code>Mensagem</code> suporta o sistema de chat integrado a cada pedido. Cada mensagem pertence a um único pedido e tem um remetente identificado:</p>
+
+<table class="data-table">
+  <tr><th>Propriedade</th><th>Tipo</th><th>Descrição</th></tr>
+  <tr><td><code>PedidoId</code></td><td>int FK</td><td>Pedido a que pertence esta mensagem</td></tr>
+  <tr><td><code>RemetenteId</code></td><td>string FK</td><td>Utilizador que enviou a mensagem</td></tr>
+  <tr><td><code>Conteudo</code></td><td>string (Max 2000)</td><td>Texto da mensagem</td></tr>
+  <tr><td><code>DataHora</code></td><td>DateTime</td><td>Timestamp de envio (UTC)</td></tr>
+  <tr><td><code>Lida</code></td><td>bool</td><td>Marcado como lido ao abrir o chat</td></tr>
+</table>
+
+<h2 class="sub-title" id="sec3-5">3.5 PedidoAlteracao</h2>
+
+<p>Esta entidade suporta o fluxo de alterações propostas pelo cliente em pedidos já submetidos. Em vez de editar diretamente os dados, o cliente propõe alterações que o administrador aprova ou rejeita:</p>
+
+<table class="data-table">
+  <tr><th>Propriedade</th><th>Tipo</th><th>Descrição</th></tr>
+  <tr><td><code>TituloProjetoProposto</code></td><td>string?</td><td>Novo título proposto (opcional)</td></tr>
+  <tr><td><code>DescricaoProposta</code></td><td>string?</td><td>Nova descrição proposta</td></tr>
+  <tr><td><code>ObservacoesProposta</code></td><td>string?</td><td>Novas observações propostas</td></tr>
+  <tr><td><code>Estado</code></td><td>EstadoAlteracao</td><td>Pendente / Aprovado / Rejeitado</td></tr>
+  <tr><td><code>MotivoRejeicao</code></td><td>string?</td><td>Explicação da rejeição pelo admin</td></tr>
+  <tr><td><code>DataDecisao</code></td><td>DateTime?</td><td>Data da decisão do admin</td></tr>
+  <tr><td><code>DecididoPorId</code></td><td>string? FK</td><td>Admin que tomou a decisão</td></tr>
+</table>
+
+<h2 class="sub-title" id="sec3-6">3.6 Enumerações</h2>
+
+<p>O domínio usa duas enumerações para modelar o estado de pedidos e alterações, respetivamente:</p>
+
+<div style="display:flex; gap:1.5rem; flex-wrap:wrap;">
+  <div style="flex:1; min-width:200px;">
+    <h3 class="sub-sub">EstadoPedido</h3>
+    <table class="data-table">
+      <tr><th>Valor</th><th>Int</th><th>Significado</th></tr>
+      <tr><td><code>Pendente</code></td><td>0</td><td>Recebido, por analisar</td></tr>
+      <tr><td><code>EmAnalise</code></td><td>1</td><td>Admin a analisar</td></tr>
+      <tr><td><code>Aprovado</code></td><td>2</td><td>Aprovado, aguarda início</td></tr>
+      <tr><td><code>EmDesenvolvimento</code></td><td>3</td><td>Em desenvolvimento</td></tr>
+      <tr><td><code>EmRevisao</code></td><td>4</td><td>Aguarda revisão do cliente</td></tr>
+      <tr><td><code>Concluido</code></td><td>5</td><td>Entregue e aceite</td></tr>
+      <tr><td><code>Cancelado</code></td><td>6</td><td>Cancelado</td></tr>
+    </table>
+  </div>
+  <div style="flex:1; min-width:200px;">
+    <h3 class="sub-sub">EstadoAlteracao</h3>
+    <table class="data-table">
+      <tr><th>Valor</th><th>Int</th><th>Significado</th></tr>
+      <tr><td><code>Pendente</code></td><td>0</td><td>Aguarda decisão do admin</td></tr>
+      <tr><td><code>Aprovado</code></td><td>1</td><td>Aprovado e aplicado</td></tr>
+      <tr><td><code>Rejeitado</code></td><td>2</td><td>Rejeitado com motivo</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ 4. BASE DE DADOS -->
+<div class="page-break"></div>
+<h1 class="section-title" id="sec4">4. Base de Dados e ORM</h1>
+
+<h2 class="sub-title" id="sec4-1">4.1 ApplicationDbContext</h2>
+
+<p>O <code>ApplicationDbContext</code> herda de <code>IdentityDbContext&lt;ApplicationUser&gt;</code>, integrando automaticamente as tabelas do ASP.NET Identity (AspNetUsers, AspNetRoles, AspNetUserRoles, etc.) com as tabelas de domínio da aplicação. A classe está definida em <code>Data/ApplicationDbContext.cs</code>.</p>
+
+<p>Os <code>DbSet</code> expostos são:</p>
+
+<table class="data-table">
+  <tr><th>Propriedade DbSet</th><th>Tabela gerada</th></tr>
+  <tr><td><code>DbSet&lt;Servico&gt; Servicos</code></td><td>Servicos</td></tr>
+  <tr><td><code>DbSet&lt;CategoriaServico&gt; CategoriasServico</code></td><td>CategoriasServico</td></tr>
+  <tr><td><code>DbSet&lt;Pedido&gt; Pedidos</code></td><td>Pedidos</td></tr>
+  <tr><td><code>DbSet&lt;PedidoServico&gt; PedidoServicos</code></td><td>PedidoServicos</td></tr>
+  <tr><td><code>DbSet&lt;Mensagem&gt; Mensagens</code></td><td>Mensagens</td></tr>
+  <tr><td><code>DbSet&lt;PedidoAlteracao&gt; PedidoAlteracoes</code></td><td>PedidoAlteracoes</td></tr>
+</table>
+
+<h2 class="sub-title" id="sec4-2">4.2 Relações e Constraints</h2>
+
+<p>O método <code>OnModelCreating</code> configura as relações entre entidades, incluindo chaves compostas e comportamentos de cascata:</p>
+
+<pre><span class="c">// Chave primária composta da tabela de junção</span>
+modelBuilder.Entity&lt;<span class="t">PedidoServico</span>&gt;()
+    .HasKey(ps => <span class="k">new</span> { ps.PedidoId, ps.ServicoId });
+
+<span class="c">// Pedido → User: Restrict (não apaga utilizador com pedidos)</span>
+modelBuilder.Entity&lt;<span class="t">Pedido</span>&gt;()
+    .HasOne(p => p.Cliente)
+    .WithMany(u => u.Pedidos)
+    .HasForeignKey(p => p.ClienteId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+<span class="c">// Servico → Categoria: SetNull (categoria pode ser eliminada)</span>
+modelBuilder.Entity&lt;<span class="t">Servico</span>&gt;()
+    .HasOne(s => s.CategoriaServico)
+    .WithMany(c => c.Servicos)
+    .HasForeignKey(s => s.CategoriaServicoId)
+    .OnDelete(DeleteBehavior.SetNull);</pre>
+
+<p>A escolha de <code>DeleteBehavior.Restrict</code> para a relação Pedido→Utilizador protege a integridade dos dados: um utilizador com pedidos associados não pode ser eliminado diretamente. Já o <code>DeleteBehavior.SetNull</code> na relação Serviço→Categoria permite eliminar categorias sem perder serviços, colocando simplesmente o campo FK a <code>NULL</code>.</p>
+
+<h2 class="sub-title" id="sec4-3">4.3 Seed de Dados</h2>
+
+<p>O <code>DbSeeder.cs</code> é responsável pela criação automática de roles e contas padrão na primeira execução. É chamado no arranque da aplicação (<code>Program.cs</code>) e é <strong>idempotente</strong>: pode ser executado múltiplas vezes sem criar duplicados.</p>
+
+<pre><span class="k">public static async</span> Task <span class="t">SeedAsync</span>(IServiceProvider serviceProvider)
+{
+    <span class="c">// Criar roles se não existirem</span>
+    <span class="k">await</span> roleManager.CreateAsync(<span class="k">new</span> IdentityRole(RoleAdmin));
+    <span class="k">await</span> roleManager.CreateAsync(<span class="k">new</span> IdentityRole(RoleCliente));
+
+    <span class="c">// Criar conta admin padrão</span>
+    <span class="k">var</span> admin = <span class="k">new</span> ApplicationUser {
+        Email = <span class="s">"admin@webservicos.pt"</span>,
+        NomeCompleto = <span class="s">"Administrador do Sistema"</span>,
+        EmailConfirmed = <span class="k">true</span>
+    };
+    <span class="k">await</span> userManager.CreateAsync(admin, <span class="s">"Admin@123"</span>);
+    <span class="k">await</span> userManager.AddToRoleAsync(admin, RoleAdmin);
+}</pre>
+
+<p>Os dados de seed de categorias e serviços são inseridos diretamente no <code>OnModelCreating</code> via <code>modelBuilder.Entity&lt;T&gt;().HasData(...)</code>, que garante que são aplicados como parte das migrations do EF Core.</p>
+
+<!-- ═══════════════════════════════════════════════════════════ 5. AUTH -->
+<div class="page-break"></div>
+<h1 class="section-title" id="sec5">5. Autenticação e Autorização</h1>
+
+<h2 class="sub-title" id="sec5-1">5.1 ASP.NET Core Identity</h2>
+
+<p>A autenticação é gerida inteiramente pelo <strong>ASP.NET Core Identity</strong>, que fornece out-of-the-box: registo, login, logout, recuperação de password, bloqueio de conta e gestão de roles. A integração é feita através do scaffolding do Identity UI, que gera automaticamente as páginas Razor em <code>/Identity/Account/</code>.</p>
+
+<p>A aplicação está configurada com dois <strong>roles</strong>: <code>Administrador</code> e <code>Cliente</code>. Cada utilizador pertence a exatamente um role, que determina as páginas e ações a que tem acesso.</p>
+
+<h2 class="sub-title" id="sec5-2">5.2 Políticas e Convenções de Autorização</h2>
+
+<p>A autorização é configurada em <code>Program.cs</code> com uma combinação de <strong>convenções por pasta</strong> e <strong>atributos por classe</strong>:</p>
+
+<pre><span class="c">// Convenções por pasta/página</span>
+options.Conventions.AuthorizeFolder(<span class="s">"/Pedidos"</span>);
+options.Conventions.AuthorizeFolder(<span class="s">"/Clientes"</span>, <span class="s">"Administrador"</span>);
+options.Conventions.AuthorizePage(<span class="s">"/Servicos/Create"</span>, <span class="s">"Administrador"</span>);
+options.Conventions.AuthorizePage(<span class="s">"/Servicos/Edit"</span>, <span class="s">"Administrador"</span>);
+options.Conventions.AuthorizePage(<span class="s">"/Servicos/Delete"</span>, <span class="s">"Administrador"</span>);
+
+<span class="c">// Políticas nomeadas</span>
+options.AddPolicy(<span class="s">"Administrador"</span>, p => p.RequireRole(<span class="s">"Administrador"</span>));
+options.AddPolicy(<span class="s">"Cliente"</span>, p => p.RequireRole(<span class="s">"Cliente"</span>, <span class="s">"Administrador"</span>));</pre>
+
+<p>Além das convenções globais, cada <code>PageModel</code> de áreas sensíveis usa o atributo <code>[Authorize(Roles = "Administrador")]</code> como segunda linha de defesa. Algumas páginas fazem verificações adicionais em runtime — por exemplo, em <code>Pedidos/Edit</code>, um cliente só pode editar pedidos no estado <em>Pendente</em> e o acesso a pedidos de outros clientes é bloqueado com <code>Forbid()</code>.</p>
+
+<h2 class="sub-title" id="sec5-3">5.3 Segurança de Passwords e Sessão</h2>
+
+<table class="data-table">
+  <tr><th>Parâmetro</th><th>Valor</th></tr>
+  <tr><td>Comprimento mínimo</td><td>8 caracteres</td></tr>
+  <tr><td>Dígito obrigatório</td><td>Sim (0–9)</td></tr>
+  <tr><td>Maiúscula obrigatória</td><td>Sim (A–Z)</td></tr>
+  <tr><td>Caráter especial obrigatório</td><td>Sim (!@#$%^&amp;*)</td></tr>
+  <tr><td>Tentativas falhadas máximas</td><td>5</td></tr>
+  <tr><td>Duração do bloqueio</td><td>15 minutos</td></tr>
+  <tr><td>Duração da sessão (cookie)</td><td>8 horas</td></tr>
+  <tr><td>Confirmação de email</td><td>Desativada (demo)</td></tr>
+  <tr><td>Redirect não autenticado</td><td><code>/Identity/Account/Login</code></td></tr>
+  <tr><td>Redirect acesso negado</td><td><code>/Erro/AcessoNegado</code></td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════ 6. RAZOR PAGES -->
+<div class="page-break"></div>
+<h1 class="section-title" id="sec6">6. Aplicação Web — Razor Pages</h1>
+
+<p>A aplicação web segue o padrão <strong>Razor Pages</strong>, onde cada página tem um ficheiro <code>.cshtml</code> (view) e um ficheiro <code>.cshtml.cs</code> (page model com a lógica). Os handlers <code>OnGet</code>, <code>OnPost</code> e variantes nomeadas (<code>OnPostAprovarAsync</code>, <code>OnPostAlterarEstadoAsync</code>) implementam as ações de cada página. No total existem <strong>26 ficheiros .cshtml</strong> em 7 áreas funcionais.</p>
+
+<h2 class="sub-title" id="sec6-1">6.1 Gestão de Pedidos</h2>
+
+<p>A área de pedidos é o núcleo funcional da plataforma, com 7 páginas distintas:</p>
+
+<table class="data-table">
+  <tr><th>Página</th><th>Acesso</th><th>Funcionalidade Principal</th></tr>
+  <tr><td><code>Pedidos/Index</code></td><td>Autenticado</td><td>Lista pedidos; admin vê todos, cliente vê só os seus. Carregamento com Include (eager loading) para evitar N+1 queries.</td></tr>
+  <tr><td><code>Pedidos/Create</code></td><td>Cliente</td><td>Formulário de criação com seleção múltipla de serviços. Calcula orçamento automaticamente. Envolve criação em transação. Dispara notificação SignalR.</td></tr>
+  <tr><td><code>Pedidos/Details</code></td><td>Autenticado</td><td>Visualização detalhada. Admin pode alterar estado e a aplicação notifica o cliente via SignalR direcionado.</td></tr>
+  <tr><td><code>Pedidos/Edit</code></td><td>Autenticado</td><td>Cliente propõe alterações (via PedidoAlteracao); admin edita diretamente (prazo, estado, URL entrega).</td></tr>
+  <tr><td><code>Pedidos/Delete</code></td><td>Autenticado</td><td>Cliente só cancela se Pendente; admin pode cancelar qualquer estado.</td></tr>
+  <tr><td><code>Pedidos/Chat</code></td><td>Autenticado</td><td>Chat por pedido: envia mensagens, marca como lidas ao abrir, mostra histórico ordenado cronologicamente.</td></tr>
+  <tr><td><code>Pedidos/RevisarAlteracoes</code></td><td>Admin</td><td>Lista e detalha propostas de alteração pendentes. Admin aprova (aplica ao pedido) ou rejeita (com motivo obrigatório).</td></tr>
+</table>
+
+<h3 class="sub-sub">Lógica de Criação com Transação</h3>
+<p>O handler <code>OnPostAsync</code> de <code>Pedidos/Create</code> usa uma transação explícita para garantir atomicidade:</p>
+
+<pre><span class="k">await using var</span> transaction = <span class="k">await</span> _db.Database.BeginTransactionAsync();
+<span class="k">try</span> {
+    _db.Pedidos.Add(Pedido);
+    <span class="k">await</span> _db.SaveChangesAsync();
+    <span class="c">// Adicionar entradas na tabela de junção PedidoServico</span>
+    <span class="k">foreach</span> (<span class="k">var</span> id <span class="k">in</span> ServicosIds) {
+        _db.PedidoServicos.Add(<span class="k">new</span> PedidoServico { PedidoId = Pedido.Id, ServicoId = id });
+    }
+    <span class="k">await</span> _db.SaveChangesAsync();
+    <span class="k">await</span> transaction.CommitAsync();
+} <span class="k">catch</span> {
+    <span class="k">await</span> transaction.RollbackAsync(); <span class="k">throw</span>;
+}</pre>
+
+<h2 class="sub-title" id="sec6-2">6.2 Catálogo de Serviços</h2>
+
+<p>A área de serviços tem comportamento diferenciado por role: clientes veem apenas serviços ativos; administradores veem todos (incluindo inativos), com indicação visual do estado. As páginas de criação, edição e eliminação são exclusivas de administradores.</p>
+
+<p>A pesquisa no catálogo funciona via query string <code>?Pesquisa=...</code> e filtra por <code>Nome</code> e <code>Descricao</code> com <code>Contains()</code> (LIKE no SQL). O resultado é ordenado por nome.</p>
+
+<p>A eliminação de um serviço verifica primeiro se existem pedidos associados em <code>PedidoServicos</code>; se sim, bloqueia a operação com uma mensagem de erro clara, evitando violações de integridade referencial.</p>
+
+<h2 class="sub-title" id="sec6-3">6.3 Gestão de Categorias</h2>
+
+<p>As categorias servem para organizar o catálogo de serviços. O CRUD completo (Index, Create, Edit, Delete) está disponível apenas para administradores. Na eliminação de uma categoria, os serviços associados mantêm-se na base de dados mas ficam sem categoria (<code>CategoriaServicoId = NULL</code>), graças ao comportamento <code>SetNull</code> configurado no contexto.</p>
+
+<h2 class="sub-title" id="sec6-4">6.4 Gestão de Clientes</h2>
+
+<p>A página <code>Clientes/Index</code> apresenta ao administrador uma tabela com todos os utilizadores registados, incluindo o número total de pedidos, a data de registo e indicação de se é administrador. A verificação de role é feita via <code>UserManager.IsInRoleAsync()</code> para cada utilizador.</p>
+
+<div class="warn-box">
+  <strong>Nota de performance:</strong> A verificação de role por utilizador resulta em N queries adicionais ao Identity (uma por utilizador). Numa aplicação de produção com muitos utilizadores, esta secção beneficiaria de um JOIN direto à tabela <code>AspNetUserRoles</code>.
+</div>
+
+<h2 class="sub-title" id="sec6-5">6.5 Sistema de Alterações Propostas</h2>
+
+<p>Um dos aspetos mais interessantes do sistema é o workflow de alterações. Um cliente com um pedido em curso pode propor alterações ao título, descrição ou observações sem as aplicar diretamente. A proposta fica no estado <em>Pendente</em> até o administrador a analisar em <code>Pedidos/RevisarAlteracoes</code>.</p>
+
+<div class="workflow">
+  <div class="wf-step"><strong>Cliente</strong>Propõe</div>
+  <span class="wf-arrow">→</span>
+  <div class="wf-step"><strong>BD</strong>PedidoAlteracao<br>Pendente</div>
+  <span class="wf-arrow">→</span>
+  <div class="wf-step"><strong>Admin</strong>Revisa</div>
+  <span class="wf-arrow">→</span>
+  <div class="wf-step"><strong>✓ Aprovado</strong>Aplica ao Pedido</div>
+  <span class="wf-arrow">|</span>
+  <div class="wf-step"><strong>✗ Rejeitado</strong>Com motivo</div>
+</div>
+<p class="caption">Figura 3 — Fluxo de aprovação de alterações propostas</p>
+
+<h2 class="sub-title" id="sec6-6">6.6 Chat por Pedido</h2>
+
+<p>Cada pedido tem um chat privado entre o cliente e o administrador. As mensagens são persistidas na tabela <code>Mensagens</code> com controlo de estado de leitura (<code>Lida</code>). Ao abrir o chat, todas as mensagens não lidas são marcadas automaticamente como lidas via update em batch. O histórico é apresentado em ordem cronológica, com diferenciação visual entre mensagens enviadas e recebidas.</p>
+
+<!-- ═══════════════════════════════════════════════════════════ 7. API -->
+<div class="page-break"></div>
+<h1 class="section-title" id="sec7">7. API REST</h1>
+
+<p>O projeto <code>WebServicos.API</code> expõe uma API RESTful documentada com Swagger, partilhando a base de dados com a aplicação web. É útil para integrações externas, dashboards de monitorização, ou acesso programático aos dados sem necessidade de navegar pela interface web.</p>
+
+<h2 class="sub-title" id="sec7-1">7.1 PedidosController</h2>
+
+<p>Rota base: <code>/api/pedidos</code></p>
+
+<div class="endpoint">
+  <span class="method get">GET</span>
+  <span class="route">/api/pedidos</span>
+  <span class="desc">Lista pedidos com filtros opcionais por clienteId e estado</span>
+</div>
+<div class="endpoint">
+  <span class="method get">GET</span>
+  <span class="route">/api/pedidos/{id}</span>
+  <span class="desc">Detalhe completo de um pedido com serviços e cliente</span>
+</div>
+<div class="endpoint">
+  <span class="method patch">PATCH</span>
+  <span class="route">/api/pedidos/{id}/estado</span>
+  <span class="desc">Atualiza apenas o estado do pedido (admin)</span>
+</div>
+
+<p>O endpoint <code>GET /api/pedidos</code> aceita dois query parameters opcionais: <code>clienteId</code> (filtra por utilizador) e <code>estado</code> (filtra pelo valor numérico do enum <code>EstadoPedido</code>). A resposta é uma projeção anónima que inclui dados do cliente e a lista de serviços associados, ordenada por data decrescente.</p>
+
+<h2 class="sub-title" id="sec7-2">7.2 ServicosController</h2>
+
+<p>Rota base: <code>/api/servicos</code></p>
+
+<div class="endpoint">
+  <span class="method get">GET</span>
+  <span class="route">/api/servicos</span>
+  <span class="desc">Lista serviços, com filtro opcional por ativo=true/false</span>
+</div>
+<div class="endpoint">
+  <span class="method get">GET</span>
+  <span class="route">/api/servicos/{id}</span>
+  <span class="desc">Detalhe de um serviço pelo ID</span>
+</div>
+<div class="endpoint">
+  <span class="method post">POST</span>
+  <span class="route">/api/servicos</span>
+  <span class="desc">Cria novo serviço (retorna 201 Created com Location header)</span>
+</div>
+<div class="endpoint">
+  <span class="method put">PUT</span>
+  <span class="route">/api/servicos/{id}</span>
+  <span class="desc">Atualiza serviço completo (retorna 204 No Content)</span>
+</div>
+<div class="endpoint">
+  <span class="method delete">DELETE</span>
+  <span class="route">/api/servicos/{id}</span>
+  <span class="desc">Elimina serviço; 409 Conflict se tiver pedidos associados</span>
+</div>
+<div class="endpoint">
+  <span class="method get">GET</span>
+  <span class="route">/api/servicos/estatisticas</span>
+  <span class="desc">Agrega TotalServicos, TotalAtivos, PrecoMedio, usos por serviço</span>
+</div>
+
+<p>O endpoint <code>DELETE</code> inclui proteção de integridade: antes de eliminar, verifica se existem entradas em <code>PedidoServicos</code> e retorna <code>409 Conflict</code> se sim, com mensagem explicativa. O endpoint de <code>estatísticas</code> é particularmente útil para dashboards externos, retornando dados agregados numa única chamada.</p>
+
+<h2 class="sub-title" id="sec7-3">7.3 DTOs e Validação</h2>
+
+<p>A API utiliza <strong>Data Transfer Objects</strong> (DTOs) para separar os modelos de domínio da representação HTTP. O <code>ServicoDto</code> é usado para leitura e o <code>CreateServicoDto</code> para escrita (POST e PUT), com validação via Data Annotations:</p>
+
+<pre><span class="k">public class</span> <span class="t">CreateServicoDto</span>
+{
+    [Required] [StringLength(<span class="s">100</span>)]
+    <span class="k">public string</span> Nome { <span class="k">get</span>; <span class="k">set</span>; } = <span class="s">""</span>;
+
+    [Required]
+    <span class="k">public string</span> Descricao { <span class="k">get</span>; <span class="k">set</span>; } = <span class="s">""</span>;
+
+    [Range(<span class="s">0</span>, <span class="s">99999.99</span>)]
+    <span class="k">public decimal</span> PrecoBase { <span class="k">get</span>; <span class="k">set</span>; }
+
+    <span class="k">public bool</span> Ativo { <span class="k">get</span>; <span class="k">set</span>; } = <span class="k">true</span>;
+    <span class="k">public string</span> Icone { <span class="k">get</span>; <span class="k">set</span>; } = <span class="s">"bi-globe"</span>;
+}</pre>
+
+<h2 class="sub-title" id="sec7-4">7.4 Swagger / OpenAPI</h2>
+
+<p>A documentação da API é gerada automaticamente pelo <strong>Swashbuckle.AspNetCore</strong> (v6.5.0). Em ambiente de produção, o Swagger UI permanece ativo para facilitar a demonstração académica. A interface está acessível em <code>/index.html</code> e permite testar todos os endpoints diretamente no browser, sem necessidade de ferramentas externas como Postman.</p>
+
+<p>A configuração CORS está definida como <code>AllowAll</code> para permitir chamadas de qualquer origem, adequado para contexto académico.</p>
+
+<!-- ═══════════════════════════════════════════════════════════ 8. SIGNALR -->
+<div class="page-break"></div>
+<h1 class="section-title" id="sec8">8. Comunicação em Tempo Real — SignalR</h1>
+
+<p>O <strong>SignalR</strong> é uma biblioteca ASP.NET Core que simplifica a adição de funcionalidades em tempo real usando WebSockets (com fallback para long-polling quando WebSockets não estão disponíveis). Na plataforma KapaDW, é usado para dois cenários:</p>
+
+<ul>
+  <li><strong>Notificação global:</strong> Quando um cliente submete um novo pedido, todos os administradores conectados recebem uma notificação imediata com o título do projeto e o nome do cliente.</li>
+  <li><strong>Notificação direcionada:</strong> Quando um administrador altera o estado de um pedido, o cliente proprietário desse pedido recebe uma notificação personalizada com o novo estado.</li>
+</ul>
+
+<h2 class="sub-title">Hub: NotificacoesHub</h2>
+
+<p>O hub está registado no endpoint <code>/hub/notificacoes</code> e requer autenticação (<code>[Authorize]</code>):</p>
+
+<pre><span class="c">/// Notifica todos os clientes conectados de um novo pedido</span>
+<span class="k">public async</span> Task <span class="t">NotificarNovoPedido</span>(<span class="k">string</span> tituloProjeto, <span class="k">string</span> nomeCliente)
+{
+    <span class="k">await</span> Clients.All.SendAsync(<span class="s">"NovoPedido"</span>, tituloProjeto, nomeCliente,
+        DateTime.Now.ToString(<span class="s">"HH:mm"</span>));
+}
+
+<span class="c">/// Notifica apenas o cliente específico sobre atualização do seu pedido</span>
+<span class="k">public async</span> Task <span class="t">NotificarAtualizacaoPedido</span>(<span class="k">string</span> clienteId,
+    <span class="k">string</span> tituloProjeto, <span class="k">string</span> novoEstado)
+{
+    <span class="k">await</span> Clients.User(clienteId).SendAsync(<span class="s">"PedidoAtualizado"</span>,
+        tituloProjeto, novoEstado, DateTime.Now.ToString(<span class="s">"HH:mm"</span>));
+}</pre>
+
+<p>No frontend (<code>_Layout.cshtml</code>), o cliente SignalR JavaScript está configurado com reconexão automática e um sistema de toasts que apresenta as notificações no canto superior direito com animação, desaparecendo automaticamente após 5 segundos:</p>
+
+<pre>connection.on(<span class="s">"NovoPedido"</span>, (titulo, cliente, hora) => {
+    mostrarNotificacao(`Novo pedido: "${titulo}" de ${cliente} às ${hora}`);
+    incrementarBadge();
+});
+
+connection.on(<span class="s">"PedidoAtualizado"</span>, (titulo, estado, hora) => {
+    mostrarNotificacao(`O pedido "${titulo}" foi atualizado: ${estado} (${hora})`);
+});</pre>
+
+<p>A integração no fluxo de criação de pedido (<code>Pedidos/Create</code>) é feita server-side através da injeção do hub no page model:</p>
+
+<pre><span class="k">private readonly</span> IHubContext&lt;<span class="t">NotificacoesHub</span>&gt; _hub;
+
+<span class="c">// Após guardar o pedido com sucesso:</span>
+<span class="k">await</span> _hub.Clients.All.SendAsync(<span class="s">"NovoPedido"</span>, Pedido.TituloProjeto, nomeCliente);</pre>
+
+<!-- ═══════════════════════════════════════════════════════════ 9. INTERFACE -->
+<div class="page-break"></div>
+<h1 class="section-title" id="sec9">9. Interface e Estética</h1>
+
+<h2 class="sub-title" id="sec9-1">9.1 Layout Global</h2>
+
+<p>Toda a aplicação utiliza um template único definido em <code>Pages/Shared/_Layout.cshtml</code>. O layout define a estrutura consistente de todas as páginas: navbar no topo, área de conteúdo central e footer. A fonte utilizada é <strong>Inter</strong> (Google Fonts), uma das fontes sans-serif mais usadas em produtos digitais modernos pela sua legibilidade em ecrãs.</p>
+
+<p>A navbar adapta o seu conteúdo ao utilizador autenticado e ao seu role:</p>
+
+<table class="data-table">
+  <tr><th>Item de Menu</th><th>Visível Para</th><th>Rota</th></tr>
+  <tr><td>Início</td><td>Todos</td><td><code>/Index</code></td></tr>
+  <tr><td>Serviços</td><td>Todos</td><td><code>/Servicos/Index</code></td></tr>
+  <tr><td>Pedidos</td><td>Autenticados</td><td><code>/Pedidos/Index</code></td></tr>
+  <tr><td>Administração (dropdown)</td><td>Administradores</td><td>— (contém sub-itens)</td></tr>
+  <tr><td>&nbsp;&nbsp;↳ Clientes</td><td>Admin</td><td><code>/Clientes/Index</code></td></tr>
+  <tr><td>&nbsp;&nbsp;↳ Categorias</td><td>Admin</td><td><code>/Categorias/Index</code></td></tr>
+  <tr><td>&nbsp;&nbsp;↳ Novo Serviço</td><td>Admin</td><td><code>/Servicos/Create</code></td></tr>
+  <tr><td>Sobre</td><td>Todos</td><td><code>/Sobre</code></td></tr>
+  <tr><td>Notificações (sino)</td><td>Autenticados</td><td>— (SignalR toast)</td></tr>
+</table>
+
+<h2 class="sub-title" id="sec9-2">9.2 Stack de Estilização</h2>
+
+<p>A interface usa uma abordagem híbrida com dois frameworks CSS complementares:</p>
+
+<ul>
+  <li><strong>Bootstrap 5.3.2</strong> — Framework principal para grid, componentes (cards, modais, dropdowns, badges, alerts) e utilitários base. Incluído via CDN.</li>
+  <li><strong>Tailwind CSS 3.4</strong> — Usado para estilos personalizados mais específicos, como a paleta de cores dark da página inicial, gradientes e efeitos de glassmorphism. O <em>preflight</em> está desativado para não conflituar com os resets do Bootstrap.</li>
+  <li><strong>Bootstrap Icons 1.11.3</strong> — Biblioteca de ícones SVG usada em toda a interface para enriquecer visualmente menus, botões, listas e cartões.</li>
+  <li><strong>AOS (Animate On Scroll)</strong> — Biblioteca de animações de entrada ao scroll. Configurada com <code>duration: 650</code> e <code>once: true</code> para animações suaves sem repetição.</li>
+</ul>
+
+<p>O Tailwind é compilado em tempo de build via um target MSBuild personalizado no <code>.csproj</code>:</p>
+
+<pre>&lt;<span class="t">Target</span> Name=<span class="s">"BuildTailwind"</span> BeforeTargets=<span class="s">"Build"</span>
+        Condition=<span class="s">"Exists('package.json') And '$(SkipNpmBuild)' != 'true'"</span>&gt;
+    &lt;<span class="t">Exec</span> Command=<span class="s">"npm run build"</span> WorkingDirectory=<span class="s">"$(ProjectDir)"</span> /&gt;
+&lt;/<span class="t">Target</span>&gt;</pre>
+
+<p>A configuração do Tailwind em <code>tailwind.config.js</code> define uma paleta de cores customizada para o tema dark da homepage:</p>
+
+<table class="data-table">
+  <tr><th>Variável</th><th>Valor</th><th>Uso</th></tr>
+  <tr><td><code>ws-bg</code></td><td>#070b14</td><td>Fundo principal da homepage</td></tr>
+  <tr><td><code>ws-surface</code></td><td>#111827</td><td>Superfície de cards</td></tr>
+  <tr><td><code>ws-blue</code></td><td>#3b82f6</td><td>Cor de destaque principal</td></tr>
+  <tr><td><code>ws-purple</code></td><td>#8b5cf6</td><td>Cor de destaque secundária</td></tr>
+  <tr><td><code>ws-cyan</code></td><td>#06b6d4</td><td>Cor de destaque terciária</td></tr>
+  <tr><td><code>ws-text</code></td><td>#f1f5f9</td><td>Texto principal (dark mode)</td></tr>
+  <tr><td><code>ws-muted</code></td><td>#64748b</td><td>Texto secundário</td></tr>
+</table>
+
+<h2 class="sub-title" id="sec9-3">9.3 Componentes Visuais Notáveis</h2>
+
+<p>Ao longo da interface, destacam-se vários padrões de design consistentes:</p>
+
+<ul>
+  <li><strong>Cards com sombra suave:</strong> <code>border-0 shadow-sm</code> são usados em todo o conteúdo principal, criando profundidade sem bordas duras.</li>
+  <li><strong>Cabeçalhos de card coloridos:</strong> Cada área tem cor própria (azul para academic info, verde para autores, amarelo para credenciais, info para stack).</li>
+  <li><strong>Feedback visual com TempData:</strong> Mensagens de sucesso (verde) e erro (vermelho) são persistidas entre redirects usando <code>TempData</code> e renderizadas no layout como alertas Bootstrap dismissíveis.</li>
+  <li><strong>Badges de estado:</strong> Cada estado de pedido tem uma cor associada, tornando a lista de pedidos imediatamente legível.</li>
+  <li><strong>Ícones Bootstrap integrados:</strong> Praticamente todos os botões, itens de menu e cabeçalhos têm um ícone Bootstrap associado para melhorar a escaneabilidade visual.</li>
+  <li><strong>Responsive Design:</strong> O grid Bootstrap garante que a interface funciona corretamente em mobile, tablet e desktop.</li>
+</ul>
+
+<h2 class="sub-title" id="sec9-4">9.4 Página de Início</h2>
+
+<p>A página inicial (<code>Pages/Index.cshtml</code>) tem um design distinto do restante da aplicação, com tema escuro e interativo. Inclui uma <strong>animação de partículas tech</strong> renderizada em canvas HTML5, onde partículas se movem e formam conexões ao aproximar o rato, criando uma estética futurista associada a tecnologia. A section hero usa a paleta Tailwind dark (<code>ws-bg</code>, <code>ws-blue</code>) com texto em gradiente e call-to-action buttons em destaque.</p>
+
+<!-- ═══════════════════════════════════════════════════════════ 10. DEPLOYMENT -->
+<div class="page-break"></div>
+<h1 class="section-title" id="sec10">10. Publicação e Infraestrutura</h1>
+
+<h2 class="sub-title" id="sec10-1">10.1 Contentorização com Docker</h2>
+
+<p>Ambos os projetos são contentorizados com ficheiros Dockerfile separados, usando o padrão <strong>multi-stage build</strong> para produzir imagens leves de produção.</p>
+
+<h3 class="sub-sub">Dockerfile — Aplicação Web</h3>
+
+<pre><span class="c"># Stage 1: Build com SDK + Node.js (para compilar Tailwind CSS)</span>
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+
+WORKDIR /src
+COPY WebServicos/WebServicos/package.json WebServicos/WebServicos/
+RUN cd WebServicos/WebServicos && npm install
+
+COPY WebServicos/WebServicos/WebServicos.csproj WebServicos/WebServicos/
+RUN dotnet restore WebServicos/WebServicos/WebServicos.csproj
+
+COPY . .
+WORKDIR /src/WebServicos/WebServicos
+RUN dotnet publish -c Release -o /app/publish --nologo
+
+<span class="c"># Stage 2: Runtime — imagem mínima sem SDK</span>
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+COPY --from=build /app/publish .
+EXPOSE 10000
+ENV ASPNETCORE_URLS=http://+:10000
+ENTRYPOINT ["dotnet", "WebServicos.dll"]</pre>
+
+<p>A inclusão do Node.js na stage de build é necessária porque o target MSBuild <code>BuildTailwind</code> executa <code>npm run build</code> durante o <code>dotnet publish</code>, gerando o ficheiro <code>wwwroot/css/app.css</code> minificado.</p>
+
+<h3 class="sub-sub">Dockerfile.api — API REST</h3>
+
+<pre><span class="c"># Stage 1: Build (sem Node.js — SkipNpmBuild=true)</span>
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY WebServicos/WebServicos/WebServicos.csproj WebServicos/WebServicos/
+COPY WebServicos/WebServicos.API/WebServicos.API.csproj WebServicos/WebServicos.API/
+RUN dotnet restore WebServicos/WebServicos.API/WebServicos.API.csproj
+
+COPY . .
+WORKDIR /src/WebServicos/WebServicos.API
+RUN dotnet publish -c Release -o /app/publish --nologo <span class="s">-p:SkipNpmBuild=true</span>
+
+<span class="c"># Stage 2: Runtime</span>
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+COPY --from=build /app/publish .
+EXPOSE 10000
+ENV ASPNETCORE_URLS=http://+:10000
+ENTRYPOINT ["dotnet", "WebServicos.API.dll"]</pre>
+
+<p>O flag <code>-p:SkipNpmBuild=true</code> é crucial: a API referencia o projeto WebServicos (para partilhar modelos), o que ativaria o target Tailwind. Como a API não tem interface web, não precisa de CSS, e o Node.js não está disponível neste Dockerfile.</p>
+
+<h2 class="sub-title" id="sec10-2">10.2 Deployment na Render.com</h2>
+
+<p>A plataforma está publicada na <strong>Render.com</strong>, um serviço cloud que oferece um plano gratuito para containers Docker. A infraestrutura é definida declarativamente no ficheiro <code>render.yaml</code> (Render Blueprint), que descreve os dois serviços e as suas variáveis de ambiente:</p>
+
+<pre>services:
+  - type: web
+    name: webservicos
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        value: Data Source=/app/webservicos.db
+
+  - type: web
+    name: webservicos-api
+    env: docker
+    dockerfilePath: ./Dockerfile.api
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        value: Data Source=/app/webservicos.db</pre>
+
+<p>Os URLs de produção são:</p>
+<ul>
+  <li>Aplicação Web: <code>https://webservicos.onrender.com</code></li>
+  <li>API REST: <code>https://webservicos-api.onrender.com</code></li>
+</ul>
+
+<div class="info-box">
+  <strong>Nota sobre SQLite em cloud:</strong> No plano gratuito da Render, o filesystem não é persistente entre deploys. Cada novo deploy começa com uma base de dados vazia, preenchida pelo seed automático. Para persistência real seria necessário configurar um volume ou migrar para PostgreSQL.
+</div>
+
+<h2 class="sub-title" id="sec10-3">10.3 Pipeline de Entrega Contínua</h2>
+
+<p>O projeto usa dois repositórios GitHub com auto-deploy configurado:</p>
+
+<table class="data-table">
+  <tr><th>Remote Git</th><th>Repositório</th><th>Branch</th><th>Finalidade</th></tr>
+  <tr><td><code>origin</code></td><td>kapa1233/projetoDW</td><td>master</td><td>Repositório principal do grupo</td></tr>
+  <tr><td><code>diogo</code></td><td>diogogodinhowaze/projetodw</td><td>main</td><td>Ligado à Render para auto-deploy</td></tr>
+</table>
+
+<p>Sempre que é feito <code>git push diogo master:main</code>, a Render deteta a alteração e inicia automaticamente um novo build Docker e deploy dos dois serviços. O processo completo de build (inclui compilação .NET + npm build do Tailwind) demora tipicamente 3 a 5 minutos.</p>
+
+<!-- ═══════════════════════════════════════════════════════════ 11. TECNOLOGIAS -->
+<div class="page-break"></div>
+<h1 class="section-title" id="sec11">11. Tecnologias e Dependências</h1>
+
+<table class="data-table">
+  <tr><th>Tecnologia</th><th>Versão</th><th>Papel no Projeto</th></tr>
+  <tr><td><strong>ASP.NET Core</strong></td><td>8.0</td><td>Framework base — Razor Pages e MVC Controllers</td></tr>
+  <tr><td><strong>Entity Framework Core</strong></td><td>8.0</td><td>ORM para acesso à base de dados e migrations</td></tr>
+  <tr><td><strong>SQLite</strong></td><td>—</td><td>Motor de base de dados (ficheiro único, sem servidor)</td></tr>
+  <tr><td><strong>ASP.NET Core Identity</strong></td><td>8.0</td><td>Autenticação, autorização, gestão de roles</td></tr>
+  <tr><td><strong>ASP.NET Core SignalR</strong></td><td>8.0</td><td>Comunicação em tempo real (WebSockets)</td></tr>
+  <tr><td><strong>Swashbuckle.AspNetCore</strong></td><td>6.5.0</td><td>Geração automática de documentação OpenAPI/Swagger</td></tr>
+  <tr><td><strong>Bootstrap</strong></td><td>5.3.2</td><td>Framework CSS — grid, componentes, utilitários</td></tr>
+  <tr><td><strong>Bootstrap Icons</strong></td><td>1.11.3</td><td>Biblioteca de ícones SVG inline</td></tr>
+  <tr><td><strong>jQuery</strong></td><td>3.7.1</td><td>Manipulação DOM, validação de formulários</td></tr>
+  <tr><td><strong>Tailwind CSS</strong></td><td>3.4.x</td><td>Utilitários CSS customizados (paleta dark, gradientes)</td></tr>
+  <tr><td><strong>AOS (Animate On Scroll)</strong></td><td>2.3.x</td><td>Animações de entrada ao scroll</td></tr>
+  <tr><td><strong>Microsoft SignalR JS</strong></td><td>8.0.0</td><td>Cliente JavaScript do SignalR</td></tr>
+  <tr><td><strong>Node.js</strong></td><td>20.x</td><td>Build tool para compilar Tailwind CSS (apenas build)</td></tr>
+  <tr><td><strong>Docker</strong></td><td>—</td><td>Contentorização para deployment</td></tr>
+  <tr><td><strong>Render.com</strong></td><td>—</td><td>Plataforma cloud para hosting (plano gratuito)</td></tr>
+  <tr><td><strong>GitHub</strong></td><td>—</td><td>Controlo de versão + trigger de auto-deploy</td></tr>
+  <tr><td><strong>Microsoft.Extensions.Hosting.WindowsServices</strong></td><td>8.0</td><td>Suporte para execução como Windows Service (desenvolvimento local)</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════ 12. PADRÕES -->
+<h1 class="section-title" id="sec12">12. Padrões de Desenvolvimento</h1>
+
+<h2 class="sub-title">12.1 Padrões Arquiteturais</h2>
+
+<ul>
+  <li><strong>Repository via EF Core:</strong> O <code>ApplicationDbContext</code> funciona como unit of work e repositório implícito, sem camada adicional de repositório (adequado para a dimensão do projeto).</li>
+  <li><strong>Page Model Pattern:</strong> Cada Razor Page tem um PageModel dedicado com handlers separados por ação (<code>OnGet</code>, <code>OnPost</code>, <code>OnPostAprovarAsync</code>), mantendo a lógica de negócio separada da view.</li>
+  <li><strong>DTO Pattern na API:</strong> Os controllers usam DTOs distintos para leitura (<code>ServicoDto</code>) e escrita (<code>CreateServicoDto</code>), evitando expor modelos de domínio diretamente.</li>
+  <li><strong>Eager Loading:</strong> As queries usam <code>.Include()</code> e <code>.ThenInclude()</code> para carregar relações necessárias, evitando o problema N+1 queries.</li>
+</ul>
+
+<h2 class="sub-title">12.2 Padrões de Dados</h2>
+
+<ul>
+  <li><strong>Timestamps UTC:</strong> Todos os campos de data usam <code>DateTime.UtcNow</code> para consistência independente do fuso horário do servidor.</li>
+  <li><strong>Soft vs Hard Delete:</strong> A aplicação usa hard delete em todos os casos, com proteção via constraints (<code>DeleteBehavior.Restrict</code> onde necessário).</li>
+  <li><strong>Seed idempotente:</strong> O <code>DbSeeder</code> verifica existência antes de criar roles e utilizadores, sendo seguro para executar múltiplas vezes.</li>
+  <li><strong>Chave composta:</strong> A tabela de junção <code>PedidoServico</code> usa uma chave primária composta (PedidoId + ServicoId), sem chave surrogate, o que é a prática correta para M:N puras com dados adicionais.</li>
+</ul>
+
+<h2 class="sub-title">12.3 Padrões de UI</h2>
+
+<ul>
+  <li><strong>Post-Redirect-Get (PRG):</strong> Todos os formulários de criação e edição redirecionam após POST bem sucedido, evitando re-submissão acidental ao recarregar a página.</li>
+  <li><strong>TempData para feedback:</strong> Mensagens de sucesso e erro são passadas entre redirects via <code>TempData</code>, apresentadas como alerts Bootstrap na página seguinte.</li>
+  <li><strong>Model Binding:</strong> O atributo <code>[BindProperty]</code> liga automaticamente os campos do formulário HTML às propriedades do PageModel, eliminando código de parsing manual.</li>
+  <li><strong>Validação dupla:</strong> A validação ocorre no lado do servidor (ModelState + lógica manual) e no cliente (jQuery Validation via <code>_ValidationScriptsPartial</code>).</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════════════ 13. DIFICULDADES -->
+<div class="page-break"></div>
+<h1 class="section-title" id="sec13">13. Dificuldades e Soluções</h1>
+
+<p>Durante o desenvolvimento e deployment do projeto, surgiram vários problemas técnicos que exigiram pesquisa e resolução criativa. Documentam-se aqui os mais relevantes:</p>
+
+<table class="data-table">
+  <tr><th>Problema</th><th>Causa</th><th>Solução</th></tr>
+  <tr>
+    <td>npm: not found durante Docker build</td>
+    <td>O target MSBuild <code>BuildTailwind</code> executa <code>npm run build</code>, mas a imagem Docker base (.NET SDK) não inclui Node.js</td>
+    <td>Adicionar instalação de Node.js 20.x via NodeSource no Dockerfile da app web</td>
+  </tr>
+  <tr>
+    <td>npm ci falha por falta de package-lock.json</td>
+    <td>O ficheiro <code>package-lock.json</code> está no <code>.gitignore</code> e não é enviado para o repositório</td>
+    <td>Substituir <code>npm ci</code> por <code>npm install</code>, que não requer o lock file</td>
+  </tr>
+  <tr>
+    <td>API falha no build Docker por npm: not found</td>
+    <td>A API referencia o projeto WebServicos, ativando o target Tailwind mesmo não precisando de CSS</td>
+    <td>Adicionar condição <code>SkipNpmBuild=true</code> ao target e passar o flag no <code>dotnet publish</code> da API</td>
+  </tr>
+  <tr>
+    <td>SQLite Error 14: unable to open database</td>
+    <td>O caminho relativo <code>../WebServicos/webservicos.db</code> resolvia para <code>/WebServicos/webservicos.db</code> no container Docker (sem permissão)</td>
+    <td>Sobrescrever a connection string nas env vars do render.yaml para <code>Data Source=/app/webservicos.db</code></td>
+  </tr>
+  <tr>
+    <td>Render Blueprint "Resources already up to date"</td>
+    <td>Um serviço Node.js antigo existia no dashboard e bloqueava a criação dos serviços Docker</td>
+    <td>Eliminar o serviço obsoleto e sincronizar novamente o Blueprint</td>
+  </tr>
+  <tr>
+    <td>Render ligado ao repositório errado</td>
+    <td>O repositório principal do grupo (<code>kapa1233/projetoDW</code>) estava configurado na Render, mas o utilizador da Render era <code>diogogodinhowaze</code></td>
+    <td>Adicionar segundo remote Git (<code>diogo</code>) e fazer force push inicial para o repositório correto</td>
+  </tr>
+  <tr>
+    <td>SQLite perde dados a cada deploy/reinício na Render</td>
+    <td>O plano gratuito da Render não tem disco persistente — o filesystem do container é destruído a cada deploy ou quando o serviço adormece</td>
+    <td>Migrar para PostgreSQL gerido pela Render (plano free): adicionar secção <code>databases:</code> ao <code>render.yaml</code> com <code>fromDatabase.connectionString</code> nos dois serviços</td>
+  </tr>
+  <tr>
+    <td>Npgsql rejeita o formato <code>postgresql://</code> do <code>DATABASE_URL</code></td>
+    <td>A Render injeta a connection string no formato URL (<code>postgresql://user:pass@host:port/db</code>) mas o <code>NpgsqlConnectionStringBuilder</code> só aceita o formato ADO.NET (<code>Host=...;Database=...;</code>)</td>
+    <td>Criar função <code>ConvertDatabaseUrl()</code> em ambos os <code>Program.cs</code> que converte o URL para formato ADO.NET antes de passar ao <code>UseNpgsql()</code></td>
+  </tr>
+  <tr>
+    <td>Erro "timestamp with time zone literal cannot be generated for Unspecified DateTime" na migration</td>
+    <td>O Npgsql 8 usa <code>timestamp with time zone</code> por defeito, que exige <code>DateTimeKind.Utc</code> em todos os valores — incluindo os dados de seed (<code>DataCriacao</code> dos serviços) guardados na migration com <code>Kind = Unspecified</code></td>
+    <td>Ativar <code>AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true)</code> em ambos os <code>Program.cs</code> e na <code>ApplicationDbContextFactory</code>; regenerar as migrations com o switch ativo, que passa as colunas para <code>timestamp without time zone</code> sem restrição de UTC</td>
+  </tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════ 14. MELHORIAS -->
+<div class="page-break"></div>
+<h1 class="section-title" id="sec14">14. Melhorias e Evolução da Plataforma</h1>
+
+<p>Ao longo do desenvolvimento, a plataforma passou por melhorias concretas que a aproximam de um produto real. Esta secção documenta as evoluções mais significativas face à versão inicial.</p>
+
+<h2 class="sub-title">14.1 Persistência de Dados com PostgreSQL</h2>
+
+<p>A alteração mais impactante foi a <strong>migração de SQLite para PostgreSQL</strong> como base de dados de produção. Esta mudança resolve um problema fundamental que existia na versão inicial da plataforma publicada na Render.com.</p>
+
+<h3 class="sub-sub">O problema com SQLite na cloud</h3>
+
+<p>Na versão original, a base de dados era um ficheiro SQLite (<code>webservicos.db</code>) armazenado no sistema de ficheiros do container Docker. O plano gratuito da Render não fornece disco persistente, o que significa que:</p>
+
+<ul>
+  <li>Cada novo <strong>deploy apagava toda a base de dados</strong> — utilizadores registados, pedidos criados e mensagens de chat desapareciam</li>
+  <li>O serviço <strong>adormece após 15 minutos</strong> de inatividade no plano gratuito; ao acordar, o container reiniciava e o ficheiro SQLite era destruído</li>
+  <li>Apenas as contas de demonstração (admin e cliente demo) sobreviviam, porque são recriadas pelo seed automático a cada arranque</li>
+  <li>Era impossível demonstrar continuidade — qualquer utilizador que se registasse antes de uma apresentação poderia já não existir no dia seguinte</li>
+</ul>
+
+<div class="warn-box">
+  <strong>Exemplo concreto:</strong> Um utilizador registava-se, submetia um pedido e trocava mensagens com o admin. No dia seguinte, ao tentar fazer login, a conta já não existia — porque entretanto houve um novo deploy ou o container reiniciou por inatividade.
+</div>
+
+<h3 class="sub-sub">A solução: PostgreSQL gerido pela Render</h3>
+
+<p>A solução foi integrar uma base de dados <strong>PostgreSQL gerida pela própria Render</strong>, independente dos containers das aplicações. O PostgreSQL é um serviço separado com disco persistente próprio — os dados vivem fora dos containers e sobrevivem a qualquer número de deploys, reinícios ou hibernações.</p>
+
+<table class="data-table">
+  <tr><th></th><th>Antes (SQLite)</th><th>Depois (PostgreSQL)</th></tr>
+  <tr><td><strong>Onde vivem os dados</strong></td><td>Ficheiro no container Docker</td><td>Servidor PostgreSQL dedicado na Render</td></tr>
+  <tr><td><strong>Utilizadores registados</strong></td><td>Apagados a cada deploy/reinício</td><td><strong>Persistem para sempre</strong></td></tr>
+  <tr><td><strong>Pedidos e mensagens</strong></td><td>Perdidos com o container</td><td><strong>Guardados permanentemente</strong></td></tr>
+  <tr><td><strong>Após hibernação (15 min)</strong></td><td>Base de dados reiniciada do zero</td><td>Dados intactos — só o container acorda</td></tr>
+  <tr><td><strong>Após novo deploy</strong></td><td>Tudo apagado</td><td>Apenas o schema é atualizado (migrations)</td></tr>
+  <tr><td><strong>Partilha entre serviços</strong></td><td>Impossível (ficheiro local)</td><td>App web e API acedem à mesma BD</td></tr>
+</table>
+
+<h3 class="sub-sub">Implementação técnica</h3>
+
+<p>A integração foi feita de forma a <strong>não quebrar o desenvolvimento local</strong>: a aplicação deteta automaticamente se está em produção (presença da variável <code>DATABASE_URL</code> injetada pela Render) e escolhe o provider adequado:</p>
+
+<pre><span class="k">var</span> databaseUrl = Environment.GetEnvironmentVariable(<span class="s">"DATABASE_URL"</span>);
+<span class="k">if</span> (databaseUrl != <span class="k">null</span>)
+{
+    <span class="c">// Produção: PostgreSQL gerido pela Render</span>
+    <span class="k">var</span> npgsqlConn = ConvertDatabaseUrl(databaseUrl);
+    options.UseNpgsql(npgsqlConn);
+}
+<span class="k">else</span>
+{
+    <span class="c">// Local: SQLite — sem necessidade de instalar PostgreSQL</span>
+    options.UseSqlite(sqliteConnStr);
+}</pre>
+
+<p>O ficheiro <code>render.yaml</code> foi atualizado para declarar a base de dados e ligar automaticamente os dois serviços (app web e API) à mesma instância PostgreSQL:</p>
+
+<pre>databases:
+  - name: webservicos-db
+    plan: free
+
+services:
+  - name: webservicos
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: webservicos-db
+          property: connectionString</pre>
+
+<p>A gestão do schema é feita pelo <strong>EF Core Migrations</strong>: no arranque em produção, <code>db.Database.Migrate()</code> aplica automaticamente quaisquer alterações de schema pendentes, garantindo que a base de dados está sempre sincronizada com o código sem intervenção manual.</p>
+
+<h2 class="sub-title">14.2 Outras Melhorias de Produto</h2>
+
+<table class="data-table">
+  <tr><th>Melhoria</th><th>Descrição</th><th>Impacto</th></tr>
+  <tr>
+    <td><strong>Página "Sobre" redesenhada</strong></td>
+    <td>Substituição da tabela estática por layout com hero, diagrama de fluxo, cards de autores com avatares, badges de tecnologias e secção GitHub</td>
+    <td>Mais apelativa para avaliação académica; auto-explicativa para visitantes</td>
+  </tr>
+  <tr>
+    <td><strong>Relatório técnico descarregável</strong></td>
+    <td>Botão "Descarregar Relatório" na página Sobre serve o HTML diretamente de <code>wwwroot/</code></td>
+    <td>Documentação acessível a partir da própria plataforma</td>
+  </tr>
+  <tr>
+    <td><strong>Comentários XML em todo o código</strong></td>
+    <td>Adição de <code>/// &lt;summary&gt;</code> em todas as classes, métodos e propriedades; comentários inline na lógica não óbvia</td>
+    <td>Código legível no IntelliSense; facilita a avaliação e manutenção</td>
+  </tr>
+  <tr>
+    <td><strong>Animação de partículas na homepage</strong></td>
+    <td>Canvas HTML5 interativo com partículas que formam conexões ao aproximar o rato</td>
+    <td>Estética tech moderna, diferenciadora visualmente</td>
+  </tr>
+  <tr>
+    <td><strong>Deploy automático (CI/CD)</strong></td>
+    <td>Qualquer <code>git push</code> para o repositório desencadeia automaticamente um novo build e deploy na Render</td>
+    <td>Zero intervenção manual para publicar novas versões</td>
+  </tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════ 15. CONCLUSÃO -->
+<div class="page-break"></div>
+<h1 class="section-title" id="sec15">15. Conclusão</h1>
+
+<p>O projeto KapaDW concretizou com sucesso os objetivos definidos para a unidade curricular de Desenvolvimento Web. A plataforma implementada vai além dos requisitos mínimos de um CRUD, incorporando funcionalidades características de sistemas web profissionais: comunicação em tempo real, workflows de aprovação, documentação de API, e deployment em cloud com CI/CD.</p>
+
+<p>Do ponto de vista técnico, o projeto demonstrou competências em múltiplas camadas:</p>
+
+<ul>
+  <li><strong>Backend:</strong> Desenho de modelos de domínio com relações complexas (M:N com dados adicionais), configuração de ORM com EF Core, gestão de migrations, autorização granular com ASP.NET Identity, e implementação de uma API REST respeitando convenções HTTP.</li>
+  <li><strong>Tempo Real:</strong> Integração de SignalR tanto server-side (injeção via <code>IHubContext</code>) como client-side (JavaScript com reconexão automática), com notificações globais e direcionadas.</li>
+  <li><strong>Frontend:</strong> Interface responsiva com Bootstrap, animações com AOS, paleta dark customizada com Tailwind CSS, e sistema de feedback visual consistente com TempData.</li>
+  <li><strong>DevOps:</strong> Contentorização com Docker multi-stage (incluindo compilação de assets frontend), configuração de Blueprint na Render.com e pipeline de auto-deploy a partir de commits GitHub.</li>
+</ul>
+
+<p>As maiores aprendizagens técnicas foram na área de <strong>contentorização com Docker</strong>, onde a necessidade de incluir Node.js na imagem de build (para compilar Tailwind CSS num ambiente .NET) e de gerir caminhos de base de dados absolutos no container exigiram um diagnóstico cuidado dos logs de erro e compreensão do comportamento do sistema de ficheiros em containers.</p>
+
+<div class="success-box">
+  <strong>Resultado:</strong> A plataforma está publicada e acessível 24/7 em <code>https://webservicos.onrender.com</code>, com deploy automático a cada push para o repositório GitHub, demonstrando um fluxo de desenvolvimento moderno e profissional.
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ 15. REFERÊNCIAS -->
+<h1 class="section-title" id="sec16">16. Referências</h1>
+
+<ul style="list-style: none; padding:0;">
+  <li style="padding: .4rem 0; border-bottom: 1px solid #f0f0f0;">
+    <strong>[1]</strong> Microsoft. <em>ASP.NET Core Razor Pages</em>. Microsoft Learn.
+    <code>learn.microsoft.com/aspnet/core/razor-pages</code>
+  </li>
+  <li style="padding: .4rem 0; border-bottom: 1px solid #f0f0f0;">
+    <strong>[2]</strong> Microsoft. <em>Entity Framework Core — Getting Started</em>. Microsoft Learn.
+    <code>learn.microsoft.com/ef/core</code>
+  </li>
+  <li style="padding: .4rem 0; border-bottom: 1px solid #f0f0f0;">
+    <strong>[3]</strong> Microsoft. <em>ASP.NET Core Identity</em>. Microsoft Learn.
+    <code>learn.microsoft.com/aspnet/core/security/authentication/identity</code>
+  </li>
+  <li style="padding: .4rem 0; border-bottom: 1px solid #f0f0f0;">
+    <strong>[4]</strong> Microsoft. <em>ASP.NET Core SignalR Introduction</em>. Microsoft Learn.
+    <code>learn.microsoft.com/aspnet/core/signalr/introduction</code>
+  </li>
+  <li style="padding: .4rem 0; border-bottom: 1px solid #f0f0f0;">
+    <strong>[5]</strong> Bootstrap Team. <em>Bootstrap 5 Documentation</em>.
+    <code>getbootstrap.com/docs/5.3</code>
+  </li>
+  <li style="padding: .4rem 0; border-bottom: 1px solid #f0f0f0;">
+    <strong>[6]</strong> Tailwind Labs. <em>Tailwind CSS Documentation</em>.
+    <code>tailwindcss.com/docs</code>
+  </li>
+  <li style="padding: .4rem 0; border-bottom: 1px solid #f0f0f0;">
+    <strong>[7]</strong> SQLite Consortium. <em>SQLite Documentation</em>.
+    <code>sqlite.org/docs.html</code>
+  </li>
+  <li style="padding: .4rem 0; border-bottom: 1px solid #f0f0f0;">
+    <strong>[8]</strong> Domaindrivendesign.org. <em>Domain-Driven Design Reference</em>.
+    <code>domainlanguage.com/ddd/reference</code>
+  </li>
+  <li style="padding: .4rem 0; border-bottom: 1px solid #f0f0f0;">
+    <strong>[9]</strong> Docker Inc. <em>Best practices for writing Dockerfiles</em>.
+    <code>docs.docker.com/develop/develop-images/dockerfile_best-practices</code>
+  </li>
+  <li style="padding: .4rem 0;">
+    <strong>[10]</strong> Render. <em>Render Documentation — Blueprint Spec</em>.
+    <code>render.com/docs/blueprint-spec</code>
+  </li>
+</ul>
+
+<br><br>
+<div style="text-align:center; color:#999; font-size:9pt; border-top: 1px solid #eee; padding-top: 1rem;">
+  KapaDW — Relatório Técnico &nbsp;|&nbsp; Diogo Godinho (27220) &amp; Kanstantsin Khomchanka (27230) &nbsp;|&nbsp; IPT 2024/2025
+</div>
+</div>
+
+</body>
+</html>

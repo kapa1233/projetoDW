@@ -1,0 +1,51 @@
+@page "{id:int}"
+@model WebServicos.Pages.Categorias.EditModel
+@{
+    ViewData["Title"] = "Editar Categoria";
+}
+
+<div class="d-flex align-items-center mb-4 gap-2">
+    <a asp-page="Index" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Voltar
+    </a>
+    <div>
+        <h1 class="fw-bold mb-0"><i class="bi bi-pencil me-2 text-warning"></i>Editar Categoria</h1>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <input type="hidden" asp-for="Categoria.Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Categoria.Nome" class="form-label fw-semibold"></label>
+                        <input asp-for="Categoria.Nome" class="form-control" />
+                        <span asp-validation-for="Categoria.Nome" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Categoria.Descricao" class="form-label fw-semibold"></label>
+                        <textarea asp-for="Categoria.Descricao" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Categoria.Descricao" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-check-circle me-1"></i>Guardar Alterações
+                        </button>
+                        <a asp-page="Index" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

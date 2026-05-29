@@ -1,0 +1,36 @@
+databases:
+  - name: webservicos-db
+    plan: free
+    databaseName: webservicos
+    user: webservicos_user
+
+services:
+  - type: web
+    name: webservicos
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://+:10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: webservicos-db
+          property: connectionString
+
+  - type: web
+    name: webservicos-api
+    env: docker
+    dockerfilePath: ./Dockerfile.api
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://+:10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: webservicos-db
+          property: connectionString

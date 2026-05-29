@@ -1,0 +1,116 @@
+@page
+@model WebServicos.Pages.Pedidos.CreateModel
+@{
+    ViewData["Title"] = "Novo Pedido";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Novo Pedido de Serviço</h4>
+            </div>
+            <div class="card-body p-4">
+                <div id="general-errors" class="alert alert-danger d-none"></div>
+                <form id="pedido-form" method="post" novalidate>
+                    <div asp-validation-summary="All" class="alert alert-danger"></div>
+
+                    <!-- Título do Projeto -->
+                    <div class="mb-3">
+                        <label asp-for="Pedido.TituloProjeto" class="form-label fw-semibold"></label>
+                        <input asp-for="Pedido.TituloProjeto" class="form-control"
+                               placeholder="Ex: Website para a minha empresa de consultoria" />
+                        <span asp-validation-for="Pedido.TituloProjeto" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Descrição -->
+                    <div class="mb-3">
+                        <label asp-for="Pedido.Descricao" class="form-label fw-semibold"></label>
+                        <textarea asp-for="Pedido.Descricao" class="form-control" rows="5"
+                                  placeholder="Descreva o projeto que pretende desenvolver, incluindo funcionalidades específicas, cores, referências de outros websites, etc."></textarea>
+                        <span asp-validation-for="Pedido.Descricao" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Prazo estimado -->
+                    <div class="mb-3">
+                        <label asp-for="Pedido.PrazoEstimado" class="form-label fw-semibold"></label>
+                        <input asp-for="Pedido.PrazoEstimado" class="form-control" type="date"
+                               min="@DateTime.Today.AddDays(7).ToString("yyyy-MM-dd")" />
+                        <div class="form-text">Opcional — indique um prazo desejado para a entrega.</div>
+                    </div>
+
+                    <!-- Serviços (muitos-para-muitos) -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Serviços Pretendidos</label>
+                        <p class="text-muted small">Selecione um ou mais serviços que pretende incluir no seu pedido.</p>
+                        <div class="row g-2">
+                            @foreach (var servico in Model.ServicosDisponiveis)
+                            {
+                                <div class="col-md-6">
+                                    <div class="form-check card border p-3 h-100 @(Model.ServicosIds.Contains(servico.Id) ? "border-primary bg-light" : "")"
+                                         id="card-@servico.Id"
+                                         style="cursor:pointer"
+                                         onclick="toggleServico(@servico.Id)">
+                                        <input class="form-check-input servico-check" type="checkbox"
+                                               name="ServicosIds" value="@servico.Id" id="s@servico.Id"
+                                               onclick="event.stopPropagation()"
+                                               @(Model.ServicosIds.Contains(servico.Id) ? "checked" : "") />
+                                        <label class="form-check-label w-100" for="s@servico.Id" onclick="event.stopPropagation()">
+                                            <i class="bi @servico.Icone text-primary me-2"></i>
+                                            <strong>@servico.Nome</strong><br />
+                                            <small class="text-muted">@servico.Descricao</small><br />
+                                            <span class="text-primary fw-bold small">
+                                                @servico.PrecoBase.ToString("C", new System.Globalization.CultureInfo("pt-PT"))
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.ErroServicos))
+                        {
+                            <p class="text-danger small mt-2">@Model.ErroServicos</p>
+                        }
+                    </div>
+
+                    <!-- Observações -->
+                    <div class="mb-4">
+                        <label asp-for="Pedido.Observacoes" class="form-label fw-semibold"></label>
+                        <textarea asp-for="Pedido.Observacoes" class="form-control" rows="3"
+                                  placeholder="Alguma observação adicional?"></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-send me-1"></i>Enviar Pedido
+                        </button>
+                        <a asp-page="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function toggleServico(id) {
+            const cb = document.getElementById("s" + id);
+            cb.checked = !cb.checked;
+            const card = document.getElementById("card-" + id);
+            card.classList.toggle("border-primary", cb.checked);
+            card.classList.toggle("bg-light", cb.checked);
+        }
+        // Sincronizar clicks diretos na checkbox
+        document.querySelectorAll(".servico-check").forEach(cb => {
+            cb.addEventListener("change", () => {
+                const card = document.getElementById("card-" + cb.value);
+                card.classList.toggle("border-primary", cb.checked);
+                card.classList.toggle("bg-light", cb.checked);
+            });
+        });
+    </script>
+}
