@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(cd \"c:\\\\Users\\\\khomc\\\\Downloads\\\\projetoDW_simplificado\\\\WebServicos\"; dotnet build 2>&1 | Where-Object { $_ -match \"error|warning|Build\" } | Select-Object -Last 20)",
+      "PowerShell(cd \"c:\\\\Users\\\\khomc\\\\Downloads\\\\projetoDW_simplificado\\\\WebServicos\"; dotnet build 2>&1 | Where-Object { $_ -match \"CS\\\\d{4}\" } | Select-Object -First 20)",
+      "PowerShell(cd \"c:\\\\Users\\\\khomc\\\\Downloads\\\\projetoDW_simplificado\\\\WebServicos\"; dotnet build 2>&1 | Out-String | Select-String -Pattern \"error CS|warning CS\" -AllMatches | ForEach-Object { $_.Matches } | Select-Object -First 20 Value)"
+    ]
+  }
+}

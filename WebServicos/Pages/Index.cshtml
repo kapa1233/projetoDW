@@ -1,0 +1,395 @@
+@page
+@model WebServicos.Pages.IndexModel
+@{
+    ViewData["Title"] = "Início";
+    var servicos = Model.ServicosDestaque.ToList();
+    var slides = servicos.Chunk(3).ToList();
+}
+
+<!-- ── Hero com canvas interativo ── -->
+<section id="heroSection" class="hero-video-section">
+
+    <!-- Canvas com partículas e elementos tech -->
+    <canvas id="heroCanvas" class="yt-bg-wrapper" aria-hidden="true"></canvas>
+
+    <!-- Overlay escuro subtil -->
+    <div class="hero-overlay"></div>
+
+    <!-- Conteúdo por cima do vídeo -->
+    <div class="hero-content text-center">
+
+        <div class="d-inline-flex align-items-center gap-2 mb-4 px-3 py-2 rounded-pill hero-badge"
+             data-aos="fade-down">
+            <span class="badge-dot"></span>
+            Plataforma de Desenvolvimento Web
+        </div>
+
+        <h1 class="hero-title" data-aos="fade-up" data-aos-delay="100">
+            Websites profissionais<br />
+            <span class="hero-gradient-text">que fazem a diferença</span>
+        </h1>
+
+        <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
+            Do conceito à publicação — soluções web com qualidade,
+            rigor e suporte contínuo.
+        </p>
+
+        <div class="d-flex justify-content-center gap-3 flex-wrap" data-aos="fade-up" data-aos-delay="300">
+            <a asp-page="/Servicos/Index" class="btn btn-primary rounded-3 px-4 py-2 fw-500">
+                <i class="bi bi-grid me-2"></i>Ver Serviços
+            </a>
+            @if (!User.Identity!.IsAuthenticated)
+            {
+                <a asp-area="Identity" asp-page="/Account/Register"
+                   class="btn btn-outline-secondary rounded-3 px-4 py-2">
+                    <i class="bi bi-person-plus me-2"></i>Pedir Orçamento
+                </a>
+            }
+            else
+            {
+                <a asp-page="/Pedidos/Create"
+                   class="btn btn-outline-secondary rounded-3 px-4 py-2">
+                    <i class="bi bi-plus-circle me-2"></i>Novo Pedido
+                </a>
+            }
+        </div>
+
+        <!-- Scroll indicator -->
+        <div class="scroll-indicator" data-aos="fade-up" data-aos-delay="500">
+            <div class="scroll-mouse">
+                <div class="scroll-wheel"></div>
+            </div>
+            <span>Scroll</span>
+        </div>
+    </div>
+</section>
+
+<!-- ── Estatísticas com counter ── -->
+<div class="row g-3 mb-5">
+    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="0">
+        <div class="stat-card">
+            <span class="stat-icon" style="color:#16a34a;"><i class="bi bi-check-circle-fill"></i></span>
+            <div class="stat-value" data-count="@Model.TotalPedidosConcluidos">0</div>
+            <div class="stat-label">Projetos Concluídos</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="80">
+        <div class="stat-card">
+            <span class="stat-icon" style="color:#2563eb;"><i class="bi bi-people-fill"></i></span>
+            <div class="stat-value" data-count="@Model.TotalClientes">0</div>
+            <div class="stat-label">Clientes</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="160">
+        <div class="stat-card">
+            <span class="stat-icon" style="color:#7c3aed;"><i class="bi bi-grid-fill"></i></span>
+            <div class="stat-value" data-count="@Model.TotalServicos">0</div>
+            <div class="stat-label">Serviços Disponíveis</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="240">
+        <div class="stat-card">
+            <span class="stat-icon" style="color:#d97706;"><i class="bi bi-star-fill"></i></span>
+            <div class="stat-value">5★</div>
+            <div class="stat-label">Avaliação Média</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Carrossel de Serviços ── -->
+<section class="mb-5" data-aos="fade-up">
+    <div class="d-flex align-items-end justify-content-between mb-4">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-size:1.5rem;letter-spacing:-0.03em;color:#0f172a;">
+                Os Nossos Serviços
+            </h2>
+            <p class="mb-0" style="color:#94a3b8;font-size:0.875rem;">
+                Soluções à medida para cada necessidade
+            </p>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+            <!-- Controlos do carrossel -->
+            <button class="carousel-btn" data-bs-target="#servicosCarousel" data-bs-slide="prev" title="Anterior">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+            <button class="carousel-btn" data-bs-target="#servicosCarousel" data-bs-slide="next" title="Seguinte">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    @if (servicos.Any())
+    {
+        <div id="servicosCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+            <!-- Indicadores -->
+            <div class="carousel-indicators carousel-indicators-custom">
+                @for (int i = 0; i < slides.Count; i++)
+                {
+                    <button type="button"
+                            data-bs-target="#servicosCarousel"
+                            data-bs-slide-to="@i"
+                            class="@(i == 0 ? "active" : "")"
+                            aria-label="Slide @(i+1)"></button>
+                }
+            </div>
+
+            <div class="carousel-inner pb-4">
+                @for (int i = 0; i < slides.Count; i++)
+                {
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <div class="row g-4">
+                            @foreach (var servico in slides[i])
+                            {
+                                <div class="col-md-4">
+                                    <div class="card-clean h-100 p-4 d-flex flex-column service-card">
+                                        <div class="d-flex align-items-center gap-3 mb-3">
+                                            <div class="service-icon-box">
+                                                <i class="bi @servico.Icone"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="mb-0 fw-semibold" style="color:#0f172a;font-size:0.95rem;">@servico.Nome</h5>
+                                                <span class="service-price">
+                                                    A partir de @servico.PrecoBase.ToString("C", new System.Globalization.CultureInfo("pt-PT"))
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <p style="color:#64748b;font-size:0.875rem;line-height:1.7;flex:1;">@servico.Descricao</p>
+                                        <a asp-page="/Servicos/Details" asp-route-id="@servico.Id"
+                                           class="btn btn-outline-primary btn-sm rounded-3 mt-2 align-self-start">
+                                            Saber Mais <i class="bi bi-arrow-right ms-1"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="text-center mt-3">
+        <a asp-page="/Servicos/Index" class="btn btn-outline-secondary btn-sm rounded-3 px-4">
+            Ver Todos os Serviços <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+</section>
+
+<!-- ── Porquê escolher-nos ── -->
+<section class="section-highlight p-4 p-md-5 mb-4" data-aos="fade-up">
+    <h2 class="text-center fw-bold mb-1"
+        style="font-size:1.4rem;letter-spacing:-0.03em;color:#0f172a;">
+        Porquê escolher a WebServicos?
+    </h2>
+    <p class="text-center mb-5" style="color:#94a3b8;font-size:0.875rem;">O que nos distingue</p>
+
+    <div class="row g-4">
+        <div class="col-md-4 text-center" data-aos="fade-up" data-aos-delay="0">
+            <div class="feature-icon-box mx-auto mb-3" style="background:#fefce8;border-color:#fde68a;">
+                <i class="bi bi-lightning-fill" style="color:#d97706;"></i>
+            </div>
+            <h6 class="fw-bold mb-2" style="color:#0f172a;">Entrega Rápida</h6>
+            <p style="color:#64748b;font-size:0.85rem;line-height:1.7;max-width:240px;margin:0 auto;">
+                Cumprimos prazos. O seu projeto é entregue a tempo e com qualidade garantida.
+            </p>
+        </div>
+        <div class="col-md-4 text-center" data-aos="fade-up" data-aos-delay="100">
+            <div class="feature-icon-box mx-auto mb-3" style="background:#f0fdf4;border-color:#bbf7d0;">
+                <i class="bi bi-phone-fill" style="color:#16a34a;"></i>
+            </div>
+            <h6 class="fw-bold mb-2" style="color:#0f172a;">Design Responsivo</h6>
+            <p style="color:#64748b;font-size:0.85rem;line-height:1.7;max-width:240px;margin:0 auto;">
+                Todos os websites funcionam perfeitamente em qualquer dispositivo.
+            </p>
+        </div>
+        <div class="col-md-4 text-center" data-aos="fade-up" data-aos-delay="200">
+            <div class="feature-icon-box mx-auto mb-3" style="background:#eff6ff;border-color:#bfdbfe;">
+                <i class="bi bi-shield-check-fill" style="color:#2563eb;"></i>
+            </div>
+            <h6 class="fw-bold mb-2" style="color:#0f172a;">Suporte Contínuo</h6>
+            <p style="color:#64748b;font-size:0.85rem;line-height:1.7;max-width:240px;margin:0 auto;">
+                Estamos sempre disponíveis para ajudar após a entrega do projeto.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ── CTA final ── -->
+<section class="text-center py-5 mb-2" data-aos="zoom-in">
+    <h3 class="fw-bold mb-2" style="color:#0f172a;letter-spacing:-0.02em;">Pronto para começar?</h3>
+    <p class="mb-4" style="color:#64748b;">Crie a sua conta e submeta o seu primeiro pedido hoje.</p>
+    @if (!User.Identity!.IsAuthenticated)
+    {
+        <a asp-area="Identity" asp-page="/Account/Register"
+           class="btn btn-primary rounded-3 px-5 py-2 fw-semibold">
+            <i class="bi bi-rocket-takeoff me-2"></i>Começar Agora
+        </a>
+    }
+    else
+    {
+        <a asp-page="/Pedidos/Create"
+           class="btn btn-primary rounded-3 px-5 py-2 fw-semibold">
+            <i class="bi bi-plus-circle me-2"></i>Novo Pedido
+        </a>
+    }
+</section>
+
+@section Scripts {
+<script>
+// ── Canvas interativo: partículas tech ──
+(function () {
+    var canvas = document.getElementById('heroCanvas');
+    var ctx = canvas.getContext('2d');
+    var section = document.getElementById('heroSection');
+    var mouse = { x: -999, y: -999 };
+
+    var SYMBOLS = ['</>', '{ }', '[ ]', '=>', '01', '10', 'API', 'null', 'fn()', 'HTTP', 'git', 'npm', '<div>', 'CSS', '404', 'async', 'JSON'];
+    var DOT_COUNT = 75;
+    var SYM_COUNT = 20;
+    var CONNECT = 130;
+
+    function Dot() { this.init(); }
+    Dot.prototype.init = function () {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.45;
+        this.vy = (Math.random() - 0.5) * 0.45;
+        this.r = Math.random() * 1.6 + 0.4;
+        this.a = Math.random() * 0.45 + 0.25;
+    };
+    Dot.prototype.tick = function () {
+        var dx = mouse.x - this.x, dy = mouse.y - this.y;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 200 && d > 0) {
+            this.vx += (dx / d) * 0.05;
+            this.vy += (dy / d) * 0.05;
+        }
+        this.vx *= 0.97; this.vy *= 0.97;
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.x > canvas.width) this.x = 0;
+        if (this.y < 0) this.y = canvas.height;
+        if (this.y > canvas.height) this.y = 0;
+    };
+    Dot.prototype.draw = function () {
+        ctx.globalAlpha = this.a;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = '#60a5fa';
+        ctx.fill();
+    };
+
+    function Sym() { this.init(); }
+    Sym.prototype.init = function () {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.22;
+        this.vy = (Math.random() - 0.5) * 0.22;
+        this.text = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+        this.size = Math.floor(Math.random() * 8 + 10);
+        this.a = Math.random() * 0.18 + 0.06;
+        this.color = Math.random() < 0.55 ? '#60a5fa' : '#a78bfa';
+    };
+    Sym.prototype.tick = function () {
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < -60) this.x = canvas.width + 60;
+        if (this.x > canvas.width + 60) this.x = -60;
+        if (this.y < -20) this.y = canvas.height + 20;
+        if (this.y > canvas.height + 20) this.y = -20;
+    };
+    Sym.prototype.draw = function () {
+        ctx.globalAlpha = this.a;
+        ctx.font = this.size + "px 'Courier New', monospace";
+        ctx.fillStyle = this.color;
+        ctx.fillText(this.text, this.x, this.y);
+    };
+
+    var dots = [], syms = [];
+
+    function setup() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        dots = []; syms = [];
+        for (var i = 0; i < DOT_COUNT; i++) dots.push(new Dot());
+        for (var j = 0; j < SYM_COUNT; j++) syms.push(new Sym());
+    }
+
+    function drawLines() {
+        for (var i = 0; i < dots.length; i++) {
+            for (var j = i + 1; j < dots.length; j++) {
+                var dx = dots[i].x - dots[j].x, dy = dots[i].y - dots[j].y;
+                var d = Math.sqrt(dx * dx + dy * dy);
+                if (d < CONNECT) {
+                    ctx.globalAlpha = (1 - d / CONNECT) * 0.28;
+                    ctx.strokeStyle = '#60a5fa';
+                    ctx.lineWidth = 0.6;
+                    ctx.beginPath();
+                    ctx.moveTo(dots[i].x, dots[i].y);
+                    ctx.lineTo(dots[j].x, dots[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    function frame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        var bg = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        bg.addColorStop(0, '#060d1f');
+        bg.addColorStop(1, '#0d1b2a');
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        syms.forEach(function (s) { s.tick(); s.draw(); });
+        drawLines();
+        dots.forEach(function (d) { d.tick(); d.draw(); });
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(frame);
+    }
+
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(setup, 150);
+    });
+    section.addEventListener('mousemove', function (e) {
+        var r = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - r.left;
+        mouse.y = e.clientY - r.top;
+    });
+    section.addEventListener('mouseleave', function () { mouse.x = -999; mouse.y = -999; });
+
+    setup();
+    frame();
+})();
+
+    // ── CountUp nas estatísticas ──
+    function countUp(el, target, duration) {
+        var start = performance.now();
+        var update = function (now) {
+            var p = Math.min((now - start) / duration, 1);
+            var eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.floor(eased * target);
+            if (p < 1) requestAnimationFrame(update);
+            else el.textContent = target;
+        };
+        requestAnimationFrame(update);
+    }
+
+    var statsObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                var el = entry.target;
+                var n = parseInt(el.dataset.count);
+                if (!isNaN(n)) countUp(el, n, 1400);
+                statsObs.unobserve(el);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('[data-count]').forEach(function (el) {
+        statsObs.observe(el);
+    });
+</script>
+}
