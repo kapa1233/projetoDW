@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Relatório KapaDW — Plataforma de Gestão de Serviços Web</title>
+<title>Relatório Plataforma de Gestão de Serviços Web</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
 
@@ -295,7 +295,7 @@
 <!-- ═══════════════════════════════════════════════════════════ CAPA -->
 <div class="cover">
   <div class="logo-box">🌐</div>
-  <h1>KapaDW</h1>
+  <h1>WebServicos</h1>
   <p class="subtitle">Plataforma de Gestão de Serviços Web</p>
   <p class="subtitle" style="font-size:.9rem; margin-top:-.5rem; margin-bottom:2rem;">Relatório Técnico do Projeto Prático</p>
 
@@ -399,7 +399,7 @@
 <div class="page-break"></div>
 <h1 class="section-title" id="sec1">1. Introdução e Objetivos</h1>
 
-<p>O projeto <strong>KapaDW</strong> foi desenvolvido no âmbito da unidade curricular de <em>Desenvolvimento Web</em> da Licenciatura em Engenharia Informática do Instituto Politécnico de Tomar. O objetivo central foi conceber e implementar uma plataforma completa de gestão de serviços web que demonstre a aplicação prática dos conteúdos lecionados ao longo do semestre.</p>
+<p>O projeto <strong>WebServicos</strong> foi desenvolvido no âmbito da unidade curricular de <em>Desenvolvimento Web</em> da Licenciatura em Engenharia Informática do Instituto Politécnico de Tomar. O objetivo central foi conceber e implementar uma plataforma completa de gestão de serviços web que demonstre a aplicação prática dos conteúdos lecionados ao longo do semestre.</p>
 
 <p>A plataforma simula o modelo de negócio de uma agência digital: clientes registam-se na plataforma, consultam o catálogo de serviços disponíveis (desenvolvimento de websites, lojas online, SEO, entre outros), submetem pedidos com requisitos específicos e acompanham o progresso dos seus projetos em tempo real. Do lado da administração, o gestor tem visibilidade total sobre todos os pedidos, pode gerir o ciclo de vida de cada um, comunicar com os clientes através de um sistema de chat integrado, e gerir os próprios serviços e categorias oferecidos.</p>
 
@@ -923,7 +923,7 @@ options.AddPolicy(<span class="s">"Cliente"</span>, p => p.RequireRole(<span cla
 <div class="page-break"></div>
 <h1 class="section-title" id="sec8">8. Comunicação em Tempo Real — SignalR</h1>
 
-<p>O <strong>SignalR</strong> é uma biblioteca ASP.NET Core que simplifica a adição de funcionalidades em tempo real usando WebSockets (com fallback para long-polling quando WebSockets não estão disponíveis). Na plataforma KapaDW, é usado para dois cenários:</p>
+<p>O <strong>SignalR</strong> é uma biblioteca ASP.NET Core que simplifica a adição de funcionalidades em tempo real usando WebSockets (com fallback para long-polling quando WebSockets não estão disponíveis). Na plataforma WebServicos, é usado para dois cenários:</p>
 
 <ul>
   <li><strong>Notificação global:</strong> Quando um cliente submete um novo pedido, todos os administradores conectados recebem uma notificação imediata com o título do projeto e o nome do cliente.</li>
@@ -1363,7 +1363,7 @@ services:
 <div class="page-break"></div>
 <h1 class="section-title" id="sec15">15. Conclusão</h1>
 
-<p>O projeto KapaDW concretizou com sucesso os objetivos definidos para a unidade curricular de Desenvolvimento Web. A plataforma implementada vai além dos requisitos mínimos de um CRUD, incorporando funcionalidades características de sistemas web profissionais: comunicação em tempo real, workflows de aprovação, documentação de API, e deployment em cloud com CI/CD.</p>
+<p>O projeto WebServicos concretizou com sucesso os objetivos definidos para a unidade curricular de Desenvolvimento Web. A plataforma implementada vai além dos requisitos mínimos de um CRUD, incorporando funcionalidades características de sistemas web profissionais: comunicação em tempo real, workflows de aprovação, documentação de API, e deployment em cloud com CI/CD.</p>
 
 <p>Do ponto de vista técnico, o projeto demonstrou competências em múltiplas camadas:</p>
 
@@ -1428,9 +1428,10 @@ services:
 
 <br><br>
 <div style="text-align:center; color:#999; font-size:9pt; border-top: 1px solid #eee; padding-top: 1rem;">
-  KapaDW — Relatório Técnico &nbsp;|&nbsp; Diogo Godinho (27220) &amp; Kanstantsin Khomchanka (27230) &nbsp;|&nbsp; IPT 2024/2025
+  Relatório Técnico &nbsp;|&nbsp; Diogo Godinho (27220) &amp; Kanstantsin Khomchanka (27230) &nbsp;|&nbsp; IPT 2024/2025
 </div>
 </div>
 
 </body>
 </html>
+

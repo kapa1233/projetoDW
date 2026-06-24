@@ -68,9 +68,9 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "KapaDW API",
+        Title = "WebServicos API",
         Version = "v1",
-        Description = "API REST da plataforma KapaDW — gestão de pedidos de serviços web.\n\n" +
+        Description = "API REST da plataforma — gestão de pedidos de serviços web.\n\n" +
                       "Para testar os endpoints protegidos, inicia sessão na aplicação web " +
                       "e volta a esta página: o cookie de autenticação é partilhado automaticamente.",
         Contact = new OpenApiContact
@@ -168,9 +168,9 @@ app.UseAuthorization();  // Verifica o que o utilizador pode fazer (roles e pol�
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "KapaDW API v1");
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "WebServicos API v1");
     options.RoutePrefix = "swagger";
-    options.DocumentTitle = "KapaDW — Documentação da API";
+    options.DocumentTitle = "WebServicos — Documentação da API";
     options.DefaultModelsExpandDepth(-1); // Oculta a secção "Schemas" por defeito
 });
 

@@ -84,13 +84,7 @@ else
                             @if (User.IsInRole("Administrador"))
                             {
                                 <td>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
-                                             style="width:28px;height:28px;background:#eff6ff;border:1px solid #bfdbfe;font-size:0.7rem;font-weight:700;color:#2563eb;">
-                                            @(pedido.Cliente?.NomeCompleto?.Substring(0, 1).ToUpper() ?? "?")
-                                        </div>
-                                        <span style="color:#64748b;font-size:0.875rem;">@pedido.Cliente?.NomeCompleto</span>
-                                    </div>
+                                    <span style="color:#64748b;font-size:0.875rem;">@pedido.Cliente?.Email</span>
                                 </td>
                             }
                             <td>
